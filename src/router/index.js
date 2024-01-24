@@ -1,0 +1,112 @@
+import { createRouter, createWebHistory } from "vue-router";
+import { useAuthStore } from "@/stores/useAuthStore";
+
+import AppLayout from "@/layout/AppLayout.vue";
+
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
+    {
+      path: "/",
+      name: "root",
+      component: AppLayout,
+      children: [
+        {
+          path: "",
+          name: "home",
+          component: () => import("@/views/Home.vue"),
+          meta: { requiresAuth: true },
+        },
+        {
+          path: "test",
+          name: "test",
+          component: () => import("@/views/Test.vue"),
+          meta: { requiresAuth: true, gest_role_id: [1] },
+        },
+        {
+          path: "human-resources",
+          name: "human-resources",
+          meta: { requiresAuth: true, gest_role_id: [1, 2] },
+          children: [
+            {
+              path: "calc-hours",
+              name: "calc-hours",
+              component: () => import("@/views/humanResources/CalcHours.vue"),
+              meta: { requiresAuth: true, gest_role_id: [1, 2] },
+            },
+            {
+              path: "list-excel-hours",
+              name: "list-excel-hours",
+              component: () =>
+                import("@/views/humanResources/ListExcelHours.vue"),
+              meta: { requiresAuth: true, gest_role_id: [1, 2] },
+            },
+          ],
+        },
+      ],
+    },
+    {
+      path: "/auth",
+      name: "auth",
+      children: [
+        {
+          path: "access",
+          name: "access",
+          component: () => import("@/views/auth/Access.vue"),
+        },
+        {
+          path: "access-denied",
+          name: "access-denied",
+          component: () => import("@/views/auth/AccessDenied.vue"),
+        },
+      ],
+    },
+    {
+      path: "/:pathMatch(.*)*",
+      name: "not-found",
+      component: () => import("@/views/auth/NotFound.vue"),
+    },
+  ],
+});
+
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore();
+
+  if (to.meta.requiresAuth) {
+    if (!authStore.isAuthenticated) {
+      next({ name: "access" });
+    } else {
+      if (!to.meta.gest_role_id) {
+        next();
+      } else {
+        if (to.meta.gest_role_id.includes(authStore.profile?.gest_role_id)) {
+          next();
+        } else {
+          next({ name: "access-denied" });
+        }
+      }
+    }
+  } else {
+    next();
+  }
+
+  // if (to.meta.gest_role_id) {
+  //   if (to.meta.gest_role_id.includes(authStore.profile?.gest_role_id)) {
+  //     next();
+  //   } else {
+  //     next({ name: "access-denied" });
+  //   }
+  // } else {
+  //   if (to.meta.requiresAuth) {
+  //     if (authStore.isAuthenticated) {
+  //       next();
+  //     } else {
+  //       next({ name: "access" });
+  //     }
+  //   } else {
+  //     next();
+  //   }
+  // }
+});
+
+export default router;

@@ -1,0 +1,18 @@
+export default function useGuCalculator() {
+  const baseUrl = import.meta.env.VITE_GU_CALCULATOR_BASE_URL;
+
+  async function getDataFromFile(fileUrl) {
+    try {
+      const response = await fetch(baseUrl + fileUrl).then((res) => res.json());
+      console.log("useGuCalculator - getDataFromFile - response", response);
+      if (response) return response.data;
+      return { error: "File not found" };
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  return {
+    getDataFromFile,
+  };
+}
