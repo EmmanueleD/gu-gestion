@@ -152,7 +152,7 @@ onMounted(() => {
 
       <div class="col-12 md:col-6 lg:col-3 flex flex-column">
         <span>File</span>
-        <div v-if="loadingHandleUpload" class="flex align-items-center">
+        <div v-if="loadingHandleUpload" class="flex align-items-center h-full">
           <i class="pi pi-spinner pi-spin mr-2"></i>
           <span>Cargando...</span>
         </div>
