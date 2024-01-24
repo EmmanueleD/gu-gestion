@@ -8,7 +8,7 @@
           class="w-full surface-card py-8 px-5 sm:px-8 flex flex-column align-items-center border-round-md"
         >
           <img
-            src="../../../layout/images/logo-dark.svg"
+            src="@/assets/img/logo-dark.svg"
             alt="Sakai logo"
             class="mb-5 w-6rem flex-shrink-0"
           />

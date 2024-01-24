@@ -9,7 +9,7 @@
         >
           <div class="grid flex flex-column align-items-center">
             <img
-              src="../../../layout/images/logo-dark.svg"
+              src="@/assets/img/logo-dark.svg"
               alt="Sakai logo"
               class="mb-5 w-6rem flex-shrink-0 border-round-md"
             />

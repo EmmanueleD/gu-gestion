@@ -25,10 +25,6 @@ onBeforeUnmount(() => {
   unbindOutsideClickListener();
 });
 
-const logoUrl = computed(() => {
-  return `layout/images/logo-dark.svg`;
-});
-
 const onTopBarMenuButton = () => {
   topbarMenuActive.value = !topbarMenuActive.value;
 };
@@ -89,7 +85,7 @@ async function handleSignOut() {
 <template>
   <div class="layout-topbar">
     <router-link to="/" class="layout-topbar-logo">
-      <img :src="logoUrl" alt="logo" class="border-circle" />
+      <img src="@/assets/img/logo-dark.svg" alt="logo" class="border-circle" />
       <span>gestión</span>
     </router-link>
 
