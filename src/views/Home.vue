@@ -9,11 +9,14 @@ const authStore = useAuthStore();
 
   <div class="w-full surface-card py-6 px-3 sm:px-6">
     <div class="flex flex-column align-items-center justify-content-center">
-      <img
-        src="@/assets/img/logo-dark.svg"
-        alt="Sakai logo"
-        class="mb-5 w-6rem flex-shrink-0 border-round-md"
-      />
+      <div class="flex align-items-center justify-content-center mb-5">
+        <img
+          src="@/assets/img/logo-dark.svg"
+          alt="Sakai logo"
+          class="w-6rem flex-shrink-0 border-round-md mr-4"
+        />
+        <span class="text-900 font-bold text-7xl">gestión</span>
+      </div>
 
       <div class="flex flex-column align-items-stretch">
         <div

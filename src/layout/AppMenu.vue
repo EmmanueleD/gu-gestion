@@ -7,6 +7,24 @@ const authStore = useAuthStore();
 
 const model = ref([
   {
+    label: "Dev",
+    gest_role_id: [1],
+    items: [
+      {
+        label: "Test",
+        icon: "pi pi-fw pi-eraser",
+        to: "/test",
+        gest_role_id: [1],
+      },
+      {
+        label: "404",
+        icon: "pi pi-fw pi-times",
+        to: "/404",
+        gest_role_id: [1],
+      },
+    ],
+  },
+  {
     label: "Gestión",
     gest_role_id: [1, 2, 3],
     items: [
@@ -19,12 +37,6 @@ const model = ref([
         label: "Perfil",
         icon: "pi pi-fw pi-user",
         to: "/profile",
-      },
-      {
-        label: "Test",
-        icon: "pi pi-fw pi-eraser",
-        to: "/test",
-        gest_role_id: [1, 3],
       },
     ],
   },

@@ -10,7 +10,7 @@
           <img
             src="@/assets/img/logo-dark.svg"
             alt="Sakai logo"
-            class="mb-5 w-6rem flex-shrink-0"
+            class="mb-5 w-6rem flex-shrink-0 border-round-md"
           />
           <span class="text-blue-500 font-bold text-3xl">404</span>
           <h1 class="text-900 font-bold text-3xl lg:text-5xl mb-2">

@@ -96,7 +96,11 @@ const checkActiveRoute = (item) => {
     :class="{ 'layout-root-menuitem': root, 'active-menuitem': isActiveMenu }"
   >
     <div
-      v-if="root && item.visible !== false"
+      v-if="
+        root &&
+        item.visible !== false &&
+        (item?.gest_role_id?.includes(gest_role_id) || !item?.gest_role_id)
+      "
       class="layout-menuitem-root-text"
     >
       {{ item.label }}
