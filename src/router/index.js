@@ -21,25 +21,25 @@ const router = createRouter({
           path: "test",
           name: "test",
           component: () => import("@/views/Test.vue"),
-          meta: { requiresAuth: true, gest_role_id: [1] },
+          meta: { requiresAuth: true, gest_role_id: [1, 3] },
         },
         {
           path: "human-resources",
           name: "human-resources",
-          meta: { requiresAuth: true, gest_role_id: [1, 2] },
+          meta: { requiresAuth: true, gest_role_id: [1, 2, 3] },
           children: [
             {
               path: "calc-hours",
               name: "calc-hours",
               component: () => import("@/views/humanResources/CalcHours.vue"),
-              meta: { requiresAuth: true, gest_role_id: [1, 2] },
+              meta: { requiresAuth: true, gest_role_id: [1, 2, 3] },
             },
             {
               path: "list-excel-hours",
               name: "list-excel-hours",
               component: () =>
                 import("@/views/humanResources/ListExcelHours.vue"),
-              meta: { requiresAuth: true, gest_role_id: [1, 2] },
+              meta: { requiresAuth: true, gest_role_id: [1, 2, 3] },
             },
           ],
         },
