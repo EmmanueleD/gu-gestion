@@ -17,8 +17,15 @@
             Pagina no encontrada
           </h1>
           <div class="text-600 mb-5">
-            La pagina que estas buscando no existe.
+            Ops! Parece que la pagina que estas buscando no existe, o está en
+            construcción...
           </div>
+          <Button
+            label="Volver atras"
+            icon="pi pi-arrow-left"
+            class="w-auto"
+            @click="$router.go(-1)"
+          />
         </div>
       </div>
     </div>
