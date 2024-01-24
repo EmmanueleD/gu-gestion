@@ -2,10 +2,12 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import useSupabaseAuth from "@/composables/useSupabaseAuth";
-import useCustomToast from "@/composables/useCustomToast";
+import useGestLog from "@/composables/supabase-tables/useGestLog";
+import useCustomToast from "@/composables/utils/useCustomToast";
 
 const router = useRouter();
 
+const { createLog } = useGestLog();
 const { login } = useSupabaseAuth();
 const { showSuccess, showError } = useCustomToast();
 
@@ -17,13 +19,16 @@ async function handleAccess() {
   loading.value = true;
 
   let response = null;
-
   try {
     response = await login({ email: email.value, password: password1.value });
     if (response.error) {
       showError(response.error);
     } else {
       showSuccess("Login exitoso");
+      const logResponse = await createLog(
+        "Access.vue - handleAccess - email: " + email.value
+      );
+      console.log("Access.vue - handleAccess - logResponse: ", logResponse);
       router.push({ name: "home" });
     }
   } catch (error) {
@@ -93,3 +98,4 @@ async function handleAccess() {
     </div>
   </div>
 </template>
+@/composables/utils/useCustomToast

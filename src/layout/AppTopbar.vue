@@ -3,7 +3,7 @@ import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useLayout } from "@/layout/composables/layout";
 import { useRouter } from "vue-router";
 import useSupabaseAuth from "@/composables/useSupabaseAuth";
-import useCustomToast from "@/composables/useCustomToast";
+import useCustomToast from "@/composables/utils/useCustomToast";
 
 import { useAuthStore } from "@/stores/useAuthStore";
 
@@ -115,3 +115,4 @@ async function handleSignOut() {
 </template>
 
 <style lang="scss" scoped></style>
+@/composables/utils/useCustomToast

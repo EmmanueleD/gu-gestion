@@ -31,14 +31,14 @@ const router = createRouter({
             {
               path: "calc-hours",
               name: "calc-hours",
-              component: () => import("@/views/humanResources/CalcHours.vue"),
+              component: () => import("@/views/human-resources/CalcHours.vue"),
               meta: { requiresAuth: true, gest_role_id: [1, 2, 3] },
             },
             {
               path: "list-excel-hours",
               name: "list-excel-hours",
               component: () =>
-                import("@/views/humanResources/ListExcelHours.vue"),
+                import("@/views/human-resources/ListExcelHours.vue"),
               meta: { requiresAuth: true, gest_role_id: [1, 2, 3] },
             },
           ],

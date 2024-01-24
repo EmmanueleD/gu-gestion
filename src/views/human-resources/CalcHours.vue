@@ -1,9 +1,11 @@
 <script setup>
 import { ref, onMounted } from "vue";
+
 import useSupabaseStorage from "@/composables/useSupabaseStorage";
-import useCustomToast from "@/composables/useCustomToast";
-import useGuCalculator from "@/composables/useGuCalculator";
-import useGeneric from "@/composables/useGeneric";
+import useGuCalculator from "@/composables/gu-calculator/useGuCalculator";
+import useCustomToast from "@/composables/utils/useCustomToast";
+import useGeneric from "@/composables/utils/useGeneric";
+
 import { useDateFormat } from "@vueuse/core";
 
 import { useStorageStore } from "@/stores/useStorageStore";
@@ -307,3 +309,5 @@ onMounted(() => {
     </div>
   </Sidebar>
 </template>
+@/composables/gu-calculator/useGuCalculator@/composables/utils/useCustomToast
+@/composables/utils/useGeneric @/composables/gu-calculator/useGuCalculator

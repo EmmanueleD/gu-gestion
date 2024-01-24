@@ -2,7 +2,7 @@
 //TODO: eliminar el archivo, descargar el archivo, filtrar los archivos, ordenar los archivos
 import { ref, onMounted } from "vue";
 import useSupabaseStorage from "@/composables/useSupabaseStorage";
-import useCustomToast from "@/composables/useCustomToast";
+import useCustomToast from "@/composables/utils/useCustomToast";
 
 import { useDateFormat } from "@vueuse/core";
 
@@ -101,3 +101,4 @@ onMounted(async () => {
     </div>
   </div>
 </template>
+@/composables/utils/useCustomToast
