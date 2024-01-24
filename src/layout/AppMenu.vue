@@ -8,6 +8,7 @@ const authStore = useAuthStore();
 const model = ref([
   {
     label: "Gestión",
+    gest_role_id: [1, 2, 3],
     items: [
       {
         label: "Home",
@@ -15,8 +16,13 @@ const model = ref([
         to: "/",
       },
       {
+        label: "Perfil",
+        icon: "pi pi-fw pi-user",
+        to: "/profile",
+      },
+      {
         label: "Test",
-        icon: "pi pi-fw pi-home",
+        icon: "pi pi-fw pi-eraser",
         to: "/test",
         gest_role_id: [1, 3],
       },
@@ -24,16 +30,17 @@ const model = ref([
   },
   {
     label: "Recursos Humanos",
+    gest_role_id: [1, 2, 3],
     items: [
       {
         label: "Lista Documentos Cargados",
-        icon: "pi pi-fw pi-home",
+        icon: "pi pi-fw pi-folder",
         to: "/human-resources/list-excel-hours",
         gest_role_id: [1, 2, 3],
       },
       {
         label: "Calculadora Horas",
-        icon: "pi pi-fw pi-home",
+        icon: "pi pi-fw pi-th-large",
         to: "/human-resources/calc-hours",
         gest_role_id: [1, 2, 3],
       },
