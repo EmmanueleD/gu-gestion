@@ -10,8 +10,6 @@ import { useDateFormat } from "@vueuse/core";
 
 import { useStorageStore } from "@/stores/useStorageStore";
 
-import fakedata from "@/assets/fakedata.json";
-
 function formattedDate(date) {
   return useDateFormat(date, "ddd DD/MM/YY HH:mm").value;
 }

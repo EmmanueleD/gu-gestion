@@ -1,7 +1,7 @@
 <script setup>
-import { useAuthStore } from "@/stores/useAuthStore";
+// import { useAuthStore } from "@/stores/useAuthStore";
 
-const authStore = useAuthStore();
+// const authStore = useAuthStore();
 </script>
 
 <template>
@@ -18,7 +18,9 @@ const authStore = useAuthStore();
         <span class="text-900 font-bold text-7xl">gestión</span>
       </div>
 
-      <div class="flex flex-column align-items-stretch">
+      <h1>BENVENUTO DC</h1>
+
+      <!-- <div class="flex flex-column align-items-stretch">
         <div
           v-if="authStore.profile"
           class="w-full py-6 px-3 sm:px-6 flex flex-column align-items-center border-round-md"
@@ -37,7 +39,7 @@ const authStore = useAuthStore();
             Por favor, cierra la sesión y vuelve a iniciar
           </span>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>

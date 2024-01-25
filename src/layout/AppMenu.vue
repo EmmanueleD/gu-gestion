@@ -47,13 +47,13 @@ const model = ref([
       {
         label: "Lista Documentos Cargados",
         icon: "pi pi-fw pi-folder",
-        to: "/human-resources/list-excel-hours",
+        to: "/list-excel-hours",
         gest_role_id: [1, 2, 3],
       },
       {
         label: "Calculadora Horas",
         icon: "pi pi-fw pi-th-large",
-        to: "/human-resources/calc-hours",
+        to: "/calc-hours",
         gest_role_id: [1, 2, 3],
       },
     ],

@@ -6,7 +6,7 @@ const layoutConfig = reactive({
   inputStyle: "outlined",
   menuMode: "static",
   theme: "tailwind-light",
-  scale: 6,
+  scale: 8,
   activeMenuItem: null,
 });
 

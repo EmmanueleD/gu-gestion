@@ -2,12 +2,10 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import useSupabaseAuth from "@/composables/useSupabaseAuth";
-import useGestLog from "@/composables/supabase-tables/useGestLog";
 import useCustomToast from "@/composables/utils/useCustomToast";
 
 const router = useRouter();
 
-const { createLog } = useGestLog();
 const { login } = useSupabaseAuth();
 const { showSuccess, showError } = useCustomToast();
 
@@ -25,10 +23,7 @@ async function handleAccess() {
       showError(response.error);
     } else {
       showSuccess("Login exitoso");
-      const logResponse = await createLog(
-        "Access.vue - handleAccess - email: " + email.value
-      );
-      console.log("Access.vue - handleAccess - logResponse: ", logResponse);
+
       router.push({ name: "home" });
     }
   } catch (error) {

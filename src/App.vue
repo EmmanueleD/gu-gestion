@@ -9,7 +9,7 @@
 </script>
 
 <template>
-  <RouterView />
   <ConfirmDialog></ConfirmDialog>
   <Toast></Toast>
+  <router-view />
 </template>
