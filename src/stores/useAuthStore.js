@@ -7,6 +7,12 @@ export const useAuthStore = defineStore("auth", () => {
   const _profile = ref(null);
   const _isAuthenticated = ref(false);
 
+  // Load profile from localStorage on store creation
+  const savedProfile = localStorage.getItem("userProfile");
+  if (savedProfile) {
+    _profile.value = JSON.parse(savedProfile);
+  }
+
   const session = computed(() => _session.value);
   const user = computed(() => _user.value);
   const profile = computed(() => _profile.value);
@@ -15,12 +21,16 @@ export const useAuthStore = defineStore("auth", () => {
   function setSession(session) {
     _session.value = session;
   }
+
   function setUser(user) {
     _user.value = user;
   }
 
   function setProfile(profile) {
     _profile.value = profile;
+
+    // Save profile to localStorage
+    localStorage.setItem("userProfile", JSON.stringify(profile));
   }
 
   function setIsAuthenticated(isAuthenticated) {
@@ -31,6 +41,9 @@ export const useAuthStore = defineStore("auth", () => {
     _session.value = null;
     _user.value = null;
     _isAuthenticated.value = false;
+
+    // Remove profile from localStorage on reset
+    localStorage.removeItem("userProfile");
   }
 
   return {

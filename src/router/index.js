@@ -11,7 +11,7 @@ const router = createRouter({
       component: AppLayout,
       children: [
         {
-          path: "",
+          path: "/",
           name: "home",
           component: () => import("@/views/Home.vue"),
           meta: { requiresAuth: true },

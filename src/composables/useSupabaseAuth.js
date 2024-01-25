@@ -20,7 +20,7 @@ export default function useSupabaseAuth() {
       authStore.setIsAuthenticated(true);
       authStore.setSession(session);
       authStore.setUser(session.user);
-      router.push({ name: "home" });
+      // router.push({ name: "home" });
     }
   });
 
