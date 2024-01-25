@@ -1,7 +1,7 @@
 <script setup>
-// import { useAuthStore } from "@/stores/useAuthStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
-// const authStore = useAuthStore();
+const authStore = useAuthStore();
 </script>
 
 <template>
