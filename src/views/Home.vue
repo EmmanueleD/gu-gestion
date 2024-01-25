@@ -18,9 +18,9 @@
         <span class="text-900 font-bold text-7xl">gestión</span>
       </div>
 
-      <h1>BENVENUTO DC</h1>
+      <!-- <h1>BENVENUTO DC</h1> -->
 
-      <!-- <div class="flex flex-column align-items-stretch">
+      <div class="flex flex-column align-items-stretch">
         <div
           v-if="authStore.profile"
           class="w-full py-6 px-3 sm:px-6 flex flex-column align-items-center border-round-md"
@@ -39,7 +39,7 @@
             Por favor, cierra la sesión y vuelve a iniciar
           </span>
         </div>
-      </div> -->
+      </div>
     </div>
   </div>
 </template>
