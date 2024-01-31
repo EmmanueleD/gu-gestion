@@ -9,45 +9,69 @@ export default function useSupabaseDB() {
   async function get({ table, id }) {
     const { data, error } = await sbDB(table).select("*").eq("id", id).single();
     if (!error) {
-      return data;
+      dbResp.value = data;
+      return "Supabase DB get OK";
     } else {
-      return error;
+      dbResp.value = error;
+      return "Supabase DB get error";
     }
   }
 
   async function getAll({ table }) {
     const { data, error } = await sbDB(table).select("*");
     if (!error) {
-      return data;
+      dbResp.value = data;
+      return "Supabase DB get all OK";
     } else {
-      return error;
+      dbResp.value = error;
+      return "Supabase DB get all error";
+    }
+  }
+
+  async function getLastOne({ table, orderingBy = table + "_id" }) {
+    const { data, error } = await sbDB(table)
+      .select("*")
+      .order(orderingBy, { ascending: false })
+      .limit(1);
+    if (!error) {
+      dbResp.value = data;
+      return "Supabase DB get last one OK";
+    } else {
+      dbResp.value = error;
+      return "Supabase DB get last one error";
     }
   }
 
   async function create({ table, data }) {
     const { error } = await sbDB(table).insert(data);
     if (!error) {
-      return data;
+      dbResp.value = data;
+      return "Supabase DB create OK";
     } else {
-      return error;
+      dbResp.value = error;
+      return "Supabase DB create error";
     }
   }
 
   async function update({ table, id, data }) {
     const { error } = await sbDB(table).update(data).eq("id", id);
     if (!error) {
-      return data;
+      dbResp.value = data;
+      return "Supabase DB update OK";
     } else {
-      return error;
+      dbResp.value = error;
+      return "Supabase DB update error";
     }
   }
 
   async function remove({ table, id }) {
     const { error } = await sbDB(table).delete().eq("id", id);
     if (!error) {
-      return true;
+      dbResp.value = id;
+      return "Supabase DB remove OK";
     } else {
-      return error;
+      dbResp.value = error;
+      return "Supabase DB remove error";
     }
   }
 
@@ -55,6 +79,7 @@ export default function useSupabaseDB() {
     dbResp,
     get,
     getAll,
+    getLastOne,
     create,
     update,
     remove,

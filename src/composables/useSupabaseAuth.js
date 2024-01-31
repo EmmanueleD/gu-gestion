@@ -1,5 +1,4 @@
 import { ref } from "vue";
-import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/useAuthStore";
 import useSupabaseClient from "./useSupabaseClient";
 import useSupabaseDB from "./useSupabaseDB";
@@ -9,8 +8,7 @@ const authResp = ref(null);
 export default function useSupabaseAuth() {
   const authStore = useAuthStore();
   const { sbAuth } = useSupabaseClient();
-  const { get } = useSupabaseDB();
-  const router = useRouter();
+  const { get, dbResp } = useSupabaseDB();
 
   sbAuth.onAuthStateChange((event, session) => {
     authResp.value = session;
@@ -20,7 +18,6 @@ export default function useSupabaseAuth() {
       authStore.setIsAuthenticated(true);
       authStore.setSession(session);
       authStore.setUser(session.user);
-      // router.push({ name: "home" });
     }
   });
 
@@ -56,17 +53,19 @@ export default function useSupabaseAuth() {
   };
 
   const getProfile = async (id) => {
-    const profile = await get({
-      table: "profiles",
-      id,
-    });
-    if (profile) {
-      authStore.setProfile(profile);
-    } else {
-      return {
-        error: "Profile not found",
-        status: 404,
-      };
+    try {
+      await get({ table: "profiles", id });
+
+      if (dbResp.value) {
+        authStore.setProfile(dbResp.value);
+      } else {
+        return {
+          error: "Profile not found",
+          status: 404,
+        };
+      }
+    } catch (error) {
+      return error;
     }
   };
 

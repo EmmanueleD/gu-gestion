@@ -56,6 +56,51 @@ const model = ref([
         to: "/calc-hours",
         gest_role_id: [1, 2, 3],
       },
+      {
+        label: "Personal",
+        icon: "pi pi-fw pi-users",
+
+        gest_role_id: [1, 2, 3],
+        items: [
+          {
+            label: "Empleados",
+            icon: "pi pi-fw pi-user",
+            to: "/employees",
+            gest_role_id: [1, 2, 3],
+          },
+          {
+            label: "Roles",
+            icon: "pi pi-fw pi-user",
+            to: "/roles",
+            gest_role_id: [1, 2, 3],
+          },
+        ],
+      },
+      {
+        label: "Modificadores de Horas",
+        icon: "pi pi-fw pi-clock",
+        gest_role_id: [1, 2, 3],
+        items: [
+          {
+            label: "Hora base",
+            icon: "pi pi-fw pi-clock",
+            to: "modifiers/base-value",
+            gest_role_id: [1, 2, 3],
+          },
+          {
+            label: "Presentismo",
+            icon: "pi pi-fw pi-clock",
+            to: "/presentismo",
+            gest_role_id: [1, 2, 3],
+          },
+          {
+            label: "Antiguedad",
+            icon: "pi pi-fw pi-clock",
+            to: "/antiguedad",
+            gest_role_id: [1, 2, 3],
+          },
+        ],
+      },
     ],
   },
 ]);

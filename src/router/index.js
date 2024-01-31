@@ -34,6 +34,18 @@ const router = createRouter({
           component: () => import("@/views/humanResources/ListExcelHours.vue"),
           meta: { requiresAuth: true, gest_role_id: [1, 2, 3] },
         },
+        {
+          path: "modifiers",
+          name: "modifiers",
+          children: [
+            {
+              path: "base-value",
+              name: "base-value",
+              component: () => import("@/views/modifiers/base-value.vue"),
+              meta: { requiresAuth: true, gest_role_id: [1, 2, 3] },
+            },
+          ],
+        },
       ],
     },
     {
