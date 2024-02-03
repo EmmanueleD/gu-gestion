@@ -11,7 +11,15 @@ export default function useGeneric() {
     return `${formattedHours}:${formattedMinutes}`;
   }
 
+  function formatCurrency(value, locale = "es-AR") {
+    return new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency: "ARS",
+    }).format(value);
+  }
+
   return {
     decimalToHoursMinutes,
+    formatCurrency,
   };
 }

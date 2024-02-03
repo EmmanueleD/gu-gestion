@@ -109,7 +109,6 @@ async function handleCalcHours() {
   loadingCalcHours.value = true;
   try {
     result = await getDataFromFile(fileUrl.value);
-    console.log("CalcHours - handleCalcHours - ", result);
     if (result) {
       showSuccess("Carga exitosa");
       fileData.value = result;
@@ -132,7 +131,6 @@ function handleCellEdit(event) {
 
 function handleDownload() {
   //TODO: download
-  console.log("download");
 }
 
 onMounted(() => {

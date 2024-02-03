@@ -17,8 +17,15 @@ export default function useSupabaseDB() {
     }
   }
 
-  async function getAll({ table }) {
-    const { data, error } = await sbDB(table).select("*");
+  async function getAll({
+    table,
+    orderingBy = table + "_id",
+    ascending = false,
+  }) {
+    const { data, error } = await sbDB(table).select("*").order(orderingBy, {
+      ascending,
+    });
+
     if (!error) {
       dbResp.value = data;
       return "Supabase DB get all OK";
@@ -28,10 +35,14 @@ export default function useSupabaseDB() {
     }
   }
 
-  async function getLastOne({ table, orderingBy = table + "_id" }) {
+  async function getLastOne({
+    table,
+    orderingBy = table + "_id",
+    ascending = false,
+  }) {
     const { data, error } = await sbDB(table)
       .select("*")
-      .order(orderingBy, { ascending: false })
+      .order(orderingBy, { ascending })
       .limit(1);
     if (!error) {
       dbResp.value = data;
@@ -65,7 +76,7 @@ export default function useSupabaseDB() {
   }
 
   async function remove({ table, id }) {
-    const { error } = await sbDB(table).delete().eq("id", id);
+    const { error } = await sbDB(table).delete().eq(id.key, id.value);
     if (!error) {
       dbResp.value = id;
       return "Supabase DB remove OK";

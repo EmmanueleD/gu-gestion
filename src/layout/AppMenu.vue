@@ -84,19 +84,19 @@ const model = ref([
           {
             label: "Hora base",
             icon: "pi pi-fw pi-clock",
-            to: "modifiers/base-value",
+            to: "/modifiers/base-value",
             gest_role_id: [1, 2, 3],
           },
           {
             label: "Presentismo",
             icon: "pi pi-fw pi-clock",
-            to: "/presentismo",
+            to: "/modifiers/presentismo",
             gest_role_id: [1, 2, 3],
           },
           {
             label: "Antiguedad",
             icon: "pi pi-fw pi-clock",
-            to: "/antiguedad",
+            to: "/modifiers/antiguedad",
             gest_role_id: [1, 2, 3],
           },
         ],
