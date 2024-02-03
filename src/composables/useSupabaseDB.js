@@ -3,18 +3,31 @@ import useSupabaseClient from "./useSupabaseClient";
 
 export default function useSupabaseDB() {
   const { sbDB } = useSupabaseClient();
-
   const dbResp = ref(null);
+  const dbResponseStatus = ref(null);
 
-  async function get({ table, id }) {
-    const { data, error } = await sbDB(table).select("*").eq("id", id).single();
-    if (!error) {
-      dbResp.value = data;
-      return "Supabase DB get OK";
-    } else {
-      dbResp.value = error;
-      return "Supabase DB get error";
+  async function handleRequest(requestPromise) {
+    dbResponseStatus.value = "PENDING";
+    try {
+      const { data, error } = await requestPromise;
+      if (error) {
+        throw new Error(error.message);
+      } else {
+        dbResponseStatus.value = "OK";
+      }
+      return data;
+    } catch (error) {
+      dbResponseStatus.value = error.message;
+      throw new Error("Supabase DB request error: " + error.message);
     }
+  }
+
+  async function get({ table, id = { key: table + "_id", value: null } }) {
+    const requestPromise = sbDB(table)
+      .select("*")
+      .eq(id.key, id.value)
+      .single();
+    dbResp.value = await handleRequest(requestPromise);
   }
 
   async function getAll({
@@ -22,17 +35,10 @@ export default function useSupabaseDB() {
     orderingBy = table + "_id",
     ascending = false,
   }) {
-    const { data, error } = await sbDB(table).select("*").order(orderingBy, {
-      ascending,
-    });
-
-    if (!error) {
-      dbResp.value = data;
-      return "Supabase DB get all OK";
-    } else {
-      dbResp.value = error;
-      return "Supabase DB get all error";
-    }
+    const requestPromise = sbDB(table)
+      .select("*")
+      .order(orderingBy, { ascending });
+    dbResp.value = await handleRequest(requestPromise);
   }
 
   async function getLastOne({
@@ -40,53 +46,34 @@ export default function useSupabaseDB() {
     orderingBy = table + "_id",
     ascending = false,
   }) {
-    const { data, error } = await sbDB(table)
+    const requestPromise = sbDB(table)
       .select("*")
       .order(orderingBy, { ascending })
       .limit(1);
-    if (!error) {
-      dbResp.value = data;
-      return "Supabase DB get last one OK";
-    } else {
-      dbResp.value = error;
-      return "Supabase DB get last one error";
-    }
+    dbResp.value = await handleRequest(requestPromise);
   }
 
   async function create({ table, data }) {
-    const { error } = await sbDB(table).insert(data);
-    if (!error) {
-      dbResp.value = data;
-      return "Supabase DB create OK";
-    } else {
-      dbResp.value = error;
-      return "Supabase DB create error";
-    }
+    const requestPromise = sbDB(table).insert(data);
+    dbResp.value = await handleRequest(requestPromise);
   }
 
-  async function update({ table, id, data }) {
-    const { error } = await sbDB(table).update(data).eq("id", id);
-    if (!error) {
-      dbResp.value = data;
-      return "Supabase DB update OK";
-    } else {
-      dbResp.value = error;
-      return "Supabase DB update error";
-    }
+  async function update({
+    table,
+    id = { key: table + "_id", value: null },
+    data,
+  }) {
+    const requestPromise = sbDB(table).update(data).eq(id.key, id.value);
+    dbResp.value = await handleRequest(requestPromise);
   }
 
   async function remove({ table, id }) {
-    const { error } = await sbDB(table).delete().eq(id.key, id.value);
-    if (!error) {
-      dbResp.value = id;
-      return "Supabase DB remove OK";
-    } else {
-      dbResp.value = error;
-      return "Supabase DB remove error";
-    }
+    const requestPromise = sbDB(table).delete().eq(id.key, id.value);
+    dbResp.value = await handleRequest(requestPromise);
   }
 
   return {
+    dbResponseStatus,
     dbResp,
     get,
     getAll,

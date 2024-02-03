@@ -44,6 +44,20 @@ const router = createRouter({
               component: () => import("@/views/modifiers/base-value.vue"),
               meta: { requiresAuth: true, gest_role_id: [1, 2, 3] },
             },
+            {
+              path: "presence-modifier",
+              name: "presence-modifier",
+              component: () =>
+                import("@/views/modifiers/presence-modifier.vue"),
+              meta: { requiresAuth: true, gest_role_id: [1, 2, 3] },
+            },
+            {
+              path: "seniority-modifier",
+              name: "seniority-modifier",
+              component: () =>
+                import("@/views/modifiers/seniority-modifier.vue"),
+              meta: { requiresAuth: true, gest_role_id: [1, 2, 3] },
+            },
           ],
         },
       ],

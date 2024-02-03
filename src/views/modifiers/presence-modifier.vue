@@ -23,12 +23,13 @@ const { showConfirm } = useCustomConfirm();
 
 // COMPONENT VARIABLES
 const historicSeries = ref([]);
-const curretBaseValue = ref(0);
+const currentPresenceModifierValue = ref(0);
 const loading = ref(false);
 const loadingNewValue = ref(false);
 const newValueVisible = ref(false);
 const newValue = ref(0);
 const newValueDate = ref(new Date());
+const newValueNote = ref("");
 const chartTypeOptions = GRAPH_TYPES;
 const chartTypeSelected = ref(chartTypeOptions[0].value);
 const dt = ref();
@@ -36,16 +37,20 @@ const dt = ref();
 async function getData() {
   loading.value = true;
   try {
-    await getAll({ table: "base", orderingBy: "created_at" });
+    await getAll({ table: "presence_modifier", orderingBy: "created_at" });
     if (dbResponseStatus.value === "OK") {
       historicSeries.value = dbResp.value;
-      curretBaseValue.value = dbResp.value[0].value.toLocaleString("es-AR", {
-        style: "currency",
-        currency: "ARS",
-      });
+      currentPresenceModifierValue.value = dbResp.value[0].value.toLocaleString(
+        "es-AR",
+        {
+          style: "percent",
+          minimumFractionDigits: 2,
+        }
+      );
+
       showSuccess("Carga exitosa");
     } else {
-      curretBaseValue.value = 0;
+      currentPresenceModifierValue.value = 0;
       historicSeries.value = [];
       showError("No se encontraron archivos");
     }
@@ -58,6 +63,8 @@ async function getData() {
 
 function handleNewValue() {
   newValue.value = 0;
+  newValueNote.value = "";
+  newValueDate.value = new Date();
   newValueVisible.value = true;
 }
 
@@ -71,10 +78,10 @@ async function saveNewValue() {
   loadingNewValue.value = true;
   try {
     await create({
-      table: "base",
+      table: "presence_modifier",
       data: {
         value: newValue.value,
-        currency: "ARS",
+        note: newValueNote.value,
         created_at: newValueDate.value,
       },
     });
@@ -108,8 +115,8 @@ async function handleDeleteValue(data) {
     accept: async () => {
       try {
         await remove({
-          table: "base",
-          id: { key: "base_id", value: data.base_id },
+          table: "presence_modifier",
+          id: { key: "presence_modifier_id", value: data.presence_modifier_id },
         });
 
         if (dbResponseStatus.value === "OK") {
@@ -135,7 +142,7 @@ getData();
 </script>
 
 <template>
-  <h1>Valor Base</h1>
+  <h1>Presentismo</h1>
 
   <div class="w-full surface-card py-6 px-3 sm:px-6 grid">
     <div class="col-12 flex align-items-center justify-content-center px-0">
@@ -158,9 +165,11 @@ getData();
               <div
                 class="w-full flex justify-content-start align-items-center gap-1"
               >
-                <span v-if="curretBaseValue" class="font-bold text-3xl">{{
-                  curretBaseValue
-                }}</span>
+                <span
+                  v-if="currentPresenceModifierValue"
+                  class="font-bold text-3xl"
+                  >{{ currentPresenceModifierValue }}</span
+                >
               </div>
             </div>
           </template>
@@ -201,12 +210,12 @@ getData();
 
           <SingleLineChart
             v-if="chartTypeSelected === 'line'"
-            title="Historico valor hora base"
+            title="Historico valor presentismo"
             :data="historicSeries"
           ></SingleLineChart>
           <SingleBarChart
             v-if="chartTypeSelected === 'bar'"
-            title="Historico valor hora base"
+            title="Historico valor presentismo"
             :data="historicSeries"
           ></SingleBarChart>
         </div>
@@ -262,9 +271,15 @@ getData();
             </Column>
             <Column field="value" header="Valor">
               <template #body="{ data }">
-                {{ formatCurrency(data.value) }}
+                {{
+                  data.value.toLocaleString("es-AR", {
+                    style: "percent",
+                    minimumFractionDigits: 2,
+                  })
+                }}
               </template>
             </Column>
+            <Column field="note" header="Notas"></Column>
             <Column field="actions" header="Acciones">
               <template #body="{ data }">
                 <Button
@@ -304,6 +319,15 @@ getData();
         <span>Fecha</span>
         <Calendar
           v-model="newValueDate"
+          class="w-full"
+          :disabled="loadingNewValue"
+        />
+      </div>
+
+      <div class="col-12 flex flex-column">
+        <span>Notas</span>
+        <Textarea
+          v-model="newValueNote"
           class="w-full"
           :disabled="loadingNewValue"
         />

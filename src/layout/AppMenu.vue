@@ -90,13 +90,13 @@ const model = ref([
           {
             label: "Presentismo",
             icon: "pi pi-fw pi-clock",
-            to: "/modifiers/presentismo",
+            to: "/modifiers/presence-modifier",
             gest_role_id: [1, 2, 3],
           },
           {
             label: "Antiguedad",
             icon: "pi pi-fw pi-clock",
-            to: "/modifiers/antiguedad",
+            to: "/modifiers/seniority-modifier",
             gest_role_id: [1, 2, 3],
           },
         ],
