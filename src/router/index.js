@@ -17,6 +17,12 @@ const router = createRouter({
           meta: { requiresAuth: true },
         },
         {
+          path: "profile",
+          name: "profile",
+          component: () => import("@/views/profile.vue"),
+          meta: { requiresAuth: true },
+        },
+        {
           path: "test",
           name: "test",
           component: () => import("@/views/Test.vue"),
@@ -32,6 +38,12 @@ const router = createRouter({
           path: "list-excel-hours",
           name: "list-excel-hours",
           component: () => import("@/views/humanResources/ListExcelHours.vue"),
+          meta: { requiresAuth: true, gest_role_id: [1, 2, 3] },
+        },
+        {
+          path: "roles",
+          name: "roles",
+          component: () => import("@/views/humanResources/roles.vue"),
           meta: { requiresAuth: true, gest_role_id: [1, 2, 3] },
         },
         {
@@ -56,6 +68,12 @@ const router = createRouter({
               name: "seniority-modifier",
               component: () =>
                 import("@/views/modifiers/seniority-modifier.vue"),
+              meta: { requiresAuth: true, gest_role_id: [1, 2, 3] },
+            },
+            {
+              path: "role-modifier",
+              name: "role-modifier",
+              component: () => import("@/views/modifiers/role-modifier.vue"),
               meta: { requiresAuth: true, gest_role_id: [1, 2, 3] },
             },
           ],

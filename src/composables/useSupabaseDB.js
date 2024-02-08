@@ -41,6 +41,19 @@ export default function useSupabaseDB() {
     dbResp.value = await handleRequest(requestPromise);
   }
 
+  async function getWithFilter({
+    table,
+    filter,
+    orderingBy = table + "_id",
+    ascending = false,
+  }) {
+    const requestPromise = sbDB(table)
+      .select("*")
+      .order(orderingBy, { ascending })
+      .eq(filter.column, filter.value);
+    dbResp.value = await handleRequest(requestPromise);
+  }
+
   async function getLastOne({
     table,
     orderingBy = table + "_id",
@@ -54,7 +67,7 @@ export default function useSupabaseDB() {
   }
 
   async function create({ table, data }) {
-    const requestPromise = sbDB(table).insert(data);
+    const requestPromise = sbDB(table).insert(data).select();
     dbResp.value = await handleRequest(requestPromise);
   }
 
@@ -63,7 +76,10 @@ export default function useSupabaseDB() {
     id = { key: table + "_id", value: null },
     data,
   }) {
-    const requestPromise = sbDB(table).update(data).eq(id.key, id.value);
+    const requestPromise = sbDB(table)
+      .update(data)
+      .eq(id.key, id.value)
+      .select();
     dbResp.value = await handleRequest(requestPromise);
   }
 
@@ -77,6 +93,7 @@ export default function useSupabaseDB() {
     dbResp,
     get,
     getAll,
+    getWithFilter,
     getLastOne,
     create,
     update,

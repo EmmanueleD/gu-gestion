@@ -29,8 +29,40 @@ export default function useDatetime() {
     return monthNames;
   }
 
+  function countdownToBirthday(dateOfBirth) {
+    console.log("countdownToBirthday", dateOfBirth);
+
+    const today = new Date();
+
+    const currentYear = today.getFullYear();
+
+    const dob = new Date(dateOfBirth);
+
+    let nextBirthdayYear = currentYear;
+
+    if (
+      dob.getMonth() < today.getMonth() ||
+      (dob.getMonth() === today.getMonth() && dob.getDate() < today.getDate())
+    ) {
+      nextBirthdayYear++;
+    }
+
+    const nextBirthday = new Date(
+      nextBirthdayYear,
+      dob.getMonth(),
+      dob.getDate()
+    );
+
+    const difference = nextBirthday.getTime() - today.getTime();
+
+    const daysUntilBirthday = Math.ceil(difference / (1000 * 60 * 60 * 24));
+
+    return daysUntilBirthday;
+  }
+
   return {
     orderObjectsByDate,
     getMonthNames,
+    countdownToBirthday,
   };
 }

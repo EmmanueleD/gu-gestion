@@ -45,6 +45,7 @@ export const useAuthStore = defineStore("auth", () => {
     _session.value = null;
     _user.value = null;
     _isAuthenticated.value = false;
+    _profile.value = null;
 
     localStorage.removeItem("gu_ge:profile");
     localStorage.removeItem("gu_ge:isAuthenticated");

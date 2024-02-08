@@ -1,78 +1,78 @@
 import { ref } from "vue";
-import { useAuthStore } from "@/stores/useAuthStore";
 import useSupabaseClient from "./useSupabaseClient";
-import useSupabaseDB from "./useSupabaseDB";
-
-const authResp = ref(null);
 
 export default function useSupabaseAuth() {
-  const authStore = useAuthStore();
-  const { sbAuth } = useSupabaseClient();
-  const { get, dbResp } = useSupabaseDB();
+  const supaAuthResp = ref({ data: null, error: null });
 
-  sbAuth.onAuthStateChange((event, session) => {
-    authResp.value = session;
-    if (!authResp.value) {
-      authStore.resetStore();
-    } else {
-      authStore.setIsAuthenticated(true);
-      authStore.setSession(session);
-      authStore.setUser(session.user);
-    }
+  const { sbAuth } = useSupabaseClient();
+
+  sbAuth.onAuthStateChange(async (event, session) => {
+    supaAuthResp.value = null;
+    supaAuthResp.value = { data: null, error: null };
+
+    return (supaAuthResp.value = { event, session });
   });
 
-  async function login({ email, password }) {
-    let loginResp;
-    try {
-      loginResp = await sbAuth.signInWithPassword({ email, password });
-      if (!loginResp.error) {
-        authStore.setIsAuthenticated(true);
-        authStore.setSession(loginResp.data.session);
-        authStore.setUser(loginResp.data.user);
+  async function supaSignIn({ email, password }) {
+    supaAuthResp.value.error = null;
+    supaAuthResp.value.data = null;
 
-        getProfile(loginResp.data.user.id);
+    try {
+      const { data, error } = await sbAuth.signInWithPassword({
+        email,
+        password,
+      });
+      if (!error) {
+        return data;
+      } else {
+        supaAuthResp.value.error = error;
       }
-      return loginResp;
     } catch (error) {
       return error;
     }
   }
 
-  const register = async ({ email, password, name }) => {
-    const registerResp = await sbAuth.signUp({ email, password });
-    if (registerResp.error) {
-      return registerResp;
-    }
-    const updateResp = await sbAuth.updateUser({ data: { name } });
+  async function supaSignUp({ email, password, name }) {
+    supaAuthResp.value.error = null;
+    supaAuthResp.value.data = null;
 
-    return updateResp;
-  };
-
-  const logout = () => {
-    return sbAuth.signOut();
-  };
-
-  const getProfile = async (id) => {
     try {
-      await get({ table: "profiles", id });
-
-      if (dbResp.value) {
-        authStore.setProfile(dbResp.value);
+      const { data, error } = await sbAuth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name,
+          },
+        },
+      });
+      if (!error) {
+        return data;
       } else {
-        return {
-          error: "Profile not found",
-          status: 404,
-        };
+        supaAuthResp.value.error = error;
       }
     } catch (error) {
       return error;
     }
-  };
+  }
+
+  async function supaSignOut() {
+    try {
+      const { error } = await sbAuth.signOut();
+      if (!error) {
+        return true;
+      } else {
+        supaAuthResp.value.error = error;
+      }
+    } catch (error) {
+      return error;
+    }
+  }
 
   return {
-    authResp,
-    login,
-    logout,
-    register,
+    supaAuthResp,
+    supaSignIn,
+    supaSignOut,
+    supaSignUp,
   };
 }

@@ -18,8 +18,26 @@ export default function useGeneric() {
     }).format(value);
   }
 
+  function percToNumber(perc) {
+    return parseFloat(perc / 100);
+  }
+
+  function numberToPerc(number) {
+    return parseFloat(number * 100);
+  }
+
+  function snakeCaseToNormal(string) {
+    return string
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  }
+
   return {
     decimalToHoursMinutes,
     formatCurrency,
+    percToNumber,
+    numberToPerc,
+    snakeCaseToNormal,
   };
 }

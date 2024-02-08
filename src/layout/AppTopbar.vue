@@ -2,16 +2,13 @@
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useLayout } from "@/layout/composables/layout";
 import { useRouter } from "vue-router";
-import useSupabaseAuth from "@/composables/useSupabaseAuth";
+import useAuth from "@/composables/useAuth";
 import useCustomToast from "@/composables/utils/useCustomToast";
 
-import { useAuthStore } from "@/stores/useAuthStore";
-
-const authStore = useAuthStore();
-
+const { guLogout, guAuthResponse } = useAuth();
 const { showSuccess, showError } = useCustomToast();
 const { layoutConfig, onMenuToggle } = useLayout();
-const { logout } = useSupabaseAuth();
+
 const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);
 const router = useRouter();
@@ -24,6 +21,25 @@ onMounted(() => {
 onBeforeUnmount(() => {
   unbindOutsideClickListener();
 });
+
+const handleSignOut = async () => {
+  loading.value = true;
+  try {
+    await guLogout();
+    if (guAuthResponse.value.error) {
+      showError(
+        guAuthResponse.value.event,
+        guAuthResponse.value.error.message || guAuthResponse.value.error
+      );
+    }
+    showSuccess("Sesión cerrada");
+    router.push({ name: "access" });
+  } catch (error) {
+    showError(error);
+  } finally {
+    loading.value = false;
+  }
+};
 
 const onTopBarMenuButton = () => {
   topbarMenuActive.value = !topbarMenuActive.value;
@@ -67,19 +83,6 @@ const isOutsideClicked = (event) => {
     topbarEl?.contains(event.target)
   );
 };
-
-async function handleSignOut() {
-  loading.value = true;
-  try {
-    await logout();
-    showSuccess("Sesión cerrada");
-    router.push({ name: "access" });
-  } catch (error) {
-    showError(error);
-  } finally {
-    loading.value = false;
-  }
-}
 </script>
 
 <template>

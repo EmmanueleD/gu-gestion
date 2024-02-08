@@ -1,7 +1,18 @@
 <script setup>
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/useAuthStore";
 
 const authStore = useAuthStore();
+const router = useRouter();
+
+const isCustomer = ref(true);
+
+onMounted(async () => {
+  if (authStore.profile && authStore.profile.gest_role_id != 6) {
+    isCustomer.value = false;
+  }
+});
 </script>
 
 <template>
@@ -15,7 +26,9 @@ const authStore = useAuthStore();
           alt="Sakai logo"
           class="w-6rem flex-shrink-0 border-round-md mr-4"
         />
-        <span class="text-900 font-bold text-7xl">gestión</span>
+        <span class="text-900 font-bold text-7xl">
+          {{ isCustomer ? "hola!" : "gestión" }}
+        </span>
       </div>
 
       <!-- <h1>BENVENUTO DC</h1> -->
@@ -38,6 +51,18 @@ const authStore = useAuthStore();
           <span class="block text-red-400 font-medium">
             Por favor, cierra la sesión y vuelve a iniciar
           </span>
+        </div>
+
+        <div
+          v-if="isCustomer"
+          class="w-full py-6 px-3 sm:px-6 flex justify-content-center align-items-center"
+        >
+          <Button
+            label="Mira tu perfil"
+            icon="pi pi-user"
+            class="w-full"
+            @click="$router.push('/profile')"
+          ></Button>
         </div>
       </div>
     </div>

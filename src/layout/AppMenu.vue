@@ -57,24 +57,16 @@ const model = ref([
         gest_role_id: [1, 2, 3],
       },
       {
-        label: "Personal",
+        label: "Empleados",
         icon: "pi pi-fw pi-users",
-
+        to: "/employees",
         gest_role_id: [1, 2, 3],
-        items: [
-          {
-            label: "Empleados",
-            icon: "pi pi-fw pi-user",
-            to: "/employees",
-            gest_role_id: [1, 2, 3],
-          },
-          {
-            label: "Roles",
-            icon: "pi pi-fw pi-user",
-            to: "/roles",
-            gest_role_id: [1, 2, 3],
-          },
-        ],
+      },
+      {
+        label: "Roles",
+        icon: "pi pi-fw pi-users",
+        to: "/roles",
+        gest_role_id: [1, 2, 3],
       },
       {
         label: "Modificadores de Horas",
@@ -97,6 +89,12 @@ const model = ref([
             label: "Antiguedad",
             icon: "pi pi-fw pi-clock",
             to: "/modifiers/seniority-modifier",
+            gest_role_id: [1, 2, 3],
+          },
+          {
+            label: "Rol",
+            icon: "pi pi-fw pi-clock",
+            to: "/modifiers/role-modifier",
             gest_role_id: [1, 2, 3],
           },
         ],

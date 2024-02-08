@@ -2,26 +2,36 @@ import { useToast } from "primevue/usetoast";
 export default function useCustomToast() {
   const toast = useToast();
 
-  function showSuccess(summary, detail) {
+  function showSuccess(summary = "OK", detail = "", life = 3000) {
     toast.add({
       severity: "success",
-      summary: summary || "Successo",
-      detail: detail || "",
-      life: 3000,
+      summary,
+      detail,
+      life,
     });
   }
 
-  function showError(summary, detail) {
+  function showError(summary = "ERROR", detail = "", life = 3000) {
     toast.add({
       severity: "error",
-      summary: summary || "Errore",
-      detail: detail || "",
-      life: 3000,
+      summary,
+      detail,
+      life,
+    });
+  }
+
+  function showInfo(summary = "INFO", detail = "", life = 3000) {
+    toast.add({
+      severity: "info",
+      summary,
+      detail,
+      life,
     });
   }
 
   return {
     showSuccess,
     showError,
+    showInfo,
   };
 }
