@@ -27,6 +27,28 @@ export default function useSupabaseStorage() {
     }
   }
 
+  async function uploadSingleFile(
+    event,
+    fileOptions = {
+      bucket,
+      folder,
+      fileName,
+    }
+  ) {
+    newDoc.value = event.files[0];
+    try {
+      const { data, error } = await sbStorage
+        .from(fileOptions.bucket)
+        .upload(fileOptions.folder + "/" + fileOptions.fileName, newDoc.value);
+      if (error) {
+        return error;
+      }
+      return data;
+    } catch (error) {
+      return error;
+    }
+  }
+
   async function getAllFiles(
     from = { bucket: "excel_hours", folder: "excel_hours" },
     options = {
@@ -66,6 +88,7 @@ export default function useSupabaseStorage() {
   }
 
   return {
+    uploadSingleFile,
     uploadExcel,
     getAllFiles,
     getFileUrl,

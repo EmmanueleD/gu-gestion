@@ -7,21 +7,29 @@ import useSupabaseDB from "@/composables/useSupabaseDB";
 import useCustomToast from "@/composables/utils/useCustomToast";
 import useFudoApi from "@/composables/useFudoApi";
 import { useDateFormat } from "@vueuse/core";
+import useSupabaseStorage from "@/composables/useSupabaseStorage";
 
 // STORES
 import { useAuthStore } from "@/stores/useAuthStore";
+import { useStorageStore } from "@/stores/useStorageStore";
 
 // VARIABLES
 const loading = ref(false);
+const loadingUpload = ref(false);
 const authStore = useAuthStore();
+const storageStore = useStorageStore();
 const { formatCurrency } = useGeneric();
 const { fetchData } = useFudoApi();
 const { countdownToBirthday } = useDateTime();
-
+const { uploadSingleFile, getFileUrl } = useSupabaseStorage();
 const { dbResponseStatus, dbResp, getAll, update, get } = useSupabaseDB();
 const { showSuccess, showError } = useCustomToast();
 
 const authProfile = ref({ ...authStore.profile });
+const bucketName = ref("avatars");
+const folderName = ref("profiles");
+const fileName = ref("");
+const fileUrl = ref(null);
 
 const form = ref([
   {
@@ -175,6 +183,52 @@ async function getData() {
   }
 }
 
+async function handleUpload(event) {
+  loadingUpload.value = true;
+  let response;
+  fileName.value =
+    authProfile.value.username +
+    "-" +
+    useDateFormat(new Date(), "YYYYMMDDHHmmss").value;
+  try {
+    response = await uploadSingleFile(event, {
+      bucket: bucketName.value,
+      folder: folderName.value,
+      fileName: fileName.value,
+    });
+    if (response?.error) {
+      showError("UPLOAD ERROR", response.error);
+    } else {
+      showSuccess("UPLOAD OK", "Carga exitosa");
+    }
+    storageStore.setCurrentFile(response);
+  } catch (error) {
+    showError(error);
+  } finally {
+    await setNewAvatar();
+    loadingUpload.value = false;
+  }
+}
+
+async function setNewAvatar() {
+  try {
+    fileUrl.value = await getFileUrl({
+      bucket: bucketName.value,
+      folder: folderName.value,
+      name: fileName.value,
+    });
+
+    if (!fileUrl.value.error) {
+      authProfile.value.avatar_url = decodeURIComponent(fileUrl.value);
+      await handleUpdateProfile();
+    } else {
+      showError("AVATAR ERROR", "No se pudo cargar la imagen");
+    }
+  } catch (error) {
+    showError("AVATAR ERROR", error);
+  }
+}
+
 onMounted(async () => {
   await getFormOptions();
 });
@@ -205,13 +259,43 @@ onMounted(async () => {
   <div v-else class="w-full surface-card py-6 px-3 sm:px-6 grid">
     <div class="col-12">
       <div
-        class="w-full py-6 px-3 sm:px-6 flex flex-column align-items-center border-round-md"
+        class="w-full py-6 px-3 sm:px-6 flex justify-content-between align-items-center border-round-md gap-2"
       >
         <span class="block text-900 font-bold text-2xl">
           Hola
           {{ authProfile && authProfile.username ? authProfile.username : "" }}
-          <i class="pi pi-user ml-2 font-bold"></i
-        ></span>
+        </span>
+
+        <div class="w-2 h-2 relative">
+          <img
+            :src="
+              authProfile.avatar_url ||
+              'https://64.media.tumblr.com/698bc7fed030cb0915b76538e103aca6/e9bb37e1e047df85-51/s540x810/2adb0bffd47ddc426534a14fe86c381581201e51.pnj'
+            "
+            class="w-full h-full border-round-lg"
+          />
+          <FileUpload
+            mode="basic"
+            name="gu-profile-avatar"
+            :multiple="false"
+            :customUpload="true"
+            accept="image/*"
+            :maxFileSize="1000000"
+            invalidFileSizeMessage="El archivo es demasiado grande. Max. 1MB"
+            invalidFileTypeMessage="El archivo debe ser una imagen. Ej: .jpg, .png"
+            @uploader="handleUpload"
+            class="absolute p-button-rounded p-button-secondary"
+            style="bottom: -7px; right: -7px"
+            :auto="true"
+          />
+
+          <!-- <Button
+            class="absolute"
+            style="bottom: -7px; right: -7px"
+            icon="pi pi-pencil"
+            rounded
+          ></Button> -->
+        </div>
       </div>
     </div>
 

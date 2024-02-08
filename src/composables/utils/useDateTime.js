@@ -30,8 +30,6 @@ export default function useDatetime() {
   }
 
   function countdownToBirthday(dateOfBirth) {
-    console.log("countdownToBirthday", dateOfBirth);
-
     const today = new Date();
 
     const currentYear = today.getFullYear();

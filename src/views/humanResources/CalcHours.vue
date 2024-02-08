@@ -157,7 +157,7 @@ onMounted(() => {
         <FileUpload
           v-else
           mode="basic"
-          name="demo[]"
+          name="gu-employees-hours"
           :customUpload="true"
           accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
           :maxFileSize="1000000"
