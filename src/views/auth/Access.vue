@@ -35,13 +35,13 @@ async function handleLogin() {
         guAuthResponse.value.error.message || guAuthResponse.value.error
       );
     } else {
-      router.push({ name: "home" });
       showSuccess(guAuthResponse.value.event, "Login exitoso");
     }
   } catch (error) {
     showError("GU-ERR - Login error", error);
   } finally {
     loading.value = false;
+    router.push("/profile");
   }
 }
 
