@@ -197,6 +197,7 @@ async function handleUpload(event) {
       fileName: fileName.value,
     });
     if (response?.error) {
+      console.error("UPLOAD ERROR", response.error);
       showError("UPLOAD ERROR", response.error);
     } else {
       showSuccess("UPLOAD OK", "Carga exitosa");
@@ -222,6 +223,7 @@ async function setNewAvatar() {
       authProfile.value.avatar_url = decodeURIComponent(fileUrl.value);
       await handleUpdateProfile();
     } else {
+      console.error("AVATAR ERROR", fileUrl.value.error);
       showError("AVATAR ERROR", "No se pudo cargar la imagen");
     }
   } catch (error) {
