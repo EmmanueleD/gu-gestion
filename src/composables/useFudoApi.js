@@ -6,9 +6,7 @@ export default function useFudoApi() {
   const fudoApiUrl = import.meta.env.VITE_FUDO_API_URL;
   const fudoKey = import.meta.env.VITE_FUDO_KEY;
   const fudoSecret = import.meta.env.VITE_FUDO_SECRET;
-  const token = ref(
-    "eyJhbGciOiJIUzI1NiJ9.eyJhaSI6NjQ0NywidWkiOjQ0MzAyLCJleHAiOjE3MDc1ODU0MjR9.BxG67kh6QsiQ7rXoYInBinEtq8WTstSmI2Wb8K5AJEY"
-  );
+  const token = ref(null);
 
   async function getToken() {
     try {
@@ -40,9 +38,9 @@ export default function useFudoApi() {
   }
 
   async function fetchData(endpoint, method = "GET", body = null) {
-    // if (!token.value) {
-    //   await getToken();
-    // }
+    if (!token.value) {
+      await getToken();
+    }
 
     try {
       const headers = {
