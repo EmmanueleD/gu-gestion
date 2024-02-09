@@ -2,15 +2,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/(.*)"
-    },
-    {
-      "source": "/api/:path*",
-      "destination": "/api/:path*"
-    },
-    {
-      "source": "/access",
-      "destination": "/access"
+      "destination": "/index.html"
     }
   ]
 }
