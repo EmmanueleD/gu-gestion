@@ -162,7 +162,7 @@ onMounted(() => {
             ></Password>
 
             <Button
-              v-if="mode === 'login'"
+              v-if="mode === 'login' && !needEmailConfirmation"
               :disabled="password1?.length < 6"
               :loading="loading"
               @click="handleLogin"
@@ -186,7 +186,7 @@ onMounted(() => {
             ></Button>
           </div>
           <Divider class="w-full my-4"></Divider>
-          <InlineMessage v-if="needEmailConfirmation" severity="warn">
+          <InlineMessage v-if="needEmailConfirmation" severity="info">
             <div class="w-full flex flex-column">
               <span>Mandamos un email de confirmación.</span>
               <span>Por favor revisa tu correo para acceder a tu cuenta.</span>
