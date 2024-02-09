@@ -280,7 +280,6 @@ onMounted(async () => {
             :multiple="false"
             :customUpload="true"
             accept="image/*"
-            :maxFileSize="1000000"
             invalidFileSizeMessage="El archivo es demasiado grande. Max. 1MB"
             invalidFileTypeMessage="El archivo debe ser una imagen. Ej: .jpg, .png"
             @uploader="handleUpload"
@@ -288,13 +287,6 @@ onMounted(async () => {
             style="bottom: -7px; right: -7px"
             :auto="true"
           />
-
-          <!-- <Button
-            class="absolute"
-            style="bottom: -7px; right: -7px"
-            icon="pi pi-pencil"
-            rounded
-          ></Button> -->
         </div>
       </div>
     </div>
