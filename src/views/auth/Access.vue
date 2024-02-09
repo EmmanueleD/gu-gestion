@@ -38,8 +38,8 @@ async function handleLogin() {
       showSuccess(guAuthResponse.value.event, "Login exitoso");
     }
   } catch (error) {
-    if (error.includes("etwork")) return; // IDK WHAT I AM DOING HERE
-    showError("GU-ERR - Login error", error);
+    console.error("GU-ERR", error);
+    // showError("GU-ERR - Login error", error);
   } finally {
     loading.value = false;
     router.push("/profile");
