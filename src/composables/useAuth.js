@@ -107,7 +107,7 @@ export default function useAuth() {
             type: "Customer",
             attributes: {
               active: true,
-              address: ["", "", "", ""],
+              address: "",
               comment: "[from gu-gestion]",
               // discountPercentage: 0,
               houseAccountEnabled: false,
