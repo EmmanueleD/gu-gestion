@@ -135,15 +135,13 @@ async function handleUpdateProfile() {
           type: "Customer",
           attributes: {
             active: true,
-            address: authProfile.value.address
-              ? authProfile.value.address
-              : null,
-            // comment: "[from gu-gestion]",
+            address: authProfile.value.address,
+            comment: authProfile.value.comment,
             // discountPercentage: 0,
             // houseAccountEnabled: false,
-            name: authProfile.value.name ? authProfile.value.name : null,
-            // email: profile.email,
-            phone: authProfile.value.phone ? authProfile.value.phone : null,
+            name: authProfile.value.name,
+            email: authProfile.value.email,
+            phone: authProfile.value.phone,
             // vatNumber: "",
           },
         },

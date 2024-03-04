@@ -107,7 +107,7 @@ export default function useAuth() {
             type: "Customer",
             attributes: {
               active: true,
-              address: "",
+              address: ["", "", "", ""],
               comment: "[from gu-gestion]",
               // discountPercentage: 0,
               houseAccountEnabled: false,
@@ -119,7 +119,12 @@ export default function useAuth() {
           },
         });
 
-        await updateSupaProfileField({
+        // await updateSupaProfileField({
+        //   fudo_id: newFudoProfile.data.id,
+        //   ...newFudoProfile.data.attributes,
+        //   gu_level_id: countStars(newFudoProfile.data.attributes.name),
+        // });
+        await updateSupaProfile({
           fudo_id: newFudoProfile.data.id,
           ...newFudoProfile.data.attributes,
           gu_level_id: countStars(newFudoProfile.data.attributes.name),
@@ -160,7 +165,9 @@ export default function useAuth() {
         data: { [column]: value },
       });
       if (dbResponseStatus.value === "OK") {
-        supaProfile.value = dbResp.value[0];
+        supaProfile.value = await getSupaProfile({
+          supaId: supaProfile.value.id,
+        });
       } else {
         throw new Error(dbResponseStatus.value);
       }

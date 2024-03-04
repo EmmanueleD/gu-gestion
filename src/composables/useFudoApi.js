@@ -156,22 +156,17 @@ export default function useFudoApi() {
       body = encodeURIComponent(JSON.stringify(body));
     }
 
-    try {
-      const response = await axios.get(
-        "https://gu-calulator.vercel.app/api/v1/fudo-api/fetch/" +
-          // "http://localhost:3000/api/v1/fudo-api/fetch/" +
-          method +
-          "/" +
-          encodeURIComponent(endpoint) +
-          "/" +
-          body
-      );
+    const url = `https://gu-calulator.vercel.app/api/v1/fudo-api/fetch/${method}/${encodeURIComponent(
+      endpoint
+    )}/${body}`;
 
-      if (response) {
-        return response.data;
-      } else {
-        return response;
-      }
+    try {
+      const response = await axios({
+        method: method,
+        url: url,
+      });
+
+      return response.data;
     } catch (error) {
       console.error("Error while fetching data:", error);
       throw error;
