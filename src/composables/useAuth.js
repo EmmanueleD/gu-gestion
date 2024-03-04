@@ -23,10 +23,10 @@ export default function useAuth() {
       await signInWithEmailAndPassword({ email, password });
       setupGuAuthResponse();
       await fetchProfiles();
+      setupAuthStore();
     } catch (error) {
       handleLoginError(error);
     } finally {
-      setupAuthStore();
       setupFudoStore();
     }
   }
@@ -81,8 +81,6 @@ export default function useAuth() {
     if (profile.fudo_id) {
       const resp = await fetchData(`customers/${profile.fudo_id}`, "GET");
       fudoProfile.value = resp.data;
-
-      console.log("fudoProfile", fudoProfile.value);
 
       await updateSupaProfile({
         fudo_id: fudoProfile.value.id,
@@ -149,15 +147,12 @@ export default function useAuth() {
   }
 
   async function updateSupaProfile(data) {
-    console.log("updateSupaProfile", data);
-
     for (const [key, value] of Object.entries(data)) {
       await updateSupaProfileField(key, value);
     }
   }
 
   async function updateSupaProfileField(column, value) {
-    console.log("updateSupaProfileField", column, value);
     try {
       await update({
         table: "profiles",

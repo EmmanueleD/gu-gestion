@@ -42,7 +42,6 @@ async function getData(endpoint, method, body) {
   try {
     const response = await fetchData(endpoint, method, body);
     if (response.data) {
-      console.log("response.data", name.value);
       data.value = response.data.filter((customer) => {
         return (
           (customer.attributes.name &&
@@ -57,7 +56,7 @@ async function getData(endpoint, method, body) {
               .includes(email.value.toLocaleLowerCase()))
         );
       });
-      console.log("data", data.value);
+
       showSuccess("Guardado exitoso");
     } else {
       showError("Error");
@@ -79,8 +78,7 @@ async function getCustomer() {
       value: email.value,
     });
     if (response) {
-      console.log("response.data", response);
-      data.value = response;
+      data.value = response.data;
       showSuccess("Guardado exitoso");
     } else {
       showError("Error");
@@ -147,6 +145,13 @@ async function getCustomer() {
         class="w-auto"
         :loading="loading"
         label="GET CUSTOMER"
+      ></Button>
+      <Button
+        @click="getToken"
+        icon="pi pi-key"
+        class="w-auto"
+        :loading="loading"
+        label="FU.DO. GET TOKEN"
       ></Button>
     </div>
 

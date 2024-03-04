@@ -4,12 +4,6 @@ import { computed } from "vue";
 
 const { layoutConfig } = useLayout();
 
-const logoUrl = computed(() => {
-  return `layout/images/${
-    layoutConfig.darkTheme.value ? "logo-white" : "logo-dark"
-  }.svg`;
-});
-
 function navigateTo(url) {
   window.open(url, "_blank");
 }
@@ -23,7 +17,7 @@ function navigateTo(url) {
       class="flex align-items-center ml-2 w-4rem h-1rem cursor-pointer"
     >
       <img
-        src="/layout/images/emmd-logo.png"
+        src="@/assets/img/emmd-logo.png"
         class="w-full h-auto"
         alt="PrimeVue"
       />
