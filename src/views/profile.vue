@@ -32,48 +32,54 @@ const fileName = ref("");
 const fileUrl = ref(null);
 
 const form = ref([
-  {
-    key: "username",
-    label: "Username",
-    type: "text",
-    icon: "pi pi-user",
-  },
+  // {
+  //   key: "comment",
+  //   label: "Comentario",
+  //   type: "text",
+  //   icon: "pi pi-comment",
+  // },
+  // {
+  //   key: "username",
+  //   label: "Username",
+  //   type: "text",
+  //   icon: "pi pi-user",
+  // },
   {
     key: "name",
     label: "Nombre completo",
     type: "text",
     icon: "pi pi-user",
   },
-  {
-    key: "email",
-    label: "Email",
-    type: "text",
-    icon: "pi pi-envelope",
-  },
+  // {
+  //   key: "email",
+  //   label: "Email",
+  //   type: "text",
+  //   icon: "pi pi-envelope",
+  // },
   {
     key: "birthdate",
     label: "Cumpleaños",
     type: "date",
     icon: "pi pi-calendar",
   },
-  {
-    key: "gu_level_id",
-    label: "Nivel güelcom",
-    type: "dropdown",
-    icon: "pi pi-user",
-  },
+  // {
+  //   key: "gu_level_id",
+  //   label: "Nivel güelcom",
+  //   type: "dropdown",
+  //   icon: "pi pi-user",
+  // },
   {
     key: "instagram",
     label: "Instagram",
     type: "text",
     icon: "pi pi-instagram",
   },
-  {
-    key: "address",
-    label: "Dirección",
-    type: "text",
-    icon: "pi pi-map-marker",
-  },
+  // {
+  //   key: "address",
+  //   label: "Dirección",
+  //   type: "text",
+  //   icon: "pi pi-map-marker",
+  // },
   {
     key: "phone",
     label: "Telefono",
@@ -135,13 +141,15 @@ async function handleUpdateProfile() {
           type: "Customer",
           attributes: {
             active: true,
-            address: authProfile.value.address,
-            comment: authProfile.value.comment,
+            // address: authProfile.value.address || "",
+            comment: authProfile.value.comment || "",
             // discountPercentage: 0,
-            // houseAccountEnabled: false,
-            name: authProfile.value.name,
-            email: authProfile.value.email,
-            phone: authProfile.value.phone,
+
+            houseAccountEnabled: authProfile.value.houseAccountEnabled || false,
+            // houseAccountBalance: authProfile.value.houseAccountBalance || 0,
+
+            name: authProfile.value.name || "",
+            phone: authProfile.value.phone || "123123123",
             // vatNumber: "",
           },
         },
@@ -365,6 +373,13 @@ onMounted(async () => {
           class="col-12 md:col-7 lg:col-4 lg:mr-3 grid"
         >
           <div class="col-12">
+            <Checkbox
+              v-if="field.type === 'checkbox'"
+              :id="field.key"
+              v-model="authProfile[field.key]"
+              class="w-full mr-2"
+              :binary="true"
+            ></Checkbox>
             <label :for="field.key" class="block text-900 font-medium mb-2">
               <i :class="field.icon"></i>
               <span class="ml-2">{{ field.label }}</span></label
