@@ -71,7 +71,7 @@ onMounted(async () => {
 
   <div class="w-full surface-card py-6 px-3 sm:px-6">
     <div v-if="loading" class="flex align-items-center justify-content-center">
-      <i class="pi pi-spin pi-spinner mr-4" style="fontsize: 3rem"></i>
+      <i class="pi pi-spin pi-spinner mr-4"></i>
       <span>Cargando...</span>
     </div>
     <div v-else>
