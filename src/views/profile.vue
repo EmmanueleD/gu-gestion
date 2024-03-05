@@ -250,7 +250,7 @@ onMounted(async () => {
     class="w-full surface-card py-6 px-3 sm:px-6 flex justify-content-center align-items-center"
   >
     <div class="flex align-items-center justify-content-center">
-      <i class="pi pi-spin pi-spinner mr-4" style="fontsize: 3rem"></i>
+      <i class="pi pi-spin pi-spinner mr-4"></i>
       <span>Cargando...</span>
     </div>
   </div>
@@ -303,8 +303,8 @@ onMounted(async () => {
       <h4>Tus beneficios:</h4>
 
       <div class="col-12 grid">
-        <div class="col-12 md:col-6 lg:col-4">
-          <Card>
+        <div class="col-12 md:col-6 lg:col-4" style="min-height: 150px">
+          <Card class="h-full">
             <template #title>🤑 Cashback personal </template>
             <template #content>
               <div class="w-full flex flex-column">
@@ -333,8 +333,8 @@ onMounted(async () => {
             </template>
           </Card>
         </div>
-        <div class="col-12 md:col-6 lg:col-4">
-          <Card>
+        <div class="col-12 md:col-6 lg:col-4" style="min-height: 150px">
+          <Card class="h-full">
             <template #title>🎁 Detalle de cumpleaños </template>
             <template #content>
               <div class="w-full flex flex-column align-items-start">
