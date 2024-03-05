@@ -70,10 +70,43 @@ export default function useSupabaseAuth() {
     }
   }
 
+  async function resetPasswordForEmail(email) {
+    try {
+      const { data, error } = await sbAuth.resetPasswordForEmail(email, {
+        redirectTo: "https://gu-gestion.vercel.app/auth/password-change",
+      });
+
+      if (!error) {
+        return data;
+      } else {
+        supaAuthResp.value.error = error;
+      }
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async function updateUserPassword(newPassword) {
+    try {
+      const { data, error } = await sbAuth.updateUser({
+        password: newPassword,
+      });
+      if (!error) {
+        return data;
+      } else {
+        supaAuthResp.value.error = error;
+      }
+    } catch (error) {
+      return error;
+    }
+  }
+
   return {
     supaAuthResp,
     supaSignIn,
     supaSignOut,
     supaSignUp,
+    resetPasswordForEmail,
+    updateUserPassword,
   };
 }

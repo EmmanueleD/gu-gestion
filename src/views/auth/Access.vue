@@ -76,8 +76,12 @@ async function handleRegister() {
   }
 }
 
-function navigateTo(url) {
-  window.open(url, "_blank");
+function navigateTo(url, newTab = true) {
+  if (newTab) {
+    window.open(url, "_blank");
+    return;
+  }
+  window.open(url);
 }
 
 onMounted(() => {
@@ -224,6 +228,21 @@ onMounted(() => {
               @click="mode = 'login'"
               :disabled="loading"
               icon="pi pi-sign-in"
+            ></Button>
+          </div>
+
+          <div
+            v-if="mode === 'login'"
+            class="mt-3 flex align-items-center justify-content-start w-full"
+          >
+            <p class="text-600 m-0">Olvidase tu contraseña?</p>
+
+            <Button
+              label="Restablecer contraseña"
+              class="p-button-text"
+              @click="router.push('/auth/password-reset')"
+              :disabled="loading"
+              icon="pi pi-key"
             ></Button>
           </div>
         </div>

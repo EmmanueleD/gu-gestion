@@ -1,12 +1,12 @@
 <script setup>
-//TODO: eliminar el archivo, descargar el archivo, filtrar los archivos, ordenar los archivos
+//TODO:  descargar el archivo, filtrar los archivos, ordenar los archivos
 import { ref, onMounted } from "vue";
 import useSupabaseStorage from "@/composables/useSupabaseStorage";
 import useCustomToast from "@/composables/utils/useCustomToast";
 
 import { useDateFormat } from "@vueuse/core";
 
-const { getAllFiles } = useSupabaseStorage();
+const { getAllFiles, getFileUrl } = useSupabaseStorage();
 const { showSuccess, showError } = useCustomToast();
 
 const loading = ref(false);
@@ -16,7 +16,10 @@ async function getFiles() {
   loading.value = true;
   files.value.splice(0);
   try {
-    files.value = await getAllFiles();
+    files.value = await getAllFiles({
+      bucket: "excel_hours",
+      folder: "excel_hours",
+    });
     if (files.value.length > 0) {
       cleanUpFileList();
 
@@ -39,6 +42,23 @@ function cleanUpFileList() {
 
 function formattedDate(date) {
   return useDateFormat(date, "DD/MM/YYYY HH:mm").value;
+}
+
+async function handleDownload(data) {
+  const codedFileUrl = await getFileUrl({
+    bucket: "excel_hours",
+    folder: "excel_hours",
+    name: data.name,
+  });
+
+  const fileUrl = decodeURIComponent(codedFileUrl);
+
+  if (typeof fileUrl === "string") {
+    window.open(fileUrl, "_blank");
+  } else {
+    console.error("FILE ERROR", fileUrl.error);
+    showError("FILE ERROR", "No se pudo cargar el archivo");
+  }
 }
 
 onMounted(async () => {
@@ -89,12 +109,12 @@ onMounted(async () => {
           headerStyle="width: 8rem; text-align: center"
           bodyStyle="text-align: center; overflow: visible"
         >
-          <template #body>
+          <template #body="{ data }">
             <Button
-              class="p-button-rounded p-button-danger mr-2"
-              icon="pi pi-trash"
+              @click="handleDownload(data)"
+              class="p-button-rounded"
+              icon="pi pi-download"
             ></Button>
-            <Button class="p-button-rounded" icon="pi pi-download"></Button>
           </template>
         </Column>
       </DataTable>

@@ -74,8 +74,8 @@ async function getCustomer() {
   data.value.splice(0);
   try {
     const response = await getCustomerByAttribute({
-      key: "email",
-      value: email.value,
+      key: "name",
+      value: name.value,
     });
     if (response) {
       data.value = response.data;
@@ -88,6 +88,14 @@ async function getCustomer() {
     showError(error);
   } finally {
     loading.value = false;
+
+    const dataValue = [];
+
+    for (let item of data.value) {
+      dataValue.push(item.attributes.name + " - " + item.id);
+    }
+
+    console.log("DATA VALUE", dataValue);
   }
 }
 </script>
