@@ -22,6 +22,7 @@ export default function useSupabaseAuth() {
         email,
         password,
       });
+
       if (!error) {
         return data;
       } else {

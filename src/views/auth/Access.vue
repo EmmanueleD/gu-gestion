@@ -29,6 +29,9 @@ async function handleLogin() {
   needEmailConfirmation.value = false;
   try {
     await guLogin({ email: email.value, password: password1.value });
+
+    console.log("GUAUTHRESPONSE", guAuthResponse.value);
+
     if (guAuthResponse.value.error) {
       showError(
         guAuthResponse.value.event,
@@ -38,8 +41,10 @@ async function handleLogin() {
       showSuccess(guAuthResponse.value.event, "Login exitoso");
     }
   } catch (error) {
-    console.error("GU-ERR", error);
-    // showError("GU-ERR - Login error", error);
+    console.error("GU-ERR :", error);
+    if (error.message.includes("Invalid login credentials")) {
+      showError("Credenciales inválidas");
+    }
   } finally {
     loading.value = false;
     router.push("/profile");
