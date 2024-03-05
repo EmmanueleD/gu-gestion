@@ -5,9 +5,21 @@ import { useRouter } from "vue-router";
 import useAuth from "@/composables/useAuth";
 import useCustomToast from "@/composables/utils/useCustomToast";
 
+import { useAuthStore } from "@/stores/useAuthStore";
+
 const { guLogout, guAuthResponse } = useAuth();
 const { showSuccess, showError } = useCustomToast();
 const { layoutConfig, onMenuToggle } = useLayout();
+
+const authStore = useAuthStore();
+const loginLevel = computed(() => {
+  if (authStore.profile) {
+    return authStore.profile.gest_role_id;
+  }
+  return null;
+});
+
+// loginLevel == 6 -> CLIENTE GUELCOM
 
 const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);
@@ -89,7 +101,8 @@ const isOutsideClicked = (event) => {
   <div class="layout-topbar">
     <router-link to="/" class="layout-topbar-logo">
       <img src="@/assets/img/logo-dark.svg" alt="logo" class="border-circle" />
-      <span>gestión</span>
+      <span v-if="loginLevel == 6">comünidad </span>
+      <span v-else>gestión</span>
     </router-link>
 
     <button
