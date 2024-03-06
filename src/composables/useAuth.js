@@ -84,17 +84,9 @@ export default function useAuth() {
   async function fetchFudoProfile() {
     const profile = supaProfile.value;
 
-    console.log("FETCHING FUDO PROFILE");
-
     if (profile.fudo_id) {
-      console.log(
-        "PROFILE EXISTS, FETCHING FUDO PROFILE - FUDO ID:",
-        profile.fudo_id
-      );
       const resp = await fetchData(`customers/${profile.fudo_id}`, "GET");
       fudoProfile.value = resp.data;
-
-      console.log("FUDO PROFILE BY FUDO ID", fudoProfile.value);
 
       await updateSupaProfile({
         fudo_id: fudoProfile.value.id,
@@ -102,19 +94,14 @@ export default function useAuth() {
         gu_level_id: countStars(fudoProfile.value.attributes.name),
       });
     } else if (profile.email) {
-      console.log(
-        "TRYING TO FETCH FUDO PROFILE BY EMAIL, FETCHING FUDO PROFILE - EMAIL:",
-        profile.email
-      );
       const resp = await getCustomerByAttribute({
         key: "email",
         value: profile.email,
       });
-      console.log("RESPONSE FROM FUDO API FOR EMAIL", resp);
 
       if (resp.data.length > 0) {
         fudoProfile.value = resp.data[0];
-        console.log("FUDO PROFILE BY EMAIL", resp.data[0]);
+
         await updateSupaProfile({
           fudo_id: resp.data[0].id,
           ...resp.data[0].attributes,
@@ -123,10 +110,6 @@ export default function useAuth() {
 
         await fetchFudoProfile();
       } else {
-        console.log("NO FUDO PROFILE FOUND, CREATING NEW FUDO PROFILE", {
-          name: profile.name,
-          email: profile.email,
-        });
         const newFudoProfile = await fetchData("customers", "POST", {
           data: {
             type: "Customer",
@@ -208,7 +191,6 @@ export default function useAuth() {
   }
 
   function handleLoginError(error) {
-    console.log("HANDLE LOGIN ERROR", error);
     resetAuthStore();
     throw new Error(error.message || error || "AUTH ERROR");
   }
