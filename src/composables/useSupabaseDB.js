@@ -88,6 +88,11 @@ export default function useSupabaseDB() {
     dbResp.value = await handleRequest(requestPromise);
   }
 
+  async function supaLog(note) {
+    const requestPromise = sbDB("gest_log").insert({ note }).select();
+    dbResp.value = await handleRequest(requestPromise);
+  }
+
   return {
     dbResponseStatus,
     dbResp,
@@ -98,5 +103,6 @@ export default function useSupabaseDB() {
     create,
     update,
     remove,
+    supaLog,
   };
 }

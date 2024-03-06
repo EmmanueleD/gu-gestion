@@ -8,7 +8,8 @@ import { useFudoStore } from "@/stores/useFudoStore";
 export default function useAuth() {
   const { supaSignOut, supaSignIn, supaSignUp, supaAuthResp } =
     useSupabaseAuth();
-  const { dbResponseStatus, dbResp, get, create, update } = useSupabaseDB();
+  const { dbResponseStatus, dbResp, get, create, update, supaLog } =
+    useSupabaseDB();
   const { getCustomerByAttribute, fetchData } = useFudoApi();
   const authStore = useAuthStore();
   const fudoStore = useFudoStore();
@@ -30,7 +31,10 @@ export default function useAuth() {
       setupGuAuthResponse();
       await fetchProfiles();
       setupAuthStore();
+
+      await supaLog("LOGIN SUCCESS: " + email);
     } catch (error) {
+      await supaLog("LOGIN ERROR: " + error.message);
       handleLoginError(error);
     } finally {
       setupFudoStore();

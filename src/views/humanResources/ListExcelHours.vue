@@ -1,5 +1,5 @@
 <script setup>
-//TODO:  descargar el archivo, filtrar los archivos, ordenar los archivos
+//TODO:   filtrar los archivos, ordenar los archivos
 import { ref, onMounted } from "vue";
 import useSupabaseStorage from "@/composables/useSupabaseStorage";
 import useCustomToast from "@/composables/utils/useCustomToast";
