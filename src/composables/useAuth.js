@@ -34,7 +34,7 @@ export default function useAuth() {
 
       await supaLog("LOGIN SUCCESS: " + email);
     } catch (error) {
-      await supaLog("LOGIN ERROR: " + error.message);
+      await supaLog("LOGIN ERROR: " + email + " - " + error.message);
       handleLoginError(error);
     } finally {
       setupFudoStore();

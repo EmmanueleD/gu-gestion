@@ -39,7 +39,7 @@ async function getEmployees() {
       employees.value = dbResp.value;
       showSuccess("Carga exitosa");
     } else {
-      showError("No se encontraron empleados");
+      showError("No se encontraron Staff");
     }
   } catch (error) {
     showError(error);
@@ -78,7 +78,7 @@ onMounted(async () => {
 
 <template>
   <div class="w-full flex justify-content-between align-items-center">
-    <h1>Empleados</h1>
+    <h1>Staff</h1>
     <div class="flex justify-content-end align-items-center">
       <Button
         label="Actualizar"
