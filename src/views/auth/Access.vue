@@ -66,7 +66,7 @@ async function handleRegister() {
       );
     } else {
       mode.value = "login";
-      needEmailConfirmation.value = true;
+      // needEmailConfirmation.value = true;
       showSuccess(guAuthResponse.value.event, "Registro exitoso");
     }
   } catch (error) {
