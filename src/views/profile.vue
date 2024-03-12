@@ -333,7 +333,11 @@ onMounted(async () => {
             </template>
           </Card>
         </div>
-        <!-- <div class="col-12 md:col-6 lg:col-4" style="min-height: 150px">
+        <div
+          v-if="authProfile.gu_level_id == 3"
+          class="col-12 md:col-6 lg:col-4"
+          style="min-height: 150px"
+        >
           <Card class="h-full">
             <template #title>🎁 Detalle de cumpleaños </template>
             <template #content>
@@ -360,7 +364,7 @@ onMounted(async () => {
               </div>
             </template>
           </Card>
-        </div> -->
+        </div>
       </div>
     </div>
 
