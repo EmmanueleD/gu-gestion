@@ -11,14 +11,19 @@ const { getAll, dbResponseStatus, dbResp } = useSupabaseDB();
 const { percToNumber, numberToPerc } = useGeneric();
 const { showSuccess } = useCustomToast();
 
+// STORES
+import { useAppStore } from "@/stores/useAppStore";
+
+const appStore = useAppStore();
+
 // COMPONENT VARIABLES
 const employees = ref([]);
 const employees_roles = ref([]);
 const loadingEmployees = ref(false);
 const loadingEmployeesRoles = ref(false);
+const sidebarVisible = ref(false);
 
 // METHODS
-
 function employeeRoles(employee_id) {
   const roles = [];
   employees_roles.value.forEach((employee_role) => {
@@ -27,6 +32,11 @@ function employeeRoles(employee_id) {
     }
   });
   return roles;
+}
+
+function showSidebar(employee) {
+  appStore.setCurrentEmployee(employee);
+  sidebarVisible.value = true;
 }
 
 async function getEmployees() {
@@ -124,4 +134,38 @@ onMounted(async () => {
       </Column>
     </DataTable>
   </div>
+  <Sidebar
+    v-model:visible="sidebarVisible"
+    :baseZIndex="10000"
+    position="right"
+    class="w-full md:w-9 lg:w-5"
+    @hide="hideSidebar"
+  >
+    <h1>{{ appStore.currentEmployee?.full_name || "Crear staff" }}</h1>
+
+    <TabView class="w-full">
+      <TabPanel header="Información">
+        <div class="w-full grid">
+          <div class="col-12 md:col-6 lg:col-3 mb-2 flex flex-column">
+            <span>Numbre completo</span>
+            <InputText
+              v-model="appStore.currentEmployee.full_name"
+              class="w-full"
+            />
+          </div>
+
+          <div class="col-12 md:col-6 lg:col-3 mb-2 flex flex-column">
+            <span>Dirección</span>
+            <InputText
+              v-model="appStore.currentEmployee.address"
+              class="w-full"
+            />
+          </div>
+        </div>
+      </TabPanel>
+      <TabPanel header="Documentos"></TabPanel>
+      <TabPanel header="Notas"></TabPanel>
+      <TabPanel header="Historial"></TabPanel>
+    </TabView>
+  </Sidebar>
 </template>

@@ -1,17 +1,17 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 
-export const useAppStateStore = defineStore("appState", () => {
-  const _appState = ref(false);
+export const useAppStore = defineStore("appState", () => {
+  const _currentEmployee = ref(null);
 
-  const appState = computed(() => _appState.value);
+  const currentEmployee = computed(() => _currentEmployee.value);
 
-  function setAppState(state) {
-    _appState.value = state;
+  function setCurrentEmployee(employee) {
+    _currentEmployee.value = employee;
   }
 
   return {
-    appState,
-    setAppState,
+    currentEmployee,
+    setCurrentEmployee,
   };
 });
