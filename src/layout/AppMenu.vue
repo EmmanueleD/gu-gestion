@@ -59,7 +59,7 @@ const model = ref([
       {
         label: "Staff",
         icon: "pi pi-fw pi-users",
-        to: "/employees",
+        to: "/staff",
         gest_role_id: [1, 2, 3],
       },
       {

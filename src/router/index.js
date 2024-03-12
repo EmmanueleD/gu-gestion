@@ -47,9 +47,9 @@ const router = createRouter({
           meta: { requiresAuth: true, gest_role_id: [1, 2, 3] },
         },
         {
-          path: "employees",
-          name: "employees",
-          component: () => import("@/views/humanResources/employees.vue"),
+          path: "staff",
+          name: "staff",
+          component: () => import("@/views/humanResources/staff.vue"),
           meta: { requiresAuth: true, gest_role_id: [1, 2, 3] },
         },
         {
