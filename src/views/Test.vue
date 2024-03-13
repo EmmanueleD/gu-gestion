@@ -74,8 +74,8 @@ async function getCustomer() {
   data.value.splice(0);
   try {
     const response = await getCustomerByAttribute({
-      key: "name",
-      value: name.value,
+      key: "email",
+      value: email.value,
     });
     if (response) {
       data.value = response.data;

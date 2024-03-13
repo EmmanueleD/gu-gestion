@@ -32,9 +32,9 @@ export default function useAuth() {
       await fetchProfiles();
       setupAuthStore();
 
-      await supaLog("LOGIN SUCCESS: " + email);
+      await supaLog(email + " login OK");
     } catch (error) {
-      await supaLog("LOGIN ERROR: " + email + " - " + error.message);
+      await supaLog(email + " login ERR: " + error.message);
       handleLoginError(error);
     } finally {
       setupFudoStore();
