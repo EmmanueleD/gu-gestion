@@ -57,7 +57,7 @@ async function handleRegister() {
     await guRegister({
       email: email.value,
       password: password1.value,
-      name: name.value,
+      name: name.value + "⭐",
     });
     if (guAuthResponse.value.error) {
       showError(
