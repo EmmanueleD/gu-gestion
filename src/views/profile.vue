@@ -1,5 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
+
 // COMPOSABLES
 import useGeneric from "@/composables/utils/useGeneric";
 import useDateTime from "@/composables/utils/useDateTime";
@@ -14,6 +16,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import { useStorageStore } from "@/stores/useStorageStore";
 
 // VARIABLES
+const router = useRouter();
 const loading = ref(false);
 const loadingUpload = ref(false);
 const authStore = useAuthStore();
@@ -95,6 +98,14 @@ const formOptions = ref({
     loading: false,
   },
 });
+
+function showBenefits() {
+  router.push("/beneficios");
+}
+
+function showTerms() {
+  window.open("https://fudoapp.com/terms", "_blank");
+}
 
 async function getFormOptions() {
   for (let field in formOptions.value) {
@@ -434,6 +445,23 @@ onMounted(async () => {
             class="w-auto"
             :loading="loading"
           />
+        </div>
+
+        <div class="col-12 mt-3 grid">
+          <span
+            @click="showBenefits"
+            class="col-12 md:col-6 text-sm flex justify-content-center align-items-center mb-4"
+          >
+            <i class="pi pi-heart-fill text-sm"></i>
+            <span class="ml-2 cursor-pointer">Beneficios</span>
+          </span>
+          <!-- <span
+            @click="showTerms"
+            class="text-sm col-12 md:col-6 flex justify-content-center align-items-center mb-4"
+          >
+            <i class="pi pi-info-circle text-sm"></i>
+            <span class="ml-2 cursor-pointer">Terminos y condiciones</span>
+          </span> -->
         </div>
       </div>
     </div>
