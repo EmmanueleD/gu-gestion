@@ -6,7 +6,17 @@ import useFudoApi from "@/composables/useFudoApi";
 import useCustomToast from "@/composables/utils/useCustomToast";
 
 // COMPOSABLES VARIABLES
-const { getToken, fetchData, getCustomerByAttribute } = useFudoApi();
+const {
+  getToken,
+  fetchData,
+  getCustomerByAttribute,
+  getFudoCustomerList,
+  getFudoCustomer,
+  postFudoCustomer,
+  getFudoUserList,
+  getFudoUser,
+  postFudoUser,
+} = useFudoApi();
 const { showSuccess, showError } = useCustomToast();
 
 // COMPONENT VARIABLES
@@ -23,6 +33,10 @@ const page = ref({
 });
 const name = ref("");
 const email = ref("");
+
+const fudoLoading = ref(false);
+const fudoParam = ref("1503");
+const fudoApiResponse = ref(null);
 
 async function fudoAuthenticate() {
   loading.value = true;
@@ -98,6 +112,42 @@ async function getCustomer() {
     console.log("DATA VALUE", dataValue);
   }
 }
+
+async function handleFudoRequest(req) {
+  fudoLoading.value = true;
+
+  try {
+    switch (req) {
+      case "GET customerList":
+        fudoApiResponse.value = await getFudoCustomerList();
+        break;
+
+      case "GET customer":
+        fudoApiResponse.value = await getFudoCustomer(fudoParam.value);
+        break;
+
+      case "POST customer":
+        fudoApiResponse.value = await postFudoCustomer();
+        break;
+
+      case "GET userList":
+        fudoApiResponse.value = await getFudoUserList();
+        break;
+
+      case "GET user":
+        fudoApiResponse.value = await getFudoUser(fudoParam.value);
+        break;
+
+      case "POST user":
+        fudoApiResponse.value = await postFudoUser();
+        break;
+    }
+  } catch (error) {
+    fudoApiResponse.value = error;
+  } finally {
+    fudoLoading.value = false;
+  }
+}
 </script>
 
 <template>
@@ -110,6 +160,12 @@ async function getCustomer() {
       :loading="loading"
       label="FU.DO. AUTHENTICATE"
     ></Button>
+
+    <pre class="mt-3">
+
+      {{ token || error }}
+
+    </pre>
 
     <Divider class="my-4"></Divider>
 
@@ -162,6 +218,79 @@ async function getCustomer() {
         label="FU.DO. GET TOKEN"
       ></Button>
     </div>
+
+    <Divider class="my-4"></Divider>
+
+    <Card>
+      <template #title>
+        <div
+          class="w-full flex justify-content-between align-items-center gap-1"
+        >
+          <h4>FUDO CONNECTION</h4>
+
+          <Button
+            label="reset"
+            icon="pi pi-refresh"
+            class="w-auto p-button-secondary"
+            @click="fudoApiResponse = null"
+          ></Button>
+        </div>
+      </template>
+
+      <template #content>
+        <div class="w-full grid gap-3">
+          <InputText
+            v-model="fudoParam"
+            placeholder="Fudo param"
+            class="col-12 md:col-6 lg:col-4 mb-2"
+          ></InputText>
+
+          <Divider class="col-12"></Divider>
+
+          <Button
+            label="GET customerList"
+            @click="handleFudoRequest('GET customerList')"
+          ></Button>
+
+          <Button
+            label="GET customer [Customer ID]"
+            @click="handleFudoRequest('GET customer')"
+          ></Button>
+
+          <Button
+            label="POST customer"
+            @click="handleFudoRequest('POST customer')"
+          ></Button>
+
+          <Divider class="col-12"></Divider>
+
+          <Button
+            label="GET userList"
+            @click="handleFudoRequest('GET userList')"
+          ></Button>
+
+          <Button
+            label="GET user"
+            @click="handleFudoRequest('GET user')"
+          ></Button>
+
+          <Button
+            label="POST user"
+            @click="handleFudoRequest('POST user')"
+          ></Button>
+
+          <Divider class="col-12"></Divider>
+        </div>
+      </template>
+
+      <template #footer>
+        <h5>FUDO RESPONSE</h5>
+
+        <i v-if="fudoLoading" class="pi pi-spin pi-spinner mr-4"></i>
+
+        <pre v-else>{{ fudoApiResponse }}</pre>
+      </template>
+    </Card>
 
     <Divider class="my-4"></Divider>
 

@@ -69,7 +69,7 @@ const model = ref([
         gest_role_id: [1, 2, 3],
       },
       {
-        label: "Modificadores de Horas",
+        label: "Modificadores e indicadores",
         icon: "pi pi-fw pi-clock",
         gest_role_id: [1, 2, 3],
         items: [
@@ -95,6 +95,12 @@ const model = ref([
             label: "Rol",
             icon: "pi pi-fw pi-clock",
             to: "/modifiers/role-modifier",
+            gest_role_id: [1, 2, 3],
+          },
+          {
+            label: "Valor Super YPF LSM",
+            icon: "pi pi-fw pi-clock",
+            to: "/modifiers/ypf-lsm",
             gest_role_id: [1, 2, 3],
           },
         ],

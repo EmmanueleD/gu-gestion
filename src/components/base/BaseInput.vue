@@ -15,11 +15,12 @@ defineProps({
 </style>
 
 <template>
-  <div class="mb-3">
+  <div class="mb-3 h-full">
     <div
       class="w-full flex"
       :class="{
-        'flex-column': !isHorizontal,
+        'flex-column h-full': !isHorizontal,
+        'justify-content-end': !isHorizontal,
         'align-items-center': isHorizontal,
       }"
     >

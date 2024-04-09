@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 
 // COMPOSABLES
 import useSupabaseDB from "@/composables/useSupabaseDB";
@@ -16,67 +16,40 @@ import SingleBarChart from "@/components/custom/SingleBarChart.vue";
 import GRAPH_TYPES from "@/constants/GRAPH_TYPES.json";
 
 // COMPOSABLES VARIABLES
-const { dbResponseStatus, dbResp, getAll, getWithFilter, create, remove } =
-  useSupabaseDB();
+const { dbResponseStatus, dbResp, getAll, create, remove } = useSupabaseDB();
 const { showSuccess, showError } = useCustomToast();
-const { percToNumber, numberToPerc } = useGeneric();
+const { formatCurrency } = useGeneric();
 const { showConfirm } = useCustomConfirm();
 
 // COMPONENT VARIABLES
 const historicSeries = ref([]);
-const currentRoleModifier = ref(0);
+const currentSeniorityModifierValue = ref(0);
 const loading = ref(false);
 const loadingNewValue = ref(false);
 const newValueVisible = ref(false);
 const newValue = ref(0);
 const newValueDate = ref(new Date());
+const newValueNote = ref("");
 const chartTypeOptions = GRAPH_TYPES;
 const chartTypeSelected = ref(chartTypeOptions[0].value);
 const dt = ref();
-const roleOptions = ref([]);
-const roleSelected = ref("");
-
-async function getRoles() {
-  loading.value = true;
-  try {
-    await getAll({ table: "staff_role", orderingBy: "staff_role_id" });
-    if (dbResponseStatus.value === "OK") {
-      roleOptions.value = dbResp.value;
-      roleSelected.value = dbResp.value[0].role_id;
-    } else {
-      showError("No se encontraron roles");
-    }
-  } catch (error) {
-    showError(error);
-  } finally {
-    loading.value = false;
-  }
-}
 
 async function getData() {
   loading.value = true;
   try {
-    await getWithFilter({
-      table: "mod_role",
-      filter: { column: "staff_role_id", value: roleSelected.value },
-      orderingBy: "created_at",
-    });
+    await getAll({ table: "mod_super_ypf", orderingBy: "created_at" });
     if (dbResponseStatus.value === "OK") {
       historicSeries.value = dbResp.value;
-      if (dbResp.value.length > 0) {
-        currentRoleModifier.value = dbResp.value[0].value.toLocaleString(
-          "es-AR",
-          {
-            style: "percent",
-          }
-        );
-      } else {
-        currentRoleModifier.value = 0;
-      }
+      currentSeniorityModifierValue.value =
+        dbResp.value[0].value.toLocaleString("es-AR", {
+          style: "currency",
+          currency: "ARS",
+          minimumFractionDigits: 2,
+        });
 
       showSuccess("Carga exitosa");
     } else {
-      currentRoleModifier.value = 0;
+      currentSeniorityModifierValue.value = 0;
       historicSeries.value = [];
       showError("No se encontraron archivos");
     }
@@ -89,6 +62,7 @@ async function getData() {
 
 function handleNewValue() {
   newValue.value = 0;
+  newValueNote.value = "";
   newValueDate.value = new Date();
   newValueVisible.value = true;
 }
@@ -103,10 +77,9 @@ async function saveNewValue() {
   loadingNewValue.value = true;
   try {
     await create({
-      table: "mod_role",
+      table: "mod_super_ypf",
       data: {
-        role_id: roleSelected.value,
-        value: percToNumber(newValue.value),
+        value: newValue.value,
         created_at: newValueDate.value,
       },
     });
@@ -126,7 +99,6 @@ async function saveNewValue() {
 }
 
 async function handleDeleteValue(data) {
-  console.log("data", data);
   showConfirm({
     message: "¿Desea eliminar este valor?",
     header: "Confirmar",
@@ -141,10 +113,10 @@ async function handleDeleteValue(data) {
     accept: async () => {
       try {
         await remove({
-          table: "mod_role",
+          table: "mod_super_ypf",
           id: {
-            key: "mod_role_id",
-            value: data.mod_role_id,
+            key: "mod_super_ypf_id",
+            value: data.mod_super_ypf_id,
           },
         });
 
@@ -167,25 +139,11 @@ function exportCSV() {
   dt.value.exportCSV();
 }
 
-onMounted(async () => {
-  await getRoles();
-  await getData();
-});
+getData();
 </script>
 
 <template>
-  <div class="w-full flex justify-content-start align-items-center gap-3 mb-3">
-    <h1 class="m-0">Rol:</h1>
-
-    <Dropdown
-      placeholder="Rol"
-      v-model="roleSelected"
-      :options="roleOptions"
-      optionLabel="label"
-      optionValue="staff_role_id"
-      @change="getData"
-    ></Dropdown>
-  </div>
+  <h1>Valor Super YPF LSM</h1>
 
   <div class="w-full surface-card py-6 px-3 sm:px-6 grid">
     <div class="col-12 flex align-items-center justify-content-center px-0">
@@ -208,9 +166,11 @@ onMounted(async () => {
               <div
                 class="w-full flex justify-content-start align-items-center gap-1"
               >
-                <span v-if="currentRoleModifier" class="font-bold text-3xl">{{
-                  currentRoleModifier
-                }}</span>
+                <span
+                  v-if="currentSeniorityModifierValue"
+                  class="font-bold text-3xl"
+                  >{{ currentSeniorityModifierValue }}</span
+                >
               </div>
             </div>
           </template>
@@ -250,12 +210,12 @@ onMounted(async () => {
           </div>
 
           <SingleLineChart
-            v-if="chartTypeSelected === 'line' && historicSeries.length > 0"
+            v-if="chartTypeSelected === 'line'"
             title="Historico valor presentismo"
             :data="historicSeries"
           ></SingleLineChart>
           <SingleBarChart
-            v-if="chartTypeSelected === 'bar' && historicSeries.length > 0"
+            v-if="chartTypeSelected === 'bar'"
             title="Historico valor presentismo"
             :data="historicSeries"
           ></SingleBarChart>
@@ -314,13 +274,13 @@ onMounted(async () => {
               <template #body="{ data }">
                 {{
                   data.value.toLocaleString("es-AR", {
-                    style: "percent",
+                    style: "currency",
+                    currency: "ARS",
                     minimumFractionDigits: 2,
                   })
                 }}
               </template>
             </Column>
-            <Column field="note" header="Notas"></Column>
             <Column field="actions" header="Acciones">
               <template #body="{ data }">
                 <Button
@@ -351,7 +311,6 @@ onMounted(async () => {
           mode="decimal"
           :minFractionDigits="2"
           :maxFractionDigits="2"
-          suffix="%"
           class="w-full"
           :disabled="loadingNewValue"
         />

@@ -82,6 +82,12 @@ const router = createRouter({
               component: () => import("@/views/modifiers/role-modifier.vue"),
               meta: { requiresAuth: true, gest_role_id: [1, 2, 3] },
             },
+            {
+              path: "ypf-lsm",
+              name: "ypf-lsm",
+              component: () => import("@/views/modifiers/ypf-lsm.vue"),
+              meta: { requiresAuth: true, gest_role_id: [1, 2, 3] },
+            },
           ],
         },
       ],
@@ -95,6 +101,11 @@ const router = createRouter({
       path: "/auth/password-reset",
       name: "password-reset",
       component: () => import("@/views/auth/password-reset.vue"),
+    },
+    {
+      path: "/beneficios",
+      name: "beneficios",
+      component: () => import("@/views/beneficios.vue"),
     },
     {
       path: "/auth/password-change",

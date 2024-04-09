@@ -29,7 +29,7 @@ export default function useAuth() {
       }
 
       setupGuAuthResponse();
-      await fetchProfiles();
+      await fetchProfiles(guAuthResponse.value.data.user.id);
       setupAuthStore();
 
       await supaLog(email + " login OK");
@@ -58,8 +58,7 @@ export default function useAuth() {
     resetFudoStore();
   }
 
-  async function fetchProfiles() {
-    const supaId = guAuthResponse.value.data.user.id;
+  async function fetchProfiles(supaId) {
     supaProfile.value = await getSupaProfile({ supaId });
 
     if (supaProfile.value) {
@@ -230,6 +229,7 @@ export default function useAuth() {
 
   return {
     guAuthResponse,
+    fetchProfiles,
     guLogin,
     guRegister,
     guLogout,

@@ -34,12 +34,15 @@ function showSidebar(role) {
 async function getData() {
   loading.value = true;
   try {
-    await getAll({ table: "role_w_modifier", orderingBy: "role_id" });
+    await getAll({
+      table: "role_with_last_modifier",
+      orderingBy: "staff_role_id",
+    });
     if (dbResponseStatus.value === "OK") {
       roles.value = dbResp.value.map((role) => {
         return {
           ...role,
-          role_modifier_value: numberToPerc(role.role_modifier_value),
+          last_modifier_value: numberToPerc(role.last_modifier_value),
         };
       });
       showSuccess("Carga exitosa");
@@ -57,10 +60,10 @@ async function getData() {
 async function saveRole() {
   loading.value = true;
   try {
-    if (currentRole.value.role_id) {
+    if (currentRole.value.staff_role_id) {
       await update({
-        table: "role",
-        id: { key: "role_id", value: currentRole.value.role_id },
+        table: "staff_role",
+        id: { key: "staff_role_id", value: currentRole.value.staff_role_id },
         data: {
           label: currentRole.value.label,
           description: currentRole.value.description,
@@ -70,7 +73,7 @@ async function saveRole() {
       });
     } else {
       await create({
-        table: "role",
+        table: "staff_role",
         data: {
           label: currentRole.value.label,
           description: currentRole.value.description,
@@ -78,8 +81,8 @@ async function saveRole() {
           updated_at: new Date(),
         },
       });
-      console.log("despues de crear", dbResp.value);
-      currentRole.value.role_id = dbResp.value[0].role_id;
+
+      currentRole.value.staff_role_id = dbResp.value[0].staff_role_id;
     }
     if (dbResponseStatus.value === "OK") {
       showSuccess("Guardado exitoso");
@@ -94,15 +97,15 @@ async function saveRole() {
 }
 
 async function saveRoleModifier() {
-  if (!currentRole.value.role_id) return;
-  console.log("currentRole", currentRole.value);
+  if (!currentRole.value.staff_role_id) return;
+
   loading.value = true;
   try {
     await create({
-      table: "role_modifier",
+      table: "mod_role",
       data: {
-        role_id: currentRole.value.role_id,
-        value: percToNumber(currentRole.value.role_modifier_value),
+        staff_role_id: currentRole.value.staff_role_id,
+        value: percToNumber(currentRole.value.last_modifier_value),
         created_at: new Date(),
       },
     });
@@ -134,7 +137,7 @@ async function handleSave() {
 
 async function handleRemove(data) {
   showConfirm({
-    message: "¿Desea eliminar este rol?",
+    message: "Eliminar este rol?",
     header: "Confirmar",
     icon: "pi pi-info-circle",
     acceptLabel: "Si",
@@ -146,8 +149,8 @@ async function handleRemove(data) {
     accept: async () => {
       try {
         await remove({
-          table: "role",
-          id: { key: "role_id", value: data.role_id },
+          table: "staff_role",
+          id: { key: "staff_role_id", value: data.staff_role_id },
         });
         if (dbResponseStatus.value === "OK") {
           showSuccess("Eliminado exitoso");
@@ -201,14 +204,13 @@ onMounted(async () => {
       :paginator="true"
       :rows="10"
       paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
-      currentPageReportTemplate="Mostrando {first} al {last} de {totalRecords} registros"
       :rowsPerPageOptions="[10, 20, 50]"
       paginatorPosition="bottom"
     >
       <Column field="label" header="Rol"></Column>
       <Column field="description" header="Descripción"></Column>
-      <Column field="role_modifier_value" header="Valor">
-        <template #body="{ data }"> {{ data.role_modifier_value }} % </template>
+      <Column field="last_modifier_value" header="Valor" sortable>
+        <template #body="{ data }"> {{ data.last_modifier_value }} % </template>
       </Column>
       <Column header="Acciones">
         <template #body="{ data }">
@@ -258,7 +260,7 @@ onMounted(async () => {
       <div class="col-12 md:col-6 flex flex-column mb-2">
         <span>Valor</span>
         <InputNumber
-          v-model="currentRole.role_modifier_value"
+          v-model="currentRole.last_modifier_value"
           mode="decimal"
           :minFractionDigits="2"
           :maxFractionDigits="2"

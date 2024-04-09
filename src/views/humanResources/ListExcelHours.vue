@@ -94,7 +94,6 @@ onMounted(async () => {
         :paginator="true"
         :rows="10"
         paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
-        currentPageReportTemplate="Mostrando {first} al {last} de {totalRecords} registros"
         :rowsPerPageOptions="[10, 20, 50]"
         paginatorPosition="bottom"
       >

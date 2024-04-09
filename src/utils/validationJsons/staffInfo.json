@@ -1,0 +1,14 @@
+{
+  "data": [
+    {
+      "name": "Numero Huella",
+      "key": "finger_id",
+      "type": "Number"
+    },
+    {
+      "name": "Email",
+      "key": "email",
+      "type": "String"
+    }
+  ]
+}

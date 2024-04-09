@@ -46,11 +46,74 @@ export default function useSupabaseDB() {
     filter,
     orderingBy = table + "_id",
     ascending = false,
+    filterType = "eq",
   }) {
-    const requestPromise = sbDB(table)
-      .select("*")
-      .order(orderingBy, { ascending })
-      .eq(filter.column, filter.value);
+    let requestPromise;
+    switch (filterType) {
+      case "eq":
+        requestPromise = sbDB(table)
+          .select("*")
+          .order(orderingBy, { ascending })
+          .eq(filter.column, filter.value);
+        break;
+      case "gt":
+        requestPromise = sbDB(table)
+          .select("*")
+          .order(orderingBy, { ascending })
+          .gt(filter.column, filter.value);
+        break;
+      case "lt":
+        requestPromise = sbDB(table)
+          .select("*")
+          .order(orderingBy, { ascending })
+          .lt(filter.column, filter.value);
+        break;
+      case "gte":
+        requestPromise = sbDB(table)
+          .select("*")
+          .order(orderingBy, { ascending })
+          .gte(filter.column, filter.value);
+        break;
+      case "lte":
+        requestPromise = sbDB(table)
+          .select("*")
+          .order(orderingBy, { ascending })
+          .lte(filter.column, filter.value);
+        break;
+      case "like":
+        requestPromise = sbDB(table)
+          .select("*")
+          .order(orderingBy, { ascending })
+          .like(filter.column, filter.value);
+        break;
+      case "ilike":
+        requestPromise = sbDB(table)
+          .select("*")
+          .order(orderingBy, { ascending })
+          .ilike(filter.column, filter.value);
+        break;
+      case "is":
+        requestPromise = sbDB(table)
+          .select("*")
+          .order(orderingBy, { ascending })
+          .is(filter.column, filter.value);
+        break;
+      case "in":
+        requestPromise = sbDB(table)
+          .select("*")
+          .order(orderingBy, { ascending })
+          .in(filter.column, filter.value);
+        break;
+      case "neq":
+        requestPromise = sbDB(table)
+          .select("*")
+          .order(orderingBy, { ascending })
+          .neq(filter.column, filter.value);
+        break;
+      default:
+        throw new Error("Invalid filterType");
+    }
+
     dbResp.value = await handleRequest(requestPromise);
   }
 
