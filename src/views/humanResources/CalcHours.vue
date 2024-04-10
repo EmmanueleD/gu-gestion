@@ -291,7 +291,7 @@ function defaultFileName() {
 }
 
 async function handleCalcHours() {
-  fileData.value.splice(0);
+  console.log("handleCalcHours", fileData.value);
 
   if (!fileOptions.value.name) return;
 
