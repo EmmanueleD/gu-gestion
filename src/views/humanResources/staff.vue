@@ -43,8 +43,8 @@ const loadingGestRole = ref(false);
 const sidebarVisible = ref(false);
 const gestRoleOptions = ref([]);
 
-const email = ref("test@test.com");
-const name = ref("test nombre");
+const email = ref("");
+const name = ref("");
 const password = ref("staff123");
 
 // METHODS
