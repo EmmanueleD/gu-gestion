@@ -231,8 +231,34 @@ onMounted(async () => {
     >
       <Column field="acciones" header="Acciones" style="width: 150px">
         <template #body="{ data }">
-          <Button icon="pi pi-user-edit" @click="showSidebar(data)" />
-          <Button icon="pi pi-trash" class="p-button-danger ml-2" />
+          <Button
+            icon="pi pi-user"
+            @click="showSidebar(data)"
+            label="Ver"
+            class="p-button-secondary"
+          />
+          <!-- <Button
+            icon="pi pi-trash"
+            class="p-button-danger ml-2"
+          /> -->
+        </template>
+      </Column>
+      <Column field="name" header="Nombre Fudo" sortable>
+        <template #body="{ data }">
+          <Avatar
+            size="xlarge"
+            shape="circle"
+            :image="
+              data.avatar_url && !data.avatar_url.includes('StorageApiError')
+                ? data.avatar_url
+                : null
+            "
+            :label="
+              !data.avatar_url || data.avatar_url.includes('StorageApiError')
+                ? data.name[0]
+                : null
+            "
+          ></Avatar>
         </template>
       </Column>
       <Column field="finger_id" header="Numero Huella" sortable>
@@ -240,7 +266,7 @@ onMounted(async () => {
           <pre>{{ data.finger_id }}</pre>
         </template>
       </Column>
-      <Column field="username" header="Nombre" sortable></Column>
+      <Column field="username" header="Nombre" sortable> </Column>
     </DataTable>
   </div>
   <Sidebar

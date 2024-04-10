@@ -204,8 +204,9 @@ async function handleUpload(event) {
   loadingUpload.value = true;
   let response;
   fileName.value =
-    authProfile.value.username ||
-    "avatar" + useDateFormat(new Date(), "YYYYMMDDHHmmss").value;
+    (authProfile.value.username || "noname") +
+    "-avatar-" +
+    useDateFormat(new Date(), "YYYYMMDDHHmmssSSS").value;
   try {
     response = await uploadSingleFile(event, {
       bucket: bucketName.value,
