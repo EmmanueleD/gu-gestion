@@ -234,12 +234,12 @@ onMounted(async () => {
           <Button icon="pi pi-trash" class="p-button-danger ml-2" />
         </template>
       </Column>
-      <Column field="finger_id" header="Numero Huella">
+      <Column field="finger_id" header="Numero Huella" sortable>
         <template #body="{ data }">
           <pre>{{ data.finger_id }}</pre>
         </template>
       </Column>
-      <Column field="username" header="Nombre"></Column>
+      <Column field="username" header="Nombre" sortable></Column>
     </DataTable>
   </div>
   <Sidebar
