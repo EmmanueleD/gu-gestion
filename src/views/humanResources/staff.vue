@@ -93,6 +93,7 @@ async function createStaff() {
   } catch (error) {
     showError(error);
   } finally {
+    hideSidebar();
     loadingCreateStaff.value = false;
   }
 }
