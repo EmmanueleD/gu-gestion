@@ -224,7 +224,7 @@ onMounted(async () => {
       stripedRows
       v-if="employees.length > 0"
       :paginator="true"
-      :rows="10"
+      :rows="50"
       paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
       :rowsPerPageOptions="[10, 20, 50]"
       paginatorPosition="bottom"
