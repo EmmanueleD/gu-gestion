@@ -620,6 +620,23 @@ export default function useSupaApi() {
     }
   }
 
+  async function setProfileGestRole(profile_id, gest_role_id) {
+    try {
+      await update({
+        table: "profiles",
+        id: {
+          key: "id",
+          value: profile_id,
+        },
+        data: {
+          gest_role_id,
+        },
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   return {
     getEmployeeOptions,
     getGestRoleOptions,
@@ -648,5 +665,6 @@ export default function useSupaApi() {
     getLastBaseHourValue,
     getStaffStatusHistory,
     getLastAntiguedad,
+    setProfileGestRole,
   };
 }

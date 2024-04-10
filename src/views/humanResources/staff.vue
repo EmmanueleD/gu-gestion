@@ -12,7 +12,8 @@ const { get, getAll, getWithFilter, create, update, dbResponseStatus, dbResp } =
   useSupabaseDB();
 const { showSuccess, showError } = useCustomToast();
 const { guAuthResponse, guRegister, fetchProfiles } = useAuth();
-const { getEmployeeOptions, getGestRoleOptions } = useSupaApi();
+const { getEmployeeOptions, getGestRoleOptions, setProfileGestRole } =
+  useSupaApi();
 
 // STORES
 import { useAppStore } from "@/stores/useAppStore";
@@ -86,6 +87,7 @@ async function createStaff() {
       }
     } else {
       await fetchProfiles(guAuthResponse.value.data.user.id);
+      await setProfileGestRole(guAuthResponse.value.data.user.id, 8);
       showSuccess(guAuthResponse.value.event, "Registro exitoso");
     }
   } catch (error) {
