@@ -204,7 +204,7 @@ async function handleUpload(event) {
   loadingUpload.value = true;
   let response;
   fileName.value =
-    (authProfile.value.username || "noname") +
+    (authProfile.value.email || "noname") +
     "-avatar-" +
     useDateFormat(new Date(), "YYYYMMDDHHmmssSSS").value;
   try {
