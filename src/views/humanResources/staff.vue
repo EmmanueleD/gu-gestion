@@ -304,7 +304,23 @@ onMounted(async () => {
               <Calendar
                 v-model="appStore.currentEmployee.birthdate"
                 class="w-full"
-              />
+                jsaction="paste:puy29d;"
+                maxlength="2048"
+                name="q"
+                type="text"
+                aria-autocomplete="both"
+                aria-haspopup="false"
+                autocapitalize="off"
+                autocomplete="off"
+                autocorrect="off"
+                autofocus=""
+                role="combobox"
+                spellcheck="false"
+                title="Pesquisar"
+                value=""
+                aria-label="Pesquisar"
+                data-ved="0ahUKEwjw0svW6brxAhWdqJUCHXoYDRsQ39UDCAQ"
+              ></Calendar>
             </BaseInput>
           </div>
 

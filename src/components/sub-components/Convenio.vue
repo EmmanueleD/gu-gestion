@@ -206,7 +206,7 @@ onMounted(async () => {
     <span class="col-12 font-bold">Exp. Titulos</span>
     <div class="col-12 flex flex-column mb-2">
       <div class="w-full flex justify-content-start align-items-center">
-        <BaseInput label="Titulos" class="mr-2 mb-2">
+        <BaseInput label="Descripción" class="mr-2 mb-2">
           <InputText v-model="expTitulos.description"></InputText>
         </BaseInput>
         <BaseInput label="Valor total">
@@ -237,7 +237,7 @@ onMounted(async () => {
         <BaseInput label="Distancia en Km" class="mr-2 mb-2">
           <InputNumber v-model="distancia"></InputNumber>
         </BaseInput>
-        <BaseInput label="Ayuda Transporte (suponiendo 24 dias trabajados)">
+        <BaseInput label="Ayuda Transporte (suponiendo 24 días trabajados)">
           <InputNumber
             v-model="ayudaTransporteNumber"
             :disabled="true"

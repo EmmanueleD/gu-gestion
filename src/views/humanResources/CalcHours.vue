@@ -211,44 +211,6 @@ function removeAnticipo(index) {
   anticipos.value.splice(index, 1);
 }
 
-function calcRealHourValue() {
-  let percPresentismo = 0;
-  let percViatico = 0;
-
-  if (!baseHour.value) {
-    throw new Error("No hay valor de hora base");
-  }
-  if (!expExterna.value || !expTitulos.value || !roleSelected.value) {
-    throw new Error("No hay valor de experiencia");
-  }
-  if (!mainRole.value) {
-    throw new Error("No hay valor de rol");
-  }
-  if (!antiguedad.value) {
-    throw new Error("No hay valor de antiguedad");
-  }
-
-  if (presentismoGranted.value) {
-    percPresentismo = presentismo.value;
-  }
-  if (viaticoGranted.value) {
-    percViatico = viatico.value;
-  }
-
-  return (
-    baseHour.value +
-    baseHour.value *
-      (percPresentismo +
-        percViatico +
-        mainRole.value.last_modifier_value +
-        (expExterna.value.value +
-          expTitulos.value.value +
-          roleSelected.value.length * 2) /
-          100 +
-        antiguedad.value)
-  );
-}
-
 async function handleUpload(event) {
   loadingHandleUpload.value = true;
   fileUrl.value = null;
@@ -463,7 +425,7 @@ onMounted(async () => {
           <div class="col-12 flex justify-content-between align-items-center">
             <span>Valor hora REAL:</span>
             <span class="font-bold">{{
-              formatCurrency(calcRealHourValue())
+              formatCurrency(TOT3 / sidebarData.totalHours)
             }}</span>
           </div>
 
