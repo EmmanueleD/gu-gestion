@@ -58,6 +58,9 @@ const totActiveTime = ref(0);
 
 const expTitulos = ref({ description: "", value: 0 });
 const expExterna = ref({ description: "", value: 0 });
+const expRoles = computed(() => {
+  return roleSelected.value.length * 2;
+});
 
 const distancia = ref();
 const ayudaTransporteNumber = computed(() => {
@@ -167,13 +170,6 @@ onMounted(async () => {
       </BaseInput>
     </div>
 
-    <div
-      class="col-12 md:col-4 flex flex-column align-items-end justify-content-center"
-    >
-      <span>Experiencia Roles: </span>
-      <span class="text-900 font-bold">{{ roleSelected.length * 2 }} %</span>
-    </div>
-
     <div class="col-12 md:col-6 lg:col-4 flex flex-column">
       <BaseInput label="De los cuales el principal es">
         <Dropdown
@@ -230,6 +226,19 @@ onMounted(async () => {
       </div>
     </div>
 
+    <span class="col-12 font-bold">Exp. Roles</span>
+
+    <div class="col-12 flex flex-column mb-2">
+      <div class="w-full flex justify-content-start align-items-center">
+        <BaseInput label="2% por cada rol" class="mr-2 mb-2">
+          <InputNumber
+            :disabled="true"
+            v-model="expRoles"
+            suffix="%"
+          ></InputNumber>
+        </BaseInput>
+      </div>
+    </div>
     <Divider class="col-12 my-4"></Divider>
 
     <span class="col-12 font-bold">Ayuda Transporte</span>
