@@ -402,6 +402,46 @@ export default function useSupaApi() {
     }
   }
 
+  async function getStaffExpGuelcom(staffId) {
+    try {
+      await getWithFilter({
+        table: "mod_exp_guelcom",
+        filter: {
+          column: "profile_id",
+          value: staffId,
+        },
+      });
+
+      if (dbResponseStatus.value === "OK") {
+        return dbResp.value.length > 0
+          ? dbResp.value[0]
+          : { value: 0, description: "-" };
+      } else {
+        throw new Error("getStaffExpGuelcom");
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async function saveStaffExpGuelcom(expGuelcomData) {
+    delete expGuelcomData.mod_exp_guelcom_id;
+    try {
+      await create({
+        table: "mod_exp_guelcom",
+        data: expGuelcomData,
+      });
+
+      if (dbResponseStatus.value === "OK") {
+        return true;
+      } else {
+        throw new Error("saveStaffExpGuelcom");
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   async function getStaffExpExterna(staffId) {
     try {
       await getWithFilter({
@@ -659,6 +699,8 @@ export default function useSupaApi() {
     saveStaffStatus,
     getStaffExpTitulos,
     saveStaffExpTitulos,
+    getStaffExpGuelcom,
+    saveStaffExpGuelcom,
     getStaffExpExterna,
     saveStaffExpExterna,
     getStaffDistance,

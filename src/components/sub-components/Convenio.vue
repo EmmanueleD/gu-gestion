@@ -18,6 +18,8 @@ const {
   saveStaffStatus,
   getStaffExpTitulos,
   saveStaffExpTitulos,
+  getStaffExpGuelcom,
+  saveStaffExpGuelcom,
   getStaffExpExterna,
   saveStaffExpExterna,
   getStaffDistance,
@@ -56,6 +58,7 @@ const statusHistory = ref([]);
 const activePeriods = ref([]);
 const totActiveTime = ref(0);
 
+const expGuelcom = ref({ description: "", value: 0 });
 const expTitulos = ref({ description: "", value: 0 });
 const expExterna = ref({ description: "", value: 0 });
 const expRoles = computed(() => {
@@ -84,6 +87,10 @@ async function saveConvenio() {
     await saveStaffStatus(currentEmployee.id, statusSelected.value);
     await saveStaffDistance(currentEmployee.id, distancia.value);
     await saveStaffDescuentoCC(currentEmployee.id, descuentoCC.value);
+    await saveStaffExpGuelcom({
+      profile_id: currentEmployee.id,
+      ...expGuelcom.value,
+    });
     await saveStaffExpTitulos({
       profile_id: currentEmployee.id,
       ...expTitulos.value,
@@ -111,6 +118,7 @@ onMounted(async () => {
     if (currentEmployee) {
       roleSelected.value = await getStaffIdRoles(currentEmployee.id);
       statusSelected.value = await getLastStaffStatus(currentEmployee.id);
+      expGuelcom.value = await getStaffExpGuelcom(currentEmployee.id);
       expTitulos.value = await getStaffExpTitulos(currentEmployee.id);
       expExterna.value = await getStaffExpExterna(currentEmployee.id);
       distancia.value = await getStaffDistance(currentEmployee.id);
@@ -200,6 +208,18 @@ onMounted(async () => {
     </div>
 
     <Divider class="col-12 my-4"></Divider>
+
+    <span class="col-12 font-bold">Exp. güelcom</span>
+    <div class="col-12 flex flex-column mb-2">
+      <div class="w-full flex justify-content-start align-items-center">
+        <BaseInput label="Descripción" class="mr-2 mb-2">
+          <InputText v-model="expGuelcom.description"></InputText>
+        </BaseInput>
+        <BaseInput label="Valor total">
+          <InputNumber v-model="expGuelcom.value" suffix="%"></InputNumber>
+        </BaseInput>
+      </div>
+    </div>
 
     <span class="col-12 font-bold">Exp. Titulos</span>
     <div class="col-12 flex flex-column mb-2">
