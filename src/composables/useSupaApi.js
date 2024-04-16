@@ -442,6 +442,46 @@ export default function useSupaApi() {
     }
   }
 
+  async function getStaffAntiguedad(staffId) {
+    try {
+      await getWithFilter({
+        table: "mod_staff_antiguedad",
+        filter: {
+          column: "profile_id",
+          value: staffId,
+        },
+      });
+
+      if (dbResponseStatus.value === "OK") {
+        return dbResp.value.length > 0
+          ? dbResp.value[0]
+          : { value: 0, description: "-" };
+      } else {
+        throw new Error("getStaffAntiguedad");
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async function saveStaffAntiguedad(antiguedadData) {
+    delete antiguedadData.mod_staff_antiguedad_id;
+    try {
+      await create({
+        table: "mod_staff_antiguedad",
+        data: antiguedadData,
+      });
+
+      if (dbResponseStatus.value === "OK") {
+        return true;
+      } else {
+        throw new Error("saveStaffAntiguedad");
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   async function getStaffExpExterna(staffId) {
     try {
       await getWithFilter({
@@ -697,6 +737,8 @@ export default function useSupaApi() {
     saveStaffMainRole,
     getLastStaffStatus,
     saveStaffStatus,
+    getStaffAntiguedad,
+    saveStaffAntiguedad,
     getStaffExpTitulos,
     saveStaffExpTitulos,
     getStaffExpGuelcom,

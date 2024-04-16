@@ -16,6 +16,8 @@ const {
   saveStaffMainRole,
   getLastStaffStatus,
   saveStaffStatus,
+  getStaffAntiguedad,
+  saveStaffAntiguedad,
   getStaffExpTitulos,
   saveStaffExpTitulos,
   getStaffExpGuelcom,
@@ -58,6 +60,8 @@ const statusHistory = ref([]);
 const activePeriods = ref([]);
 const totActiveTime = ref(0);
 
+const staffAntiguedad = ref({ description: "", value: 0 });
+
 const expGuelcom = ref({ description: "", value: 0 });
 const expTitulos = ref({ description: "", value: 0 });
 const expExterna = ref({ description: "", value: 0 });
@@ -99,6 +103,11 @@ async function saveConvenio() {
       profile_id: currentEmployee.id,
       ...expExterna.value,
     });
+
+    await saveStaffAntiguedad({
+      profile_id: currentEmployee.id,
+      ...staffAntiguedad.value,
+    });
   } catch (error) {
     showError("ERROR SALVANDO STAFF:", error);
   } finally {
@@ -121,6 +130,7 @@ onMounted(async () => {
       expGuelcom.value = await getStaffExpGuelcom(currentEmployee.id);
       expTitulos.value = await getStaffExpTitulos(currentEmployee.id);
       expExterna.value = await getStaffExpExterna(currentEmployee.id);
+      staffAntiguedad.value = await getStaffAntiguedad(currentEmployee.id);
       distancia.value = await getStaffDistance(currentEmployee.id);
       descuentoCC.value = await getStaffDescuentoCC(currentEmployee.id);
       mainRole.value = await getStaffMainRoleId(currentEmployee.id);
@@ -153,14 +163,14 @@ onMounted(async () => {
       </BaseInput>
     </div>
 
-    <div class="col-12 md:col-6 lg:col-4 flex flex-column mb-2">
+    <!-- <div class="col-12 md:col-6 lg:col-4 flex flex-column mb-2">
       <BaseInput label="Antiguedad">
         <InputNumber
           :disabled="true"
           :placeholder="'Años:' + Number(totActiveTime).toFixed(0)"
         ></InputNumber>
       </BaseInput>
-    </div>
+    </div> -->
 
     <div
       class="col-12 flex flex-column align-items-end justify-content-center"
@@ -205,6 +215,21 @@ onMounted(async () => {
         }}
         %</span
       >
+    </div>
+
+    <Divider class="col-12 my-4"></Divider>
+
+    <span class="col-12 font-bold">Antiguedad</span>
+
+    <div class="col-12 flex flex-column mb-2">
+      <div class="w-full flex justify-content-start align-items-center">
+        <BaseInput label="Descripción" class="mr-2 mb-2">
+          <InputText v-model="staffAntiguedad.description"></InputText>
+        </BaseInput>
+        <BaseInput label="Valor total">
+          <InputNumber v-model="staffAntiguedad.value" suffix="%"></InputNumber>
+        </BaseInput>
+      </div>
     </div>
 
     <Divider class="col-12 my-4"></Divider>
