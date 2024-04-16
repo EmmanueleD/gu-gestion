@@ -73,6 +73,8 @@ const antiguedad = ref();
 async function saveConvenio() {
   loadingSave.value = true;
 
+  console.log("saveConvenio", roleSelected.value);
+
   try {
     await setStaffIdRoles(currentEmployee.id, roleSelected.value);
     await saveStaffMainRole(currentEmployee.id, mainRole.value);
@@ -215,7 +217,7 @@ onMounted(async () => {
       </div>
     </div>
 
-    <span class="col-12 font-bold">Exp. Externa</span>
+    <span class="col-12 font-bold">Exp. Previa</span>
 
     <div class="col-12 flex flex-column mb-2">
       <div class="w-full flex justify-content-start align-items-center">

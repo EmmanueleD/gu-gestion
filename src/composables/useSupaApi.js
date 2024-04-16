@@ -241,7 +241,13 @@ export default function useSupaApi() {
       (role) => !roles.includes(role.role_id)
     );
 
-    let rolesToAdd = roles.filter((role) => !originalRoles.includes(role));
+    let rolesToAdd = [];
+
+    for (let r of roles) {
+      if (!originalRoles.some((role) => role.role_id === r)) {
+        rolesToAdd.push(r);
+      }
+    }
 
     for (let role of rolesToDelete) {
       await remove({
