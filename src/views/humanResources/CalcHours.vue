@@ -147,29 +147,21 @@ const AYUDA_TRANSPORTE = computed(() => {
 });
 
 const TOT2 = computed(() => {
-  if (
-    MAIN_ROLE_MODIFIER.value &&
-    EXPERIENCE.value &&
-    totActiveTime.value &&
-    AYUDA_TRANSPORTE.value &&
-    antiguedad.value
-  ) {
-    return (
-      PRESENTISMO.value +
-      VIATICO.value +
-      MAIN_ROLE_MODIFIER.value +
-      EXPERIENCE.value +
-      AYUDA_TRANSPORTE.value +
-      totActiveTime.value.toFixed(0) * antiguedad.value * TOT1.value +
-      feriados.value +
-      vacaciones.value +
-      sac.value +
-      plusCierre.value +
-      plusGuelcom.value
-    );
-  } else {
-    return 0;
-  }
+  return (
+    (PRESENTISMO.value || 0) +
+    (VIATICO.value || 0) +
+    (MAIN_ROLE_MODIFIER.value || 0) +
+    (EXPERIENCE.value || 0) +
+    (AYUDA_TRANSPORTE.value || 0) +
+    (totActiveTime.value.toFixed(0) || 0) *
+      (antiguedad.value || 0) *
+      (TOT1.value || 0) +
+    (feriados.value || 0) +
+    (vacaciones.value || 0) +
+    (sac.value || 0) +
+    (plusCierre.value || 0) +
+    (plusGuelcom.value || 0)
+  );
 });
 
 const TOT3 = computed(() => {
@@ -334,7 +326,11 @@ onMounted(async () => {
     <div class="w-full grid">
       <div class="col-12 md:col-6 lg:col-3 flex flex-column">
         <span>Nombre file</span>
-        <InputText v-model="fileOptions.name" class="w-full" />
+        <InputText
+          :disabled="loadingCalcHours"
+          v-model="fileOptions.name"
+          class="w-full"
+        />
       </div>
 
       <div class="col-12 md:col-6 lg:col-3 flex flex-column">

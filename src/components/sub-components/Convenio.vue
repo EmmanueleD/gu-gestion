@@ -176,7 +176,7 @@ onMounted(async () => {
       class="col-12 flex flex-column align-items-end justify-content-center"
     ></div>
 
-    <div class="col-12 md:col-8 flex flex-column mb-2">
+    <div class="col-12 flex flex-column mb-2">
       <BaseInput label="Roles">
         <MultiSelect
           :options="roleOptions"
@@ -188,7 +188,7 @@ onMounted(async () => {
       </BaseInput>
     </div>
 
-    <div class="col-12 md:col-6 lg:col-4 flex flex-column">
+    <div class="col-12 md:col-6 flex flex-column">
       <BaseInput label="De los cuales el principal es">
         <Dropdown
           :options="
@@ -205,7 +205,7 @@ onMounted(async () => {
 
     <div
       v-if="mainRole"
-      class="col-12 md:col-6 lg:col-8 flex flex-column align-items-end justify-content-center"
+      class="col-12 md:col-6 flex flex-column align-items-end justify-content-center"
     >
       <span>Modificador Rol: </span>
       <span class="text-900 font-bold"
