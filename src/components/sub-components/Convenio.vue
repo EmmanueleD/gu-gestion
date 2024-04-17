@@ -234,6 +234,20 @@ onMounted(async () => {
 
     <Divider class="col-12 my-4"></Divider>
 
+    <div class="w-full flex justify-content-end align-items-center">
+      <div
+        class="col-12 md:col-6 flex flex-column align-items-end justify-content-center"
+      >
+        <span>Tot Experiencia: </span>
+        <span class="text-900 font-bold"
+          >{{
+            expGuelcom.value + expTitulos.value + expExterna.value + expRoles
+          }}
+          %</span
+        >
+      </div>
+    </div>
+
     <span class="col-12 font-bold">Exp. güelcom</span>
     <div class="col-12 flex flex-column mb-2">
       <div class="w-full flex justify-content-start align-items-center">
