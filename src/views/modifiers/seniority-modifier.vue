@@ -37,7 +37,7 @@ const dt = ref();
 async function getData() {
   loading.value = true;
   try {
-    await getAll({ table: "seniority_modifier", orderingBy: "created_at" });
+    await getAll({ table: "mod_staff_antiguedad", orderingBy: "created_at" });
     if (dbResponseStatus.value === "OK") {
       historicSeries.value = dbResp.value;
       currentSeniorityModifierValue.value =
@@ -113,9 +113,9 @@ async function handleDeleteValue(data) {
     accept: async () => {
       try {
         await remove({
-          table: "seniority_modifier",
+          table: "mod_staff_antiguedad",
           id: {
-            key: "seniority_modifier_id",
+            key: "mod_staff_antiguedad_id",
             value: data.seniority_modifier_id,
           },
         });

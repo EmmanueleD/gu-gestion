@@ -36,7 +36,7 @@ const dt = ref();
 async function getData() {
   loading.value = true;
   try {
-    await getAll({ table: "base", orderingBy: "created_at" });
+    await getAll({ table: "mod_hora_base", orderingBy: "created_at" });
     if (dbResponseStatus.value === "OK") {
       historicSeries.value = dbResp.value;
       curretBaseValue.value = dbResp.value[0].value.toLocaleString("es-AR", {
@@ -71,7 +71,7 @@ async function saveNewValue() {
   loadingNewValue.value = true;
   try {
     await create({
-      table: "base",
+      table: "mod_hora_base",
       data: {
         value: newValue.value,
         currency: "ARS",
@@ -108,8 +108,8 @@ async function handleDeleteValue(data) {
     accept: async () => {
       try {
         await remove({
-          table: "base",
-          id: { key: "base_id", value: data.base_id },
+          table: "mod_hora_base",
+          id: { key: "mod_base_id", value: data.base_id },
         });
 
         if (dbResponseStatus.value === "OK") {

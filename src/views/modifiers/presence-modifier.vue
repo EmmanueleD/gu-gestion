@@ -37,7 +37,7 @@ const dt = ref();
 async function getData() {
   loading.value = true;
   try {
-    await getAll({ table: "presence_modifier", orderingBy: "created_at" });
+    await getAll({ table: "mod_presentismo", orderingBy: "created_at" });
     if (dbResponseStatus.value === "OK") {
       historicSeries.value = dbResp.value;
       currentPresenceModifierValue.value = dbResp.value[0].value.toLocaleString(
@@ -115,8 +115,8 @@ async function handleDeleteValue(data) {
     accept: async () => {
       try {
         await remove({
-          table: "presence_modifier",
-          id: { key: "presence_modifier_id", value: data.presence_modifier_id },
+          table: "mod_presentismo",
+          id: { key: "mod_presentismo_id", value: data.presence_modifier_id },
         });
 
         if (dbResponseStatus.value === "OK") {
