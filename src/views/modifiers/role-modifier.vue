@@ -42,7 +42,7 @@ async function getRoles() {
     await getAll({ table: "staff_role", orderingBy: "staff_role_id" });
     if (dbResponseStatus.value === "OK") {
       roleOptions.value = dbResp.value;
-      roleSelected.value = dbResp.value[0].role_id;
+      roleSelected.value = dbResp.value[0].staff_role_id;
     } else {
       showError("No se encontraron roles");
     }
