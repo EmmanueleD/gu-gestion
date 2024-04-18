@@ -408,7 +408,7 @@ onMounted(async () => {
     :baseZIndex="10000"
     position="right"
     class="w-full md:w-9 lg:w-5"
-    :header="'Sueldo - ' + sidebarData.name"
+    :header="'Resumen salarial - ' + sidebarData.name"
   >
     <TabView>
       <TabPanel header="Resumen">
