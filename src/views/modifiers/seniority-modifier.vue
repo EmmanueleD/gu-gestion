@@ -248,6 +248,8 @@ getData();
             v-if="historicSeries.length > 0"
             class="w-full"
             ref="dt"
+            sortField="created_at"
+            :sortOrder="-1"
           >
             <template #header>
               <div
@@ -261,7 +263,7 @@ getData();
                 />
               </div>
             </template>
-            <Column field="created_at" header="Fecha">
+            <Column field="created_at" header="Fecha" sortable>
               <template #body="{ data }">
                 {{
                   useDateFormat(data.created_at, "DD MMMM YYYY ", {
@@ -270,7 +272,7 @@ getData();
                 }}
               </template>
             </Column>
-            <Column field="value" header="Valor">
+            <Column field="value" header="Valor" sortable>
               <template #body="{ data }">
                 {{
                   data.value.toLocaleString("es-AR", {
