@@ -20,6 +20,7 @@ const {
   getLastStaffStatus,
   getStaffExpTitulos,
   getStaffExpExterna,
+  getStaffExpGuelcom,
   getStaffDistance,
   getProfileIdFromFingerId,
   getStaffDescuentoCC,
@@ -66,6 +67,7 @@ const roleSelected = ref([]);
 const statusSelected = ref();
 const expTitulos = ref({});
 const expExterna = ref({});
+const expGuelcom = ref({});
 const distancia = ref();
 const descuentoCC = ref();
 const mainRole = ref({});
@@ -119,6 +121,7 @@ const EXPERIENCE = computed(() => {
   if (
     TOT1.value &&
     expExterna.value &&
+    expGuelcom.value &&
     expTitulos.value &&
     roleSelected.value
   ) {
@@ -126,6 +129,7 @@ const EXPERIENCE = computed(() => {
       TOT1.value *
       ((expExterna.value.value ||
         0 + expTitulos.value.value ||
+        0 + expGuelcom.value.value ||
         0 + roleSelected.value.length * 2) /
         100)
     );
@@ -289,6 +293,7 @@ async function showSidebar(data) {
     mainRole.value = await getStaffMainRole(staffId.value);
     expTitulos.value = await getStaffExpTitulos(staffId.value);
     expExterna.value = await getStaffExpExterna(staffId.value);
+    expGuelcom.value = await getStaffExpGuelcom(staffId.value);
     roleSelected.value = await getStaffRoles(staffId.value);
     statusSelected.value = await getLastStaffStatus(staffId.value);
     distancia.value = await getStaffDistance(staffId.value);
@@ -474,7 +479,10 @@ onMounted(async () => {
           <div class="col-12 flex justify-content-between align-items-center">
             <span
               >{{
-                expExterna.value + expTitulos.value + roleSelected.length * 2
+                expExterna.value +
+                expGuelcom.value +
+                expTitulos.value +
+                roleSelected.length * 2
               }}% - Experiencia</span
             >
             <span class="font-bold">{{ formatCurrency(EXPERIENCE) }}</span>
@@ -636,27 +644,35 @@ onMounted(async () => {
           </div>
 
           <div
-            v-if="expTitulos && expExterna"
+            v-if="
+              expTitulos && expExterna && expGuelcom && roleSelected.length > 0
+            "
             class="col-12 flex flex-column align-items-start"
           >
             <span class="font-bold"
               >Experiencia:
               {{
-                expTitulos.value + expExterna.value + roleSelected.length * 2
+                expTitulos.value +
+                expGuelcom.value +
+                expExterna.value +
+                roleSelected.length * 2
               }}
               %</span
             >
-            <div>
+            <div v-if="roleSelected.length">
               -
               <span v-for="role in roleSelected" :key="role" class="mr-2">{{
                 role.label
               }}</span>
             </div>
-            <div>
+            <div v-if="expExterna.value">
               <span>- {{ expExterna.description }}</span>
             </div>
-            <div>
+            <div v-if="expTitulos.value">
               <span>- {{ expTitulos.description }}</span>
+            </div>
+            <div v-if="expGuelcom.value">
+              <span>- exp gü {{ expGuelcom.value }}</span>
             </div>
           </div>
 
