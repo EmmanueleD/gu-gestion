@@ -29,6 +29,12 @@ const router = createRouter({
           meta: { requiresAuth: true, gest_role_id: [1, 3] },
         },
         {
+          path: "playground",
+          name: "playground",
+          component: () => import("@/views/playground.vue"),
+          meta: { requiresAuth: true, gest_role_id: [1] },
+        },
+        {
           path: "calc-hours",
           name: "calc-hours",
           component: () => import("@/views/humanResources/CalcHours.vue"),

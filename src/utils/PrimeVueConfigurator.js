@@ -93,6 +93,7 @@ import Tree from "primevue/tree";
 import TreeSelect from "primevue/treeselect";
 import TreeTable from "primevue/treetable";
 import TriStateCheckbox from "primevue/tristatecheckbox";
+import VirtualScroller from "primevue/virtualscroller";
 
 class PrimeVueConfigurator {
   constructor() {}
@@ -340,6 +341,7 @@ class PrimeVueConfigurator {
     app.component("TreeSelect", TreeSelect);
     app.component("TreeTable", TreeTable);
     app.component("TriStateCheckbox", TriStateCheckbox);
+    app.component("VirtualScroller", VirtualScroller);
   }
 }
 

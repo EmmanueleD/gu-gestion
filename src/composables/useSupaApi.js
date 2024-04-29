@@ -723,6 +723,19 @@ export default function useSupaApi() {
     }
   }
 
+  async function savePaycheck(paycheck) {
+    // TODO: savePaycheck
+    console.log("savePaycheck", paycheck);
+    // try {
+    //   await create({
+    //     table: "paycheck",
+    //     data: paycheck,
+    //   });
+    // } catch (error) {
+    //   throw new Error(error);
+    // }
+  }
+
   return {
     getEmployeeOptions,
     getGestRoleOptions,
@@ -756,5 +769,6 @@ export default function useSupaApi() {
     getStaffStatusHistory,
     getLastAntiguedad,
     setProfileGestRole,
+    savePaycheck,
   };
 }

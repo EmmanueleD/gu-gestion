@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 
 import useSupabaseStorage from "@/composables/useSupabaseStorage";
 import useGuCalculator from "@/composables/gu-calculator/useGuCalculator";
@@ -30,6 +30,7 @@ const {
   getLastBaseHourValue,
   getStaffStatusHistory,
   getLastAntiguedad,
+  savePaycheck,
 } = useSupaApi();
 
 function formattedDate(date) {
@@ -51,6 +52,7 @@ const storageStore = useStorageStore();
 const loadingHandleUpload = ref(false);
 const loadingSidebar = ref(false);
 const loadingCalcHours = ref(false);
+const loadingSavePaycheck = ref(false);
 const sidebarVisible = ref(false);
 const sidebarData = ref({});
 
@@ -82,7 +84,13 @@ const reciboSac = ref(0);
 const reciboEstudioContable = ref(0);
 const cuentaCC = ref(0);
 const anticipos = ref([]);
+const refuerzoPerc = ref(0);
+const refuerzo = computed(() => {
+  return (TOT1.value * refuerzoPerc.value) / 100;
+});
+const plusGuelcomPerc = ref(0);
 const plusGuelcom = ref(0);
+const plusCierrePerc = ref(0);
 const plusCierre = ref(0);
 
 const TOT1 = computed(() => {
@@ -164,6 +172,7 @@ const TOT2 = computed(() => {
     (vacaciones.value || 0) +
     (sac.value || 0) +
     (plusCierre.value || 0) +
+    (refuerzo.value || 0) +
     (plusGuelcom.value || 0)
   );
 });
@@ -314,9 +323,44 @@ function handleHideSidebar() {
   sidebarData.value = {};
 }
 
+async function handleSavePaycheck() {
+  loadingSavePaycheck.value = true;
+
+  try {
+    await savePaycheck({});
+  } catch (error) {
+    showError(error);
+  } finally {
+    loadingSavePaycheck.value = false;
+  }
+}
+
+watch(plusCierre, (newValue) => {
+  if (newValue > 0) {
+    plusCierrePerc.value = (newValue * 100) / TOT1.value;
+  }
+});
+
+watch(plusCierrePerc, (newValue) => {
+  if (newValue > 0) {
+    plusCierre.value = (newValue * TOT1.value) / 100;
+  }
+});
+
+watch(plusGuelcom, (newValue) => {
+  if (newValue > 0) {
+    plusGuelcomPerc.value = (newValue * 100) / TOT1.value;
+  }
+});
+
+watch(plusGuelcomPerc, (newValue) => {
+  if (newValue > 0) {
+    plusGuelcom.value = (newValue * TOT1.value) / 100;
+  }
+});
+
 onMounted(async () => {
   fileOptions.value.name = defaultFileName();
-
   presentismo.value = await getLastPresentismoValue();
   viatico.value = await getLastViaticoValue();
   antiguedad.value = await getLastAntiguedad();
@@ -530,15 +574,26 @@ onMounted(async () => {
             v-if="plusCierre"
             class="col-12 flex justify-content-between align-items-center"
           >
-            <span>Responsable cierre</span>
+            <span
+              >{{ Number(plusCierrePerc).toFixed(2) }}% - Responsable
+              cierre</span
+            >
             <span class="font-bold">{{ formatCurrency(plusCierre) }}</span>
+          </div>
+
+          <div
+            v-if="refuerzo"
+            class="col-12 flex justify-content-between align-items-center"
+          >
+            <span>{{ Number(refuerzoPerc).toFixed(2) }}% - Refuerzo</span>
+            <span class="font-bold">{{ formatCurrency(refuerzo) }}</span>
           </div>
 
           <div
             v-if="plusGuelcom"
             class="col-12 flex justify-content-between align-items-center"
           >
-            <span>Plus güelcom</span>
+            <span>{{ plusGuelcomPerc }}% - Plus güelcom</span>
             <span class="font-bold">{{ formatCurrency(plusGuelcom) }}</span>
           </div>
 
@@ -616,6 +671,16 @@ onMounted(async () => {
             <span class="text-blue-700 text-xl font-bold">{{
               formatCurrency(TOT3 - TOT_ANTICIPOS)
             }}</span>
+          </div>
+
+          <div class="col-12 flex justify-content-end align-items-center">
+            <Button
+              label="Guardar resumen"
+              icon="pi pi-save"
+              class="p-button-outlined"
+              :loading="loadingSavePaycheck"
+              @click="handleSavePaycheck"
+            ></Button>
           </div>
         </div>
       </TabPanel>
@@ -739,6 +804,18 @@ onMounted(async () => {
           </div>
 
           <div class="col-12 md:col-7 flex flex-column mb-2">
+            <BaseInput label="Refuerzo">
+              <InputNumber
+                v-model="refuerzoPerc"
+                suffix="%"
+                :min-fraction-digits="2"
+                :max-fraction-digits="2"
+              ></InputNumber>
+            </BaseInput>
+            <small>Refuerzo: {{ formatCurrency(refuerzo) }}</small>
+          </div>
+
+          <div class="col-12 md:col-6 flex flex-column mb-2">
             <BaseInput label="Plus güelcom">
               <InputNumber
                 v-model="plusGuelcom"
@@ -751,13 +828,35 @@ onMounted(async () => {
             </BaseInput>
           </div>
 
-          <div class="col-12 md:col-7 flex flex-column mb-2">
+          <div class="col-12 md:col-6 flex flex-column mb-2">
+            <BaseInput label="Plus güelcom %">
+              <InputNumber
+                v-model="plusGuelcomPerc"
+                suffix="%"
+                :min-fraction-digits="2"
+                :max-fraction-digits="2"
+              ></InputNumber>
+            </BaseInput>
+          </div>
+
+          <div class="col-12 md:col-6 flex flex-column mb-2">
             <BaseInput label="Responsable Cierre">
               <InputNumber
                 v-model="plusCierre"
                 mode="currency"
                 currency="ARS"
                 locale="es-AR"
+                :min-fraction-digits="2"
+                :max-fraction-digits="2"
+              ></InputNumber>
+            </BaseInput>
+          </div>
+
+          <div class="col-12 md:col-6 flex flex-column mb-2">
+            <BaseInput label="Responsable Cierre %">
+              <InputNumber
+                v-model="plusCierrePerc"
+                suffix="%"
                 :min-fraction-digits="2"
                 :max-fraction-digits="2"
               ></InputNumber>

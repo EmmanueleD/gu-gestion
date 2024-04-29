@@ -17,6 +17,12 @@ const model = ref([
         gest_role_id: [1],
       },
       {
+        label: "Playground",
+        icon: "pi pi-fw pi-desktop",
+        to: "/playground",
+        gest_role_id: [1],
+      },
+      {
         label: "404",
         icon: "pi pi-fw pi-times",
         to: "/404",

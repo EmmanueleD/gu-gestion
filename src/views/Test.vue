@@ -325,7 +325,11 @@ async function handleFudoRequest(req) {
         </Card>
       </div>
     </div>
-    <!-- <div v-if="token">Token: {{ token }}</div>
-    <div v-if="error">Error: {{ error }}</div> -->
+
+    <div class="w-full grid">
+      <h1>Calculos comünidad</h1>
+
+      <div class="col-10 border-1 border-round">hola</div>
+    </div>
   </div>
 </template>

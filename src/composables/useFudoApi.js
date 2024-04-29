@@ -245,7 +245,22 @@ export default function useFudoApi() {
 
   async function putFudoRoom() {}
 
-  async function getFudoSaleList() {}
+  async function getFudoSaleList() {
+    try {
+      const result = await axios.get(
+        // "https://gu-calulator.vercel.app/api/v1/fudo-api/sales"
+        "http://localhost:3000/api/v1/fudo-api/sales/01-01-2022/31-01-2022"
+      );
+
+      if (result.data.status == "OK") {
+        return result.data.data;
+      } else {
+        return result.data;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
 
   async function getFudoSale() {}
 
@@ -350,5 +365,7 @@ export default function useFudoApi() {
     getFudoUserList,
     getFudoUser,
     postFudoUser,
+
+    getFudoSaleList,
   };
 }
