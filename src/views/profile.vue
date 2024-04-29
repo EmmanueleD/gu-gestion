@@ -249,6 +249,7 @@ async function setNewAvatar() {
 }
 
 onMounted(async () => {
+  await getData();
   await getFormOptions();
 });
 </script>

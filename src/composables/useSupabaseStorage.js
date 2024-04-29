@@ -77,7 +77,10 @@ export default function useSupabaseStorage() {
     try {
       const { data, error } = await sbStorage
         .from(fileOptions.bucket)
-        .createSignedUrl(fileOptions.folder + "/" + fileOptions.name, 604800);
+        .createSignedUrl(
+          fileOptions.folder + "/" + fileOptions.name,
+          99999999999
+        );
       if (error) {
         return error;
       }
