@@ -258,12 +258,14 @@ function defaultFileName() {
 }
 
 async function handleCalcHours() {
-  console.log("handleCalcHours", fileData.value);
+  console.log("handleCalcHours FILE DATA", fileData.value);
+  console.log("handleCalcHours FILE OPTIONS", fileOptions.value);
 
   if (!fileOptions.value.name) return;
 
   fileUrl.value = await handleGetFileUrl();
 
+  console.log("handleCalcHours FILE URL", fileUrl.value);
   let result;
   loadingCalcHours.value = true;
   try {
@@ -354,15 +356,22 @@ async function handleSavePaycheck() {
 
     total3: TOT3.value,
 
-    cuentaCorriente:
-      cuentaCC.value - (cuentaCC.value * descuentoCC.value) / 100,
+    cuentaCorriente: cuentaCC.value,
+    devoluciones: (cuentaCC.value * descuentoCC.value) / 100,
+
     reciboEstudioContable: reciboEstudioContable.value,
     reciboSac: reciboSac.value,
     anticipos: anticipos.value.reduce((a, b) => a + b.value, 0),
 
-    anticipos: TOT_ANTICIPOS.value,
+    totalAnticipos: TOT_ANTICIPOS.value,
 
-    totalNeto: TOT3.value - TOT_ANTICIPOS.value,
+    totalNeto:
+      TOT3.value -
+      cuentaCC.value +
+      (cuentaCC.value * descuentoCC.value) / 100 -
+      anticipos.value.reduce((a, b) => a + b.value, 0) -
+      reciboEstudioContable.value -
+      reciboSac.value,
   };
 
   try {

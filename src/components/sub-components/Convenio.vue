@@ -219,7 +219,7 @@ onMounted(async () => {
 
     <Divider class="col-12 my-4"></Divider>
 
-    <span class="col-12 font-bold">Antiguedad</span>
+    <span class="col-12 font-bold">Antigüedad</span>
 
     <div class="col-12 flex flex-column mb-2">
       <div class="w-full flex justify-content-start align-items-center">
@@ -305,7 +305,12 @@ onMounted(async () => {
     <div class="col-12 flex flex-column mb-2">
       <div class="w-full flex justify-content-start align-items-center">
         <BaseInput label="Distancia en Km" class="mr-2 mb-2">
-          <InputNumber v-model="distancia"></InputNumber>
+          <InputNumber
+            v-model="distancia"
+            suffix=" Km"
+            :min-fraction-digits="0"
+            :max-fraction-digits="2"
+          ></InputNumber>
         </BaseInput>
         <BaseInput label="Ayuda Transporte (suponiendo 24 días trabajados)">
           <InputNumber

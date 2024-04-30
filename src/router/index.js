@@ -47,6 +47,13 @@ const router = createRouter({
               component: () => import("@/views/community/StatusReport.vue"),
               meta: { requiresAuth: true, gest_role_id: [1, 3, 7] },
             },
+            {
+              path: "status-report-all-fudo",
+              name: "status-report-all-fudo",
+              component: () =>
+                import("@/views/community/StatusReportAllFudo.vue"),
+              meta: { requiresAuth: true, gest_role_id: [1, 3, 7] },
+            },
           ],
         },
         {

@@ -55,6 +55,11 @@ const model = ref([
         icon: "pi pi-fw pi-info-circle",
         to: "/community/status-report",
       },
+      {
+        label: "Status report all fudo",
+        icon: "pi pi-fw pi-info-circle",
+        to: "/community/status-report-all-fudo",
+      },
     ],
   },
   {
