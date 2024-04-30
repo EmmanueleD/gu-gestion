@@ -4,11 +4,14 @@ import { ref, onMounted } from "vue";
 import { useDateFormat } from "@vueuse/core";
 
 import useFudoApi from "@/composables/useFudoApi";
+import useSupabaseDB from "@/composables/useSupabaseDB";
 import useGeneric from "@/composables/utils/useGeneric";
 
 import useDateTime from "@/composables/utils/useDateTime";
+import OrderList from "primevue/orderlist";
 
 const { getFudoSaleList } = useFudoApi();
+const { dbResponseStatus, dbResp, getWithFilter } = useSupabaseDB();
 const { formatCurrency } = useGeneric();
 
 const {
@@ -20,6 +23,9 @@ const {
 
 const loadingSalesList = ref(false);
 const salesList = ref([]);
+const customersList = ref([]);
+
+const combinedData = ref([]);
 
 const fromDate = ref("");
 const toDate = ref("");
@@ -33,9 +39,7 @@ const exportCSV = () => {
   dt.value.exportCSV();
 };
 
-async function getData() {
-  console.log("getData", fromDate.value, toDate.value);
-
+async function getSaleList() {
   if (typeof fromDate.value !== "string") {
     fromDate.value = useDateFormat(fromDate.value, "YYYY/MM/DD").value;
   }
@@ -49,22 +53,145 @@ async function getData() {
   loadingSalesList.value = true;
 
   try {
-    salesList.value = await getFudoSaleList(
-      fromDate.value.split("/").join("-"),
-      toDate.value.split("/").join("-")
-    );
+    salesList.value = await getSalesInInterval({
+      startDate: fromDate.value.split("/").join("-"),
+      endDate: toDate.value.split("/").join("-"),
+    });
   } catch (error) {
     console.log(error);
   } finally {
-    salesList.value.map(
-      (s) =>
-        (s.cashback =
-          s.totSales >= minFamily.value
-            ? (s.totSales * percCashback.value) / 100
-            : 0)
-    );
     loadingSalesList.value = false;
   }
+}
+
+async function getSupaCustomers() {
+  try {
+    await getWithFilter({
+      table: "profiles",
+      filter: {
+        column: "gest_role_id",
+        value: 6,
+      },
+      orderingBy: "createdAt",
+    });
+
+    if (dbResponseStatus.value === "OK") {
+      customersList.value = dbResp.value;
+    } else {
+      customersList.value = [];
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function getCommunityReport() {
+  try {
+    await getSupaCustomers();
+    await getSaleList();
+
+    return combineSalesAndCustomers();
+  } catch (error) {
+    throw error;
+  }
+}
+
+function combineSalesAndCustomers() {
+  combinedData.value.splice(0);
+  // Create a map to store customers by their fudo_id
+
+  const currentCustomersList = customersList.value;
+  const currentSalesList = salesList.value;
+
+  const customerMap = {};
+  currentCustomersList.forEach((customer) => {
+    if (customer.fudo_id) {
+      customerMap[customer.fudo_id] = {
+        ...customer,
+        sales: [], // Initialize an empty array to store sales
+        totSales: 0, // Initialize total sales to zero
+      };
+    }
+  });
+
+  // Iterate over each sale and find the associated customer
+  currentSalesList.forEach((sale) => {
+    const customerId = sale.relationships.customer.data.id;
+    const customer = customerMap[customerId];
+    if (customer) {
+      // Add sale to the customer's sales array
+      customer.sales.push(sale);
+      // Add sale's total to customer's total sales
+      customer.totSales += sale.attributes.total;
+
+      if (customer.totSales >= minFamily.value) {
+        customer.cashback = customer.totSales * (percCashback.value / 100);
+      } else {
+        customer.cashback = 0;
+      }
+    }
+  });
+
+  // Convert customerMap object to an array of customers
+  combinedData.value = Object.values(customerMap);
+
+  // combinedData.value.map(
+  //   (s) =>
+  //     (s.cashback =
+  //       s.totSales >= minFamily.value
+  //         ? (s.totSales * percCashback.value) / 100
+  //         : 0)
+  // );
+}
+
+async function getSalesInInterval(params) {
+  const { startDate, endDate } = params;
+
+  let currentSales = [];
+  let validCurrentSales = [];
+  let salesList = [];
+  let page = 1;
+  let callCount = 0;
+  let reachedValidSales = false;
+
+  do {
+    currentSales.splice(0);
+    validCurrentSales.splice(0);
+    currentSales = await getFudoSaleList(page);
+
+    validCurrentSales = currentSales.filter((sale) => {
+      const createdAt = new Date(sale.attributes.createdAt);
+      return createdAt <= new Date(endDate);
+    });
+
+    if (validCurrentSales.length > 0) {
+      reachedValidSales = true;
+    }
+
+    if (reachedValidSales) {
+      // Filter out sales after the startDate
+      validCurrentSales = validCurrentSales.filter((sale) => {
+        const createdAt = new Date(sale.attributes.createdAt);
+        return createdAt >= new Date(startDate);
+      });
+
+      salesList = salesList.concat(validCurrentSales);
+    }
+
+    page++;
+    callCount++;
+
+    // Check if it's the tenth call, and wait 15 seconds
+    if (callCount % 10 === 0) {
+      await delay(15000); // Wait for 15 seconds
+    }
+  } while (!reachedValidSales || validCurrentSales.length > 0);
+
+  return salesList.filter((sale) => sale.relationships.customer.data);
+}
+
+async function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 </script>
 
@@ -99,7 +226,7 @@ async function getData() {
           @click="
             fromDate = firstDayOfLastMonth();
             toDate = lastDayOfLastMonth();
-            getData();
+            getCommunityReport();
           "
         />
         <Button
@@ -110,13 +237,13 @@ async function getData() {
           @click="
             fromDate = firstDayOCurrentMonth();
             toDate = lastDayOfCurrentMonth();
-            getData();
+            getCommunityReport();
           "
         ></Button>
         <Button
           :disabled="!fromDate || !toDate"
           :loading="loadingSalesList"
-          @click="getData"
+          @click="getCommunityReport"
           label="Filtrar"
           icon="pi pi-filter"
           class="w-auto"
@@ -164,7 +291,7 @@ async function getData() {
 
   <div class="w-full grid surface-card py-6 px-3 sm:px-6">
     <DataTable
-      :value="salesList"
+      :value="combinedData"
       responsiveLayout="scroll"
       class="w-full"
       stripedRows

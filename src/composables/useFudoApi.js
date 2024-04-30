@@ -245,18 +245,13 @@ export default function useFudoApi() {
 
   async function putFudoRoom() {}
 
-  async function getFudoSaleList(from, to) {
+  async function getFudoSaleList(page) {
     try {
       const result = await axios.get(
-        "https://gu-calulator.vercel.app/api/v1/fudo-api/community-report/" +
-          from +
-          "/" +
-          to
-        // "http://localhost:3000/api/v1/fudo-api/community-report/" +
-        //   from +
-        //   "/" +
-        //   to
+        "https://gu-calulator.vercel.app/api/v1/fudo-api/sales-by-page/" + page
       );
+
+      console.log("result", result.data.status);
 
       if (result.data.status == "OK") {
         return result.data.data;
