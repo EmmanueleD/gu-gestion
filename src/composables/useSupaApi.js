@@ -724,16 +724,45 @@ export default function useSupaApi() {
   }
 
   async function savePaycheck(paycheck) {
-    // TODO: savePaycheck
-    console.log("savePaycheck", paycheck);
-    // try {
-    //   await create({
-    //     table: "paycheck",
-    //     data: paycheck,
-    //   });
-    // } catch (error) {
-    //   throw new Error(error);
-    // }
+    try {
+      await create({
+        table: "paycheck",
+        data: {
+          value: paycheck,
+          profile_id: paycheck.profile_id,
+          reference_date: paycheck.reference_date,
+          profile_name: paycheck.profile_name,
+        },
+      });
+
+      if (dbResponseStatus.value === "OK") {
+        return true;
+      } else {
+        throw new Error("savePaycheck");
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async function getCustomerList() {
+    try {
+      await getWithFilter({
+        table: "profiles",
+        orderingBy: "createdAt",
+        filter: {
+          column: "gest_role_id",
+          value: 6, // CUSTOMER
+        },
+      });
+      if (dbResponseStatus.value === "OK") {
+        return dbResp.value;
+      } else {
+        throw new Error("getCustomerList");
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   return {
@@ -770,5 +799,6 @@ export default function useSupaApi() {
     getLastAntiguedad,
     setProfileGestRole,
     savePaycheck,
+    getCustomerList,
   };
 }

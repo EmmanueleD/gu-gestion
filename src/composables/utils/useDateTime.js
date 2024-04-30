@@ -104,11 +104,73 @@ export default function useDatetime() {
     return totalTimeInYears;
   }
 
+  function firstDayOfLastMonth() {
+    var today = new Date(); // Get today's date
+    var lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1); // Create a new date object for the first day of last month
+    return (
+      lastMonth.getFullYear() +
+      "/" +
+      (lastMonth.getMonth() + 1 < 10
+        ? "0" + (lastMonth.getMonth() + 1)
+        : lastMonth.getMonth() + 1) +
+      "/01"
+    ); // Format the date string
+  }
+
+  function firstDayOCurrentMonth() {
+    var today = new Date(); // Get today's date
+    var lastMonth = new Date(today.getFullYear(), today.getMonth(), 1); // Create a new date object for the first day of last month
+    return (
+      lastMonth.getFullYear() +
+      "/" +
+      (lastMonth.getMonth() + 1 < 10
+        ? "0" + (lastMonth.getMonth() + 1)
+        : lastMonth.getMonth() + 1) +
+      "/01"
+    ); // Format the date string
+  }
+
+  function lastDayOfLastMonth() {
+    var today = new Date(); // Get today's date
+    var lastMonth = new Date(today.getFullYear(), today.getMonth(), 0); // Create a new date object for the last day of last month
+    return (
+      lastMonth.getFullYear() +
+      "/" +
+      (lastMonth.getMonth() + 1 < 10
+        ? "0" + (lastMonth.getMonth() + 1)
+        : lastMonth.getMonth() + 1) +
+      "/" +
+      (lastMonth.getDate() < 10
+        ? "0" + lastMonth.getDate()
+        : lastMonth.getDate())
+    ); // Format the date string
+  }
+
+  function lastDayOfCurrentMonth() {
+    var today = new Date(); // Get today's date
+    var lastMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0); // Create a new date object for the last day of last month
+    return (
+      lastMonth.getFullYear() +
+      "/" +
+      (lastMonth.getMonth() + 1 < 10
+        ? "0" + (lastMonth.getMonth() + 1)
+        : lastMonth.getMonth() + 1) +
+      "/" +
+      (lastMonth.getDate() < 10
+        ? "0" + lastMonth.getDate()
+        : lastMonth.getDate())
+    ); // Format the date string
+  }
+
   return {
     orderObjectsByDate,
     getMonthNames,
     countdownToBirthday,
     extractActivePeriods,
     calculateTotalTime,
+    firstDayOfLastMonth,
+    firstDayOCurrentMonth,
+    lastDayOfLastMonth,
+    lastDayOfCurrentMonth,
   };
 }

@@ -34,11 +34,31 @@ const router = createRouter({
           component: () => import("@/views/playground.vue"),
           meta: { requiresAuth: true, gest_role_id: [1] },
         },
+
+        // COMUNIDAD
+
+        {
+          path: "community",
+          name: "community",
+          children: [
+            {
+              path: "status-report",
+              name: "status-report",
+              component: () => import("@/views/community/StatusReport.vue"),
+              meta: { requiresAuth: true, gest_role_id: [1, 3, 7] },
+            },
+          ],
+        },
         {
           path: "calc-hours",
           name: "calc-hours",
           component: () => import("@/views/humanResources/CalcHours.vue"),
           meta: { requiresAuth: true, gest_role_id: [1, 2, 3] },
+        },
+        {
+          path: "paycheck-list",
+          name: "paycheck-list",
+          component: () => import("@/views/humanResources/PaycheckList.vue"),
         },
         {
           path: "list-excel-hours",

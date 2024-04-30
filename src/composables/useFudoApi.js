@@ -245,11 +245,14 @@ export default function useFudoApi() {
 
   async function putFudoRoom() {}
 
-  async function getFudoSaleList() {
+  async function getFudoSaleList(from, to) {
     try {
       const result = await axios.get(
         // "https://gu-calulator.vercel.app/api/v1/fudo-api/sales"
-        "http://localhost:3000/api/v1/fudo-api/sales/01-01-2022/31-01-2022"
+        "http://localhost:3000/api/v1/fudo-api/community-report/" +
+          from +
+          "/" +
+          to
       );
 
       if (result.data.status == "OK") {

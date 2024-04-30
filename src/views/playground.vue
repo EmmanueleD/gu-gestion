@@ -20,7 +20,7 @@ async function getSalesList() {
   salesList.value.splice(0);
   loadingSales.value = true;
   try {
-    const response = await getFudoSaleList();
+    const response = await getFudoSaleList(from, to);
 
     if (response) {
       salesList.value = response;

@@ -47,6 +47,17 @@ const model = ref([
     ],
   },
   {
+    label: "Comünidad",
+    gest_role_id: [1, 3, 7],
+    items: [
+      {
+        label: "Status report",
+        icon: "pi pi-fw pi-info-circle",
+        to: "/community/status-report",
+      },
+    ],
+  },
+  {
     label: "Recursos Humanos",
     gest_role_id: [1, 2, 3],
     items: [
@@ -60,6 +71,12 @@ const model = ref([
         label: "Calculadora Horas",
         icon: "pi pi-fw pi-th-large",
         to: "/calc-hours",
+        gest_role_id: [1, 2, 3],
+      },
+      {
+        label: "Suledos",
+        icon: "pi pi-fw pi-money-bill",
+        to: "/paycheck-list",
         gest_role_id: [1, 2, 3],
       },
       {

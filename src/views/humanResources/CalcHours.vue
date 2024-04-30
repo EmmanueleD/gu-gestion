@@ -326,8 +326,47 @@ function handleHideSidebar() {
 async function handleSavePaycheck() {
   loadingSavePaycheck.value = true;
 
+  let paycheck = {
+    profile_id: staffId.value,
+    profile_name: sidebarData.value.name,
+    reference_date: new Date(),
+
+    horaBase: baseHour.value,
+    horaReal: TOT3.value / sidebarData.value.totalHours,
+    horasTotales: sidebarData.value.totalHours,
+
+    total1: TOT1.value,
+
+    presentismo: PRESENTISMO.value,
+    viatico: VIATICO.value,
+    rol: MAIN_ROLE_MODIFIER.value,
+    experiencia: EXPERIENCE.value,
+    antiguedad: totActiveTime.value * antiguedad.value * TOT1.value,
+    ayudaTransporte: AYUDA_TRANSPORTE.value,
+    feriados: feriados.value,
+    vacaciones: vacaciones.value,
+    sac: sac.value,
+    plusCierre: plusCierre.value,
+    refuerzo: refuerzo.value,
+    plusGuelcom: plusGuelcom.value,
+
+    total2: TOT2.value,
+
+    total3: TOT3.value,
+
+    cuentaCorriente:
+      cuentaCC.value - (cuentaCC.value * descuentoCC.value) / 100,
+    reciboEstudioContable: reciboEstudioContable.value,
+    reciboSac: reciboSac.value,
+    anticipos: anticipos.value.reduce((a, b) => a + b.value, 0),
+
+    anticipos: TOT_ANTICIPOS.value,
+
+    totalNeto: TOT3.value - TOT_ANTICIPOS.value,
+  };
+
   try {
-    await savePaycheck({});
+    await savePaycheck(paycheck);
   } catch (error) {
     showError(error);
   } finally {
@@ -593,7 +632,9 @@ onMounted(async () => {
             v-if="plusGuelcom"
             class="col-12 flex justify-content-between align-items-center"
           >
-            <span>{{ plusGuelcomPerc }}% - Plus güelcom</span>
+            <span
+              >{{ Number(plusGuelcomPerc).toFixed(2) }}% - Plus güelcom</span
+            >
             <span class="font-bold">{{ formatCurrency(plusGuelcom) }}</span>
           </div>
 
