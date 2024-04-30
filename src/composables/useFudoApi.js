@@ -76,8 +76,8 @@ export default function useFudoApi() {
   async function getFudoCustomerList() {
     try {
       const result = await axios.get(
-        // "https://gu-calulator.vercel.app/api/v1/fudo-api/customers"
-        "http://localhost:3000/api/v1/fudo-api/customers"
+        "https://gu-calulator.vercel.app/api/v1/fudo-api/customers"
+        // "http://localhost:3000/api/v1/fudo-api/customers"
       );
 
       console.log(result);
@@ -95,8 +95,8 @@ export default function useFudoApi() {
   async function getFudoCustomer(customerId) {
     try {
       const result = await axios.get(
-        // "https://gu-calulator.vercel.app/api/v1/fudo-api/customer"
-        "http://localhost:3000/api/v1/fudo-api/customer/" + customerId
+        "https://gu-calulator.vercel.app/api/v1/fudo-api/customer/" + customerId
+        // "http://localhost:3000/api/v1/fudo-api/customer/" + customerId
       );
 
       if (result.data.status == "OK") {
@@ -126,8 +126,8 @@ export default function useFudoApi() {
   ) {
     try {
       const result = await axios.post(
-        // "https://gu-calulator.vercel.app/api/v1/fudo-api/customer"
-        "http://localhost:3000/api/v1/fudo-api/customer",
+        "https://gu-calulator.vercel.app/api/v1/fudo-api/customer",
+        // "http://localhost:3000/api/v1/fudo-api/customer",
         newCustomer
       );
 
@@ -248,11 +248,14 @@ export default function useFudoApi() {
   async function getFudoSaleList(from, to) {
     try {
       const result = await axios.get(
-        // "https://gu-calulator.vercel.app/api/v1/fudo-api/sales"
-        "http://localhost:3000/api/v1/fudo-api/community-report/" +
+        "https://gu-calulator.vercel.app/api/v1/fudo-api/community-report/" +
           from +
           "/" +
           to
+        // "http://localhost:3000/api/v1/fudo-api/community-report/" +
+        //   from +
+        //   "/" +
+        //   to
       );
 
       if (result.data.status == "OK") {
@@ -282,8 +285,8 @@ export default function useFudoApi() {
   async function getFudoUserList() {
     try {
       const result = await axios.get(
-        // "https://gu-calulator.vercel.app/api/v1/fudo-api/customers"
-        "http://localhost:3000/api/v1/fudo-api/users"
+        "https://gu-calulator.vercel.app/api/v1/fudo-api/users"
+        // "http://localhost:3000/api/v1/fudo-api/users"
       );
 
       console.log(result);
@@ -301,8 +304,8 @@ export default function useFudoApi() {
   async function getFudoUser(userId) {
     try {
       const result = await axios.get(
-        // "https://gu-calulator.vercel.app/api/v1/fudo-api/customer"
-        "http://localhost:3000/api/v1/fudo-api/user/" + userId
+        "https://gu-calulator.vercel.app/api/v1/fudo-api/user/" + userId
+        // "http://localhost:3000/api/v1/fudo-api/user/" + userId
       );
 
       if (result.data.status == "OK") {
@@ -339,8 +342,8 @@ export default function useFudoApi() {
   ) {
     try {
       const result = await axios.post(
-        // "https://gu-calulator.vercel.app/api/v1/fudo-api/customer"
-        "http://localhost:3000/api/v1/fudo-api/user",
+        "https://gu-calulator.vercel.app/api/v1/fudo-api/user",
+        // "http://localhost:3000/api/v1/fudo-api/user",
         newUser
       );
 
