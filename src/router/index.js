@@ -54,6 +54,18 @@ const router = createRouter({
                 import("@/views/community/StatusReportAllFudo.vue"),
               meta: { requiresAuth: true, gest_role_id: [1, 3, 7] },
             },
+            {
+              path: "comm-settings",
+              name: "comm-settings",
+              component: () => import("@/views/community/CommSettings.vue"),
+              meta: { requiresAuth: true, gest_role_id: [1, 3, 7] },
+            },
+            {
+              path: "dashboard",
+              name: "dashboard",
+              component: () => import("@/views/community/Dashboard.vue"),
+              meta: { requiresAuth: true, gest_role_id: [1, 3, 7] },
+            },
           ],
         },
         {

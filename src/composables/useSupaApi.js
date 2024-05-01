@@ -765,6 +765,70 @@ export default function useSupaApi() {
     }
   }
 
+  async function getComunidadRelaciones() {
+    try {
+      await getAll({
+        table: "comunidad_relaciones",
+      });
+      if (dbResponseStatus.value === "OK") {
+        return dbResp.value;
+      } else {
+        throw new Error("getComunidadRelaciones");
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async function saveComunidadRelaciones(relacion) {
+    console.log("saveComunidadRelaciones", relacion);
+
+    try {
+      if (!relacion.comunidad_relaciones_id) {
+        await create({
+          table: "comunidad_relaciones",
+          data: relacion,
+        });
+      } else {
+        await update({
+          table: "comunidad_relaciones",
+          id: {
+            key: "comunidad_relaciones_id",
+            value: relacion.comunidad_relaciones_id,
+          },
+          data: relacion,
+        });
+      }
+
+      if (dbResponseStatus.value === "OK") {
+        return true;
+      } else {
+        throw new Error("saveComunidadRelaciones");
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async function deleteComunidadRelaciones(comunidad_relaciones_id) {
+    try {
+      await remove({
+        table: "comunidad_relaciones",
+        id: {
+          key: "comunidad_relaciones_id",
+          value: comunidad_relaciones_id,
+        },
+      });
+      if (dbResponseStatus.value === "OK") {
+        return true;
+      } else {
+        throw new Error("deleteComunidadRelaciones");
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   return {
     getEmployeeOptions,
     getGestRoleOptions,
@@ -800,5 +864,8 @@ export default function useSupaApi() {
     setProfileGestRole,
     savePaycheck,
     getCustomerList,
+    getComunidadRelaciones,
+    saveComunidadRelaciones,
+    deleteComunidadRelaciones,
   };
 }

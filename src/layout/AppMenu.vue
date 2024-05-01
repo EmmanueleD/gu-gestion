@@ -51,6 +51,11 @@ const model = ref([
     gest_role_id: [1, 3, 7],
     items: [
       {
+        label: "Dashboard Comünidad",
+        icon: "pi pi-fw pi-chart-bar",
+        to: "/community/dashboard",
+      },
+      {
         label: "Status report",
         icon: "pi pi-fw pi-info-circle",
         to: "/community/status-report",
@@ -59,6 +64,11 @@ const model = ref([
         label: "Status report all fudo",
         icon: "pi pi-fw pi-info-circle",
         to: "/community/status-report-all-fudo",
+      },
+      {
+        label: "Configuración de comünidad",
+        icon: "pi pi-fw pi-cog",
+        to: "/community/comm-settings",
       },
     ],
   },

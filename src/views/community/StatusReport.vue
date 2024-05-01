@@ -5,15 +5,20 @@ import { useDateFormat } from "@vueuse/core";
 
 import useFudoApi from "@/composables/useFudoApi";
 import useSupabaseDB from "@/composables/useSupabaseDB";
+import useSupaApi from "@/composables/useSupaApi";
 import useGeneric from "@/composables/utils/useGeneric";
-
+import useCustomToast from "@/composables/utils/useCustomToast";
+import useComunidad from "@/composables/utils/useComunidad";
 import useDateTime from "@/composables/utils/useDateTime";
-import OrderList from "primevue/orderlist";
 
+import { useComunidadStore } from "@/stores/useComunidadStore";
+
+const { segmentComunidadByRelations } = useComunidad();
+const { showError } = useCustomToast();
+const { getComunidadRelaciones } = useSupaApi();
 const { getFudoSaleList } = useFudoApi();
 const { dbResponseStatus, dbResp, getWithFilter } = useSupabaseDB();
 const { formatCurrency } = useGeneric();
-
 const {
   firstDayOfLastMonth,
   firstDayOCurrentMonth,
@@ -21,11 +26,19 @@ const {
   lastDayOfCurrentMonth,
 } = useDateTime();
 
+const comunidadStore = useComunidadStore();
+
+const loadingRelaciones = ref(false);
+const relacionesOptions = ref([]);
+const relacionesSelected = ref([]);
+
 const loadingSalesList = ref(false);
 const salesList = ref([]);
 const customersList = ref([]);
 
 const combinedData = ref([]);
+
+const segmentedData = ref({});
 
 const fromDate = ref("");
 const toDate = ref("");
@@ -132,16 +145,17 @@ function combineSalesAndCustomers() {
     }
   });
 
-  // Convert customerMap object to an array of customers
   combinedData.value = Object.values(customerMap);
 
-  // combinedData.value.map(
-  //   (s) =>
-  //     (s.cashback =
-  //       s.totSales >= minFamily.value
-  //         ? (s.totSales * percCashback.value) / 100
-  //         : 0)
-  // );
+  combinedData.value.sort((a, b) => b.totSales - a.totSales);
+
+  // combinedData.value = combinedData.value.filter((s) => s.totSales > 0);
+
+  segmentedData.value = segmentComunidadByRelations(
+    combinedData.value,
+    relacionesOptions.value
+  );
+  comunidadStore.setStatusReportData(segmentedData.value);
 }
 
 async function getSalesInInterval(params) {
@@ -193,6 +207,29 @@ async function getSalesInInterval(params) {
 async function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+async function getRelaciones() {
+  loadingRelaciones.value = true;
+  relacionesOptions.value.splice(0);
+  relacionesSelected.value.splice(0);
+  try {
+    relacionesOptions.value = await getComunidadRelaciones();
+    for (let r of relacionesOptions.value) {
+      relacionesSelected.value.push(r.comunidad_relaciones_id);
+    }
+  } catch (error) {
+    showError(error);
+  } finally {
+    loadingRelaciones.value = false;
+  }
+}
+
+onMounted(() => {
+  getRelaciones();
+  if (comunidadStore.statusReportData) {
+    segmentedData.value = comunidadStore.statusReportData;
+  }
+});
 </script>
 
 <template>
@@ -212,6 +249,21 @@ async function delay(ms) {
         <Calendar :disabled="loadingSalesList" v-model="toDate" />
       </div>
 
+      <Divider class="col-12"></Divider>
+
+      <div class="col-12 md:col-6 lg:col-3 flex flex-column">
+        <span>Relación</span>
+        <MultiSelect
+          :disabled="loadingRelaciones || loadingSalesList"
+          v-model="relacionesSelected"
+          :options="relacionesOptions"
+          optionLabel="label"
+          optionValue="comunidad_relaciones_id"
+        />
+      </div>
+
+      <Divider class="col-12"></Divider>
+
       <div class="col-12 flex justify-content-end align-items-center">
         <Button
           :label="
@@ -230,7 +282,12 @@ async function delay(ms) {
           "
         />
         <Button
-          label="Este mes"
+          :label="
+            'Este mes' +
+            ' (' +
+            useDateFormat(firstDayOCurrentMonth(), 'MMMM YYYY').value +
+            ')'
+          "
           :loading="loadingSalesList"
           icon="pi pi-arrow-down"
           class="w-auto p-button-secondary mr-2"
@@ -252,76 +309,56 @@ async function delay(ms) {
     </div>
   </div>
 
-  <div class="w-full grid surface-card py-6 px-3 sm:px-6 my-5">
-    <div class="w-full grid">
-      <h4 class="col-12">Opciones</h4>
-
-      <div class="col-12 md:col-6 lg:col-3">
-        <span>Gasto minimo para ser Family</span>
-        <InputNumber
-          :disabled="loadingSalesList"
-          v-model="minFamily"
-          mode="currency"
-          :minFractionDigits="2"
-          :maxFractionDigits="2"
-          locale="es-AR"
-          currency="ARS"
-          class="w-full"
-        />
-      </div>
-
-      <div class="col-12 md:col-6 lg:col-3">
-        <span>Porcentaje de Cashback para los Family</span>
-        <InputNumber
-          :disabled="loadingSalesList"
-          v-model="percCashback"
-          :minFractionDigits="2"
-          :maxFractionDigits="2"
-          suffix="%"
-          class="w-full"
-        />
-      </div>
-    </div>
-  </div>
-
   <Message v-if="loadingSalesList" severity="info"
     >La carga de la información puede durar unos minutos. Por favor
     espere.</Message
   >
 
-  <div class="w-full grid surface-card py-6 px-3 sm:px-6">
-    <DataTable
-      :value="combinedData"
-      responsiveLayout="scroll"
-      class="w-full"
-      stripedRows
-      :loading="loadingSalesList"
-      ref="dt"
-      :rows="10"
-      paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
-      :rowsPerPageOptions="[10, 20, 50]"
-      paginatorPosition="bottom"
+  <div class="w-full grid" v-if="!loadingSalesList && combinedData.length > 0">
+    <Accordion
+      v-for="relation in relacionesOptions.filter((r) =>
+        relacionesSelected.includes(r.comunidad_relaciones_id)
+      )"
+      :key="relation.comunidad_relaciones_id"
+      class="w-full my-2"
     >
-      <template #header>
-        <div style="text-align: left">
-          <Button
-            icon="pi pi-external-link"
-            label="Export"
-            @click="exportCSV($event)"
-          />
-        </div>
-      </template>
-      <Column field="name" header="Nombre"></Column>
-      <Column field="totSales" header="Total Gastado" sortable>
-        <template #body="{ data }">{{
-          formatCurrency(data.totSales)
-        }}</template>
-      </Column>
-      <Column field="cashback" header="Cashback ganado">
-        <template #body="{ data }">{{
-          formatCurrency(data.cashback)
-        }}</template>
-      </Column>
-    </DataTable>
+      <AccordionTab :header="relation.label">
+        <DataTable
+          v-if="segmentedData[relation.label]"
+          :value="segmentedData[relation.label]"
+          responsiveLayout="scroll"
+          class="w-full"
+          stripedRows
+          :loading="loadingSalesList"
+          ref="dt"
+          :rows="10"
+          paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+          :rowsPerPageOptions="[10, 20, 50]"
+          paginatorPosition="bottom"
+          removableSort
+        >
+          <template #header>
+            <div style="text-align: left">
+              <Button
+                icon="pi pi-external-link"
+                label="Export"
+                @click="exportCSV($event)"
+              />
+            </div>
+          </template>
+          <Column field="name" header="Nombre"></Column>
+          <Column field="totSales" header="Total Gastado" sortable>
+            <template #body="{ data }">{{
+              formatCurrency(data.totSales)
+            }}</template>
+          </Column>
+          <Column field="cashback" header="Cashback ganado">
+            <template #body="{ data }">{{
+              formatCurrency(data.cashback)
+            }}</template>
+          </Column>
+        </DataTable>
+      </AccordionTab>
+    </Accordion>
   </div>
 </template>

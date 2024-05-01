@@ -35,8 +35,6 @@ export default function useSupabaseDB() {
     orderingBy = table + "_id",
     ascending = false,
   }) {
-    console.log("getAll", table, orderingBy, ascending);
-
     const requestPromise = sbDB(table)
       .select("*")
       .order(orderingBy, { ascending });

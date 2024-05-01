@@ -61,7 +61,7 @@ async function getCustomersFromSupabase() {
   <h1>Playground</h1>
 
   <div class="w-full grid">
-    <h2 class="col-12">Calculos para la comunidad</h2>
+    <h2 class="col-12">Calculos para la comünidad</h2>
 
     <div class="col-12 md:col-6 lg:col-4 py-2">
       <Card>
