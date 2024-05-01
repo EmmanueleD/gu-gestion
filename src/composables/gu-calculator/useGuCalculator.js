@@ -3,10 +3,10 @@ export default function useGuCalculator() {
 
   async function getDataFromFile(fileUrl) {
     try {
-      // const response = await fetch(baseUrl + fileUrl).then((res) => res.json());
-      const response = await fetch(
-        "http://localhost:3000/api/v1/" + fileUrl
-      ).then((res) => res.json());
+      const response = await fetch(baseUrl + fileUrl).then((res) => res.json());
+      // const response = await fetch(
+      //   "http://localhost:3000/api/v1/" + fileUrl
+      // ).then((res) => res.json());
       if (response) return response.data;
       return { error: "File not found" };
     } catch (error) {
