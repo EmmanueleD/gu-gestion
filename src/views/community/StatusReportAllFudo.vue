@@ -229,6 +229,10 @@ async function getRelaciones() {
   }
 }
 
+if (comunidadStore.statusReportData) {
+  segmentedData.value = comunidadStore.statusReportData;
+}
+
 onMounted(() => {
   getRelaciones();
   if (comunidadStore.statusReportData) {
@@ -338,7 +342,7 @@ onMounted(() => {
     </Card>
   </div>
 
-  <div class="w-full grid" v-if="!loadingSalesList && combinedData.length > 0">
+  <div class="w-full grid" v-if="!loadingSalesList">
     <Accordion
       v-for="relation in relacionesOptions.filter((r) =>
         relacionesSelected.includes(r.comunidad_relaciones_id)

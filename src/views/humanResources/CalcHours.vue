@@ -265,7 +265,6 @@ async function handleCalcHours() {
 
   fileUrl.value = await handleGetFileUrl();
 
-  console.log("handleCalcHours FILE URL", fileUrl.value);
   let result;
   loadingCalcHours.value = true;
   try {

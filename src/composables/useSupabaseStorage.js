@@ -90,10 +90,25 @@ export default function useSupabaseStorage() {
     }
   }
 
+  async function deleteFile(fileOptions) {
+    try {
+      const { data, error } = await sbStorage
+        .from(fileOptions.bucket)
+        .remove([fileOptions.folder + "/" + fileOptions.name]);
+      if (error) {
+        return error;
+      }
+      return data;
+    } catch (error) {
+      return error;
+    }
+  }
+
   return {
     uploadSingleFile,
     uploadExcel,
     getAllFiles,
     getFileUrl,
+    deleteFile,
   };
 }

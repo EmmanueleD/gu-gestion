@@ -1,12 +1,17 @@
 <script setup>
 //TODO:   filtrar los archivos, ordenar los archivos
 import { ref, onMounted } from "vue";
+
+import { useConfirm } from "primevue/useconfirm";
+
 import useSupabaseStorage from "@/composables/useSupabaseStorage";
 import useCustomToast from "@/composables/utils/useCustomToast";
 
 import { useDateFormat } from "@vueuse/core";
 
-const { getAllFiles, getFileUrl } = useSupabaseStorage();
+const confirm = useConfirm();
+
+const { getAllFiles, getFileUrl, deleteFile } = useSupabaseStorage();
 const { showSuccess, showError } = useCustomToast();
 
 const loading = ref(false);
@@ -61,6 +66,33 @@ async function handleDownload(data) {
   }
 }
 
+async function confirmDelete(data) {
+  confirm.require({
+    message: "¿Quieres eliminar este archivo?",
+    header: "Confirmar",
+    icon: "pi pi-info-circle",
+    acceptLabel: "Si",
+    rejectLabel: "No",
+    acceptClassName: "p-button-danger",
+    acceptIcon: "pi pi-trash",
+    rejectIcon: "pi pi-times",
+    accept: async () => {
+      try {
+        await deleteFile({
+          bucket: "excel_hours",
+          folder: "excel_hours",
+          name: data.name,
+        });
+      } catch (error) {
+        showError(error);
+      } finally {
+        await getFiles();
+      }
+    },
+    reject: () => {},
+  });
+}
+
 onMounted(async () => {
   await getFiles();
 });
@@ -97,12 +129,6 @@ onMounted(async () => {
         :rowsPerPageOptions="[10, 20, 50]"
         paginatorPosition="bottom"
       >
-        <Column field="name" header="Nombre"></Column>
-        <Column field="created_at" header="Fecha">
-          <template #body="{ data }">
-            {{ formattedDate(data.created_at) }}
-          </template>
-        </Column>
         <Column
           header="Acciones"
           headerStyle="width: 8rem; text-align: center"
@@ -110,10 +136,21 @@ onMounted(async () => {
         >
           <template #body="{ data }">
             <Button
+              @click="confirmDelete(data)"
+              class="p-button-rounded p-button-danger"
+              icon="pi pi-trash"
+            ></Button>
+            <!-- <Button
               @click="handleDownload(data)"
               class="p-button-rounded"
               icon="pi pi-download"
-            ></Button>
+            ></Button> -->
+          </template>
+        </Column>
+        <Column field="name" header="Nombre" sortable></Column>
+        <Column field="created_at" header="Fecha">
+          <template #body="{ data }">
+            {{ formattedDate(data.created_at) }}
           </template>
         </Column>
       </DataTable>
