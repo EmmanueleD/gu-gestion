@@ -81,6 +81,11 @@ async function getSaleList() {
 }
 
 async function getCommunityReport() {
+  salesList.value.splice(0);
+  combinedData.value.splice(0);
+  segmentedData.value = {};
+  customersCalled.value = 0;
+
   try {
     await getSaleList();
     return combineSalesAndCustomers();
@@ -110,7 +115,7 @@ async function combineSalesAndCustomers() {
 
         // Introduce a delay every 10 customer fetches
         if ((customerFetchCount % Math.floor(Math.random() * 5)) + 9 === 0) {
-          await delay(1500);
+          await delay(10000);
         }
 
         if (customer) {
