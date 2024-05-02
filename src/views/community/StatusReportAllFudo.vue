@@ -115,7 +115,7 @@ async function combineSalesAndCustomers() {
 
         // Introduce a delay every 10 customer fetches
         if ((customerFetchCount % Math.floor(Math.random() * 5)) + 9 === 0) {
-          await delay(10000);
+          await delay(15000);
         }
 
         if (customer) {
