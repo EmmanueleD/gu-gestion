@@ -16,7 +16,7 @@ const { getEmployeeOptions, getGestRoleOptions, setProfileGestRole } =
   useSupaApi();
 
 // STORES
-import { useAppStore } from "@/stores/useAppStore";
+import { useRRHHStore } from "@/stores/useRRHHStore";
 
 // COMPONENTS
 import BaseInput from "@/components/base/BaseInput.vue";
@@ -26,11 +26,11 @@ import Convenio from "@/components/sub-components/Convenio.vue";
 import Validator from "@/utils/Validator";
 import staffInfo from "@/utils/validationJsons/staffInfo.json";
 
-const appStore = useAppStore();
+const RRHHStore = useRRHHStore();
 
 const validator = new Validator(staffInfo);
 const validatorResults = computed(() => {
-  return validator.validate(appStore.currentEmployee);
+  return validator.validate(RRHHStore.currentEmployee);
 });
 
 // COMPONENT VARIABLES
@@ -51,7 +51,7 @@ const password = ref("staff123");
 
 function hideSidebar() {
   sidebarVisible.value = false;
-  appStore.setCurrentEmployee({});
+  RRHHStore.setCurrentEmployee({});
 }
 
 async function createStaff() {
@@ -75,7 +75,7 @@ async function createStaff() {
           },
         });
         if (dbResponseStatus.value === "OK") {
-          appStore.setCurrentEmployee(dbResp.value[0]);
+          RRHHStore.setCurrentEmployee(dbResp.value[0]);
         } else {
           showError("No se encontraron Staff");
         }
@@ -100,9 +100,9 @@ async function createStaff() {
 
 async function showSidebar(employee) {
   if (employee.id) {
-    appStore.setCurrentEmployee(employee);
+    RRHHStore.setCurrentEmployee(employee);
   } else {
-    appStore.setCurrentEmployee({ finger_id: appStore.freeFingerId });
+    RRHHStore.setCurrentEmployee({ finger_id: RRHHStore.freeFingerId });
   }
 
   sidebarVisible.value = true;
@@ -111,8 +111,8 @@ async function showSidebar(employee) {
 async function getCurrentFingerId() {
   loadingFinger.value = true;
 
-  appStore.setFreeFingerId(null);
-  appStore.currentEmployee.finger_id = null;
+  RRHHStore.setFreeFingerId(null);
+  RRHHStore.currentEmployee.finger_id = null;
 
   try {
     await get({
@@ -120,9 +120,9 @@ async function getCurrentFingerId() {
       id: { key: "finger_id_id", value: 1 },
     });
     if (dbResponseStatus.value === "OK") {
-      appStore.setFreeFingerId(dbResp.value.value + 1);
+      RRHHStore.setFreeFingerId(dbResp.value.value + 1);
 
-      appStore.currentEmployee.finger_id = dbResp.value.value + 1;
+      RRHHStore.currentEmployee.finger_id = dbResp.value.value + 1;
     } else {
       showError("No se encontraron huellas");
     }
@@ -139,8 +139,8 @@ async function saveEmployee() {
   try {
     await update({
       table: "profiles",
-      id: { key: "id", value: appStore.currentEmployee.id },
-      data: appStore.currentEmployee,
+      id: { key: "id", value: RRHHStore.currentEmployee.id },
+      data: RRHHStore.currentEmployee,
     });
 
     if (dbResponseStatus.value === "OK") {
@@ -164,7 +164,7 @@ async function saveNewFingerId() {
       table: "finger_id",
       id: { key: "finger_id_id", value: 1 },
       data: {
-        value: Number(appStore.currentEmployee.finger_id),
+        value: Number(RRHHStore.currentEmployee.finger_id),
         updated_at: new Date(),
       },
     });
@@ -276,15 +276,15 @@ onMounted(async () => {
     class="w-full md:w-9 lg:w-5"
     @hide="hideSidebar"
   >
-    <h1>{{ appStore.currentEmployee?.username || "Crear staff" }}</h1>
+    <h1>{{ RRHHStore.currentEmployee?.username || "Crear staff" }}</h1>
 
-    <TabView v-if="appStore.currentEmployee.id" class="w-full">
+    <TabView v-if="RRHHStore.currentEmployee.id" class="w-full">
       <TabPanel header="Información">
         <div class="w-full grid pt-4">
           <div class="col-12 md:col-6 lg:col-4 mb-2 flex flex-column">
             <BaseInput label="Nombre">
               <InputText
-                v-model="appStore.currentEmployee.username"
+                v-model="RRHHStore.currentEmployee.username"
                 class="w-full"
               />
             </BaseInput>
@@ -293,7 +293,7 @@ onMounted(async () => {
           <div class="col-12 md:col-6 lg:col-4 mb-2 flex flex-column">
             <BaseInput label="Nombre Fudo">
               <InputText
-                v-model="appStore.currentEmployee.name"
+                v-model="RRHHStore.currentEmployee.name"
                 class="w-full"
               />
             </BaseInput>
@@ -302,7 +302,7 @@ onMounted(async () => {
           <div class="col-12 md:col-6 lg:col-4 mb-2 flex flex-column">
             <BaseInput label="Fecha de nacimiento">
               <Calendar
-                v-model="appStore.currentEmployee.birthdate"
+                v-model="RRHHStore.currentEmployee.birthdate"
                 class="w-full"
                 jsaction="paste:puy29d;"
                 maxlength="2048"
@@ -329,7 +329,7 @@ onMounted(async () => {
           <div class="col-12 md:col-6 lg:col-4 mb-2 flex flex-column">
             <BaseInput label="Dirección">
               <InputText
-                v-model="appStore.currentEmployee.address"
+                v-model="RRHHStore.currentEmployee.address"
                 class="w-full"
               />
             </BaseInput>
@@ -341,7 +341,7 @@ onMounted(async () => {
               :error-message="validatorResults.messages.email"
             >
               <InputText
-                v-model="appStore.currentEmployee.email"
+                v-model="RRHHStore.currentEmployee.email"
                 class="w-full"
               />
             </BaseInput>
@@ -350,7 +350,7 @@ onMounted(async () => {
           <div class="col-12 md:col-6 lg:col-4 mb-2 flex flex-column">
             <BaseInput label="Telefono">
               <InputText
-                v-model="appStore.currentEmployee.phone"
+                v-model="RRHHStore.currentEmployee.phone"
                 class="w-full"
               />
             </BaseInput>
@@ -364,7 +364,7 @@ onMounted(async () => {
               :error-message="validatorResults.messages.gest_role_id"
             >
               <Dropdown
-                v-model="appStore.currentEmployee.gest_role_id"
+                v-model="RRHHStore.currentEmployee.gest_role_id"
                 :options="gestRoleOptions"
                 optionLabel="label"
                 optionValue="gest_role_id"
@@ -379,7 +379,7 @@ onMounted(async () => {
             >
               <InputNumber
                 :disabled="true"
-                v-model="appStore.currentEmployee.finger_id"
+                v-model="RRHHStore.currentEmployee.finger_id"
                 class="w-full"
               />
             </BaseInput>
@@ -416,7 +416,7 @@ onMounted(async () => {
           table="staff_note"
           :filter="{
             column: 'profile_id',
-            value: appStore.currentEmployee.id,
+            value: RRHHStore.currentEmployee.id,
           }"
           :ascending="false"
         />

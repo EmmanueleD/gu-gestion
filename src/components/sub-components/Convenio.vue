@@ -37,14 +37,14 @@ const { showSuccess, showError } = useCustomToast();
 const { extractActivePeriods, calculateTotalTime } = useDatetime();
 
 // STORES
-import { useAppStore } from "@/stores/useAppStore";
+import { useRRHHStore } from "@/stores/useRRHHStore";
 
 // COMPONENTS
 import BaseInput from "../base/BaseInput.vue";
 
 // COMPONENT VARIABLES
-const appStore = useAppStore();
-const currentEmployee = appStore.currentEmployee;
+const RRHHStore = useRRHHStore();
+const currentEmployee = RRHHStore.currentEmployee;
 
 const loadingRoleOptions = ref(false);
 const loadingStatusOptions = ref(false);

@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 
-export const useAppStore = defineStore("app-state", () => {
+export const useRRHHStore = defineStore("RRHH", () => {
   const _currentEmployee = ref(null);
   const _freeFingerId = ref(null);
 

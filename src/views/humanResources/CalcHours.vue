@@ -1074,13 +1074,28 @@ onMounted(async () => {
                   class="pi"
                   :class="
                     data.late
-                      ? 'pi-check text-red-500'
-                      : 'pi-times text-green-500'
+                      ? 'pi-check-circle text-red-500'
+                      : 'pi-times text-gray-300'
                   "
                 ></i>
               </template>
               <template #editor="{ data }">
                 <Checkbox v-model="data.late" :binary="true" />
+              </template>
+            </Column>
+            <Column field="fediado" header="Feriado">
+              <template #body="{ data }">
+                <i
+                  class="pi"
+                  :class="
+                    data.fediado
+                      ? 'pi-check-circle text-green-500'
+                      : 'pi-times text-gray-300'
+                  "
+                ></i>
+              </template>
+              <template #editor="{ data }">
+                <Checkbox v-model="data.fediado" :binary="true" />
               </template>
             </Column>
           </DataTable>
