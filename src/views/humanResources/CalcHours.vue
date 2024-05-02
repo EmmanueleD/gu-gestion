@@ -33,6 +33,8 @@ const {
   savePaycheck,
 } = useSupaApi();
 
+const { getAllFiles } = useSupabaseStorage();
+
 function formattedDate(date) {
   return useDateFormat(date, "ddd DD/MM/YY HH:mm").value;
 }
@@ -50,11 +52,15 @@ const { getDataFromFile } = useGuCalculator();
 const storageStore = useStorageStore();
 
 const loadingHandleUpload = ref(false);
+const loadingDocsOptions = ref(false);
 const loadingSidebar = ref(false);
 const loadingCalcHours = ref(false);
 const loadingSavePaycheck = ref(false);
 const sidebarVisible = ref(false);
 const sidebarData = ref({});
+
+const docsOptions = ref([]);
+const filtro = ref("");
 
 const baseHour = ref(0);
 
@@ -253,10 +259,6 @@ async function handleGetFileUrl() {
   }
 }
 
-function defaultFileName() {
-  return `horas_${new Date().getMonth() + 1}_${new Date().getFullYear()}`;
-}
-
 async function handleCalcHours() {
   console.log("handleCalcHours FILE DATA", fileData.value);
   console.log("handleCalcHours FILE OPTIONS", fileOptions.value);
@@ -322,6 +324,17 @@ async function showSidebar(data) {
 function handleHideSidebar() {
   sidebarVisible.value = false;
   sidebarData.value = {};
+}
+
+async function getDocsOptions() {
+  loadingDocsOptions.value = true;
+  try {
+    docsOptions.value = await getAllFiles();
+  } catch (error) {
+    showError(error);
+  } finally {
+    loadingDocsOptions.value = false;
+  }
 }
 
 async function handleSavePaycheck() {
@@ -406,8 +419,15 @@ watch(plusGuelcomPerc, (newValue) => {
   }
 });
 
+const filteredFileData = computed(() => {
+  return fileData.value.filter((file) =>
+    file.name.toLowerCase().includes(filtro.value.toLocaleLowerCase())
+  );
+});
+
 onMounted(async () => {
-  fileOptions.value.name = defaultFileName();
+  await getDocsOptions();
+
   presentismo.value = await getLastPresentismoValue();
   viatico.value = await getLastViaticoValue();
   antiguedad.value = await getLastAntiguedad();
@@ -420,6 +440,21 @@ onMounted(async () => {
 
   <div class="w-full surface-card py-6 px-3 sm:px-6">
     <div class="w-full grid">
+      <div class="col-12 md:col-6 lg:col-3 flex flex-column">
+        <span>File existentes</span>
+        <Dropdown
+          filter
+          show-clear
+          :loading="loadingDocsOptions"
+          :options="
+            docsOptions.filter((doc) => doc.name !== '.emptyFolderPlaceholder')
+          "
+          optionLabel="name"
+          optionValue="name"
+          v-model="fileOptions.name"
+        ></Dropdown>
+      </div>
+
       <div class="col-12 md:col-6 lg:col-3 flex flex-column">
         <span>Nombre file</span>
         <InputText
@@ -460,8 +495,17 @@ onMounted(async () => {
       </div>
     </div>
 
+    <div class="w-full grid">
+      <div class="col-12 flex justify-content-end align-items-center">
+        <InputText v-model="filtro" placeholder="Buscar..."></InputText>
+      </div>
+    </div>
+
     <div v-if="fileData" class="w-full grid">
-      <div v-for="item in fileData" class="col-12 md:col-4 lg:col-3 py-3 px-3">
+      <div
+        v-for="item in filteredFileData"
+        class="col-12 md:col-4 lg:col-3 py-3 px-3"
+      >
         <Card class="w-full surface-100 border-1 border-round border-500">
           <template #title>
             {{ item.name }}
@@ -481,6 +525,7 @@ onMounted(async () => {
               >
                 <Button
                   @click="handleDownload(item)"
+                  disabled
                   size="small"
                   icon="pi pi-download"
                 ></Button>

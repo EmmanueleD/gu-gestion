@@ -829,6 +829,21 @@ export default function useSupaApi() {
     }
   }
 
+  async function getExcelFiles() {
+    let files = [];
+
+    try {
+      files = await getAllFiles({
+        bucket: "excel_hours",
+        folder: "excel_hours",
+      });
+
+      return files;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   return {
     getEmployeeOptions,
     getGestRoleOptions,
@@ -867,5 +882,6 @@ export default function useSupaApi() {
     getComunidadRelaciones,
     saveComunidadRelaciones,
     deleteComunidadRelaciones,
+    getExcelFiles,
   };
 }
