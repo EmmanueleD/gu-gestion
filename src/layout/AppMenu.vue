@@ -31,7 +31,7 @@ const model = ref([
     ],
   },
   {
-    label: "Gestión",
+    label: "güelcom",
     gest_role_id: [1, 2, 3],
     items: [
       {
