@@ -30,8 +30,6 @@ async function handleLogin() {
   try {
     await guLogin({ email: email.value, password: password1.value });
 
-    console.log("GUAUTHRESPONSE", guAuthResponse.value);
-
     if (guAuthResponse.value.error) {
       showError(
         guAuthResponse.value.event,

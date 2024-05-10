@@ -622,6 +622,27 @@ export default function useSupaApi() {
     }
   }
 
+  async function getProfileFromFingerId(fingerId) {
+    try {
+      await getWithFilter({
+        table: "profiles",
+        orderingBy: "createdAt",
+        filter: {
+          column: "finger_id",
+          value: fingerId,
+        },
+      });
+
+      if (dbResponseStatus.value === "OK") {
+        return dbResp.value[0];
+      } else {
+        throw new Error("getProfileFromFingerId");
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   async function getLastPresentismoValue() {
     try {
       await getLastOne({
@@ -844,6 +865,21 @@ export default function useSupaApi() {
     }
   }
 
+  async function saveProfile(profile) {
+    try {
+      await update({
+        table: "profiles",
+        id: {
+          key: "id",
+          value: profile.id,
+        },
+        data: profile,
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   return {
     getEmployeeOptions,
     getGestRoleOptions,
@@ -871,6 +907,7 @@ export default function useSupaApi() {
     getStaffDescuentoCC,
     saveStaffDescuentoCC,
     getProfileIdFromFingerId,
+    getProfileFromFingerId,
     getLastPresentismoValue,
     getLastViaticoValue,
     getLastBaseHourValue,
@@ -883,5 +920,6 @@ export default function useSupaApi() {
     saveComunidadRelaciones,
     deleteComunidadRelaciones,
     getExcelFiles,
+    saveProfile,
   };
 }

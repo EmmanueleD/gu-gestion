@@ -104,7 +104,10 @@ function showBenefits() {
 }
 
 function showTerms() {
-  window.open("https://fudoapp.com/terms", "_blank");
+  window.open(
+    "https://docs.google.com/document/d/1F1wBWTZ-mA7jOWgOavNBflZ_vmQxnQc6/edit?usp=sharing&ouid=104016870069918903421&rtpof=true&sd=true",
+    "_blank"
+  );
 }
 
 async function getFormOptions() {
@@ -456,13 +459,13 @@ onMounted(async () => {
             <i class="pi pi-heart-fill text-sm"></i>
             <span class="ml-2 cursor-pointer">Beneficios</span>
           </span>
-          <!-- <span
+          <span
             @click="showTerms"
             class="text-sm col-12 md:col-6 flex justify-content-center align-items-center mb-4"
           >
             <i class="pi pi-info-circle text-sm"></i>
             <span class="ml-2 cursor-pointer">Terminos y condiciones</span>
-          </span> -->
+          </span>
         </div>
       </div>
     </div>

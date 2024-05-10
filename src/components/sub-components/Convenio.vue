@@ -31,6 +31,7 @@ const {
   getStaffMainRoleId,
   getStaffStatusHistory,
   getLastAntiguedad,
+  saveProfile,
 } = useSupaApi();
 const { showSuccess, showError } = useCustomToast();
 
@@ -59,6 +60,8 @@ const statusSelected = ref([]);
 const statusHistory = ref([]);
 const activePeriods = ref([]);
 const totActiveTime = ref(0);
+const viatico = ref(false);
+const feriados = ref(false);
 
 const staffAntiguedad = ref({ description: "", value: 0 });
 
@@ -83,9 +86,12 @@ const antiguedad = ref();
 async function saveConvenio() {
   loadingSave.value = true;
 
-  console.log("saveConvenio", roleSelected.value);
+  let currentProfile = { ...currentEmployee };
+  currentProfile.viatico = viatico.value;
+  currentProfile.feriados = feriados.value;
 
   try {
+    await saveProfile(currentProfile);
     await setStaffIdRoles(currentEmployee.id, roleSelected.value);
     await saveStaffMainRole(currentEmployee.id, mainRole.value);
     await saveStaffStatus(currentEmployee.id, statusSelected.value);
@@ -123,6 +129,8 @@ onMounted(async () => {
     statusOptions.value = await getStatusOptions();
     lastSuperYpf.value = await getLastSuperYpf();
     antiguedad.value = await getLastAntiguedad();
+    viatico.value = currentEmployee.viatico;
+    feriados.value = currentEmployee.feriados;
 
     if (currentEmployee) {
       roleSelected.value = await getStaffIdRoles(currentEmployee.id);
@@ -215,6 +223,29 @@ onMounted(async () => {
         }}
         %</span
       >
+    </div>
+    <Divider class="col-12 my-4"></Divider>
+
+    <span class="col-12 font-bold">Viatico</span>
+
+    <div class="col-12 flex flex-column mb-2">
+      <div class="w-full flex justify-content-start align-items-center">
+        <BaseInput label="Viatico abilitado" class="mr-2 mb-2">
+          <Checkbox v-model="viatico" :binary="true"></Checkbox>
+        </BaseInput>
+      </div>
+    </div>
+
+    <Divider class="col-12 my-4"></Divider>
+
+    <span class="col-12 font-bold">Feriados</span>
+
+    <div class="col-12 flex flex-column mb-2">
+      <div class="w-full flex justify-content-start align-items-center">
+        <BaseInput label="Feriados abilitados" class="mr-2 mb-2">
+          <Checkbox v-model="feriados" :binary="true"></Checkbox>
+        </BaseInput>
+      </div>
     </div>
 
     <Divider class="col-12 my-4"></Divider>

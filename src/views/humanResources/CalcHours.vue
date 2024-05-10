@@ -7,12 +7,15 @@ import useCustomToast from "@/composables/utils/useCustomToast";
 import useGeneric from "@/composables/utils/useGeneric";
 import useDatetime from "@/composables/utils/useDateTime";
 import useSupaApi from "@/composables/useSupaApi";
+import useRRHH from "@/composables/utils/useRRHH";
 
 import { useDateFormat } from "@vueuse/core";
 
 import { useStorageStore } from "@/stores/useStorageStore";
+import { useRRHHStore } from "@/stores/useRRHHStore";
 
 import BaseInput from "@/components/base/BaseInput.vue";
+import ResumenSalarial from "@/components/sub-components/ResumenSalarial.vue";
 
 const {
   getStaffRoles,
@@ -35,6 +38,8 @@ const {
 
 const { getAllFiles } = useSupabaseStorage();
 
+const { handlePresentismo } = useRRHH();
+
 function formattedDate(date) {
   return useDateFormat(date, "ddd DD/MM/YY HH:mm").value;
 }
@@ -49,7 +54,9 @@ const { decimalToHoursMinutes, formatCurrency } = useGeneric();
 const { uploadExcel, getFileUrl } = useSupabaseStorage();
 const { showSuccess, showError } = useCustomToast();
 const { getDataFromFile } = useGuCalculator();
+
 const storageStore = useStorageStore();
+const RRHH_STORE = useRRHHStore();
 
 const loadingHandleUpload = ref(false);
 const loadingDocsOptions = ref(false);
@@ -260,9 +267,6 @@ async function handleGetFileUrl() {
 }
 
 async function handleCalcHours() {
-  console.log("handleCalcHours FILE DATA", fileData.value);
-  console.log("handleCalcHours FILE OPTIONS", fileOptions.value);
-
   if (!fileOptions.value.name) return;
 
   fileUrl.value = await handleGetFileUrl();
@@ -296,12 +300,15 @@ function handleDownload() {
 }
 
 async function showSidebar(data) {
+  RRHH_STORE.setFingerId(data.fingerId);
+  RRHH_STORE.setTotalHours(data.totalHours);
+  RRHH_STORE.setStaffName(data.name);
+
   loadingSidebar.value = true;
   sidebarVisible.value = true;
   sidebarData.value = data;
   try {
     staffId.value = await getProfileIdFromFingerId(data.fingerId);
-
     mainRole.value = await getStaffMainRole(staffId.value);
     expTitulos.value = await getStaffExpTitulos(staffId.value);
     expExterna.value = await getStaffExpExterna(staffId.value);
@@ -395,6 +402,13 @@ async function handleSavePaycheck() {
   }
 }
 
+function handleFeriadoChange(event) {
+  console.log("handleFeriadoChange", event);
+  if (event.feriado) {
+    let feriado = RRHH_STORE.feriadosList.find((f) => f.index == event.index);
+  }
+}
+
 watch(plusCierre, (newValue) => {
   if (newValue > 0) {
     plusCierrePerc.value = (newValue * 100) / TOT1.value;
@@ -419,6 +433,11 @@ watch(plusGuelcomPerc, (newValue) => {
   }
 });
 
+watch(presentismoGranted, (newValue) => {
+  RRHH_STORE.setPresentismoAvailable(newValue);
+  handlePresentismo();
+});
+
 const filteredFileData = computed(() => {
   return fileData.value.filter((file) =>
     file.name.toLowerCase().includes(filtro.value.toLocaleLowerCase())
@@ -427,7 +446,6 @@ const filteredFileData = computed(() => {
 
 onMounted(async () => {
   await getDocsOptions();
-
   presentismo.value = await getLastPresentismoValue();
   viatico.value = await getLastViaticoValue();
   antiguedad.value = await getLastAntiguedad();
@@ -440,48 +458,59 @@ onMounted(async () => {
 
   <div class="w-full surface-card py-6 px-3 sm:px-6">
     <div class="w-full grid">
-      <div class="col-12 md:col-6 lg:col-3 flex flex-column">
-        <span>File existentes</span>
-        <Dropdown
-          filter
-          show-clear
-          :loading="loadingDocsOptions"
-          :options="
-            docsOptions.filter((doc) => doc.name !== '.emptyFolderPlaceholder')
-          "
-          optionLabel="name"
-          optionValue="name"
-          v-model="fileOptions.name"
-        ></Dropdown>
-      </div>
-
-      <div class="col-12 md:col-6 lg:col-3 flex flex-column">
-        <span>Nombre file</span>
-        <InputText
-          :disabled="loadingCalcHours"
-          v-model="fileOptions.name"
-          class="w-full"
-        />
-      </div>
-
-      <div class="col-12 md:col-6 lg:col-3 flex flex-column">
-        <span>File</span>
-        <div v-if="loadingHandleUpload" class="flex align-items-center h-full">
-          <i class="pi pi-spinner pi-spin mr-2"></i>
-          <span>Cargando...</span>
+      <div class="col-12 md:col-6 lg:col-3 flex flex-column mr-4">
+        <h4>Archivos existentes</h4>
+        <div class="flex flex-column">
+          <span>File existentes</span>
+          <Dropdown
+            filter
+            show-clear
+            :loading="loadingDocsOptions"
+            :options="
+              docsOptions.filter(
+                (doc) => doc.name !== '.emptyFolderPlaceholder'
+              )
+            "
+            optionLabel="name"
+            optionValue="name"
+            v-model="fileOptions.name"
+          ></Dropdown>
         </div>
-        <FileUpload
-          v-else
-          mode="basic"
-          name="gu-employees-hours"
-          :customUpload="true"
-          accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-          :maxFileSize="1000000"
-          @uploader="handleUpload"
-          :auto="true"
-          :chooseLabel="loadingHandleUpload ? 'Cargando...' : 'Cargar archivo'"
-          :disabled="loadingHandleUpload"
-        />
+      </div>
+
+      <Divider layout="vertical" />
+
+      <div class="col-12 md:col-6 lg:col-3 flex flex-column">
+        <h4>Cargar archivo</h4>
+
+        <div class="flex flex-column">
+          <span>Nombre file</span>
+
+          <InputText :disabled="loadingCalcHours" v-model="fileOptions.name" />
+          <div class="flex justify-content-end align-items-center mt-2">
+            <div
+              v-if="loadingHandleUpload"
+              class="flex align-items-center h-full"
+            >
+              <i class="pi pi-spinner pi-spin mr-2"></i>
+              <span>Cargando...</span>
+            </div>
+            <FileUpload
+              v-else
+              mode="basic"
+              name="gu-employees-hours"
+              :customUpload="true"
+              accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+              :maxFileSize="1000000"
+              @uploader="handleUpload"
+              :auto="true"
+              :chooseLabel="
+                loadingHandleUpload ? 'Cargando...' : 'Cargar archivo'
+              "
+              :disabled="loadingHandleUpload"
+            />
+          </div>
+        </div>
       </div>
     </div>
     <div v-if="fileOptions.name" class="w-full grid my-4">
@@ -494,8 +523,10 @@ onMounted(async () => {
         ></Button>
       </div>
     </div>
+  </div>
 
-    <div class="w-full grid">
+  <div class="w-full my-4 grid surface-card py-6 px-3 sm:px-6 my-5">
+    <div class="w-full grid my-4">
       <div class="col-12 flex justify-content-end align-items-center">
         <InputText v-model="filtro" placeholder="Buscar..."></InputText>
       </div>
@@ -552,7 +583,7 @@ onMounted(async () => {
     :header="'Resumen salarial - ' + sidebarData.name"
   >
     <TabView>
-      <TabPanel header="Resumen">
+      <TabPanel header="Resumen salarial">
         <div class="col-12 grid">
           <div class="col-12 flex justify-content-between align-items-center">
             <span>Valor hora BASE:</span>
@@ -777,6 +808,10 @@ onMounted(async () => {
             ></Button>
           </div>
         </div>
+      </TabPanel>
+
+      <TabPanel header="Resumen salarial edit">
+        <ResumenSalarial></ResumenSalarial>
       </TabPanel>
 
       <TabPanel header="Panel de control">
@@ -1139,8 +1174,12 @@ onMounted(async () => {
                   "
                 ></i>
               </template>
-              <template #editor="{ data }">
-                <Checkbox v-model="data.fediado" :binary="true" />
+              <template #editor="{ data, index }">
+                <Checkbox
+                  @change="handleFeriadoChange({ ...data, index })"
+                  v-model="data.fediado"
+                  :binary="true"
+                />
               </template>
             </Column>
           </DataTable>
