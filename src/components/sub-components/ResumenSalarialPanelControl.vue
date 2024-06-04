@@ -10,17 +10,33 @@ const sac = ref(0);
 const recibo = ref(0);
 const reciboSac = ref(0);
 
-function handleConfirm() {
-  RRHH_STORE.setCuentaCorriente(cuentaCorriente.value);
-  RRHH_STORE.setDevolucionCC(
-    (cuentaCorriente.value * RRHH_STORE.descuentoCC) / 100
-  );
-  RRHH_STORE.setVacaciones(vacaciones.value);
-  RRHH_STORE.setSac(sac.value);
-  RRHH_STORE.setRecibo(recibo.value);
-  RRHH_STORE.setReciboSac(reciboSac.value);
+const anticiposRows = ref([]);
+const customRowsTot2 = ref([]);
+const customRowsTot3 = ref([]);
 
-  handleTotales();
+const loadingPlacebo = ref(false);
+
+function handleConfirm() {
+  loadingPlacebo.value = true;
+
+  setTimeout(() => {
+    RRHH_STORE.setCuentaCorriente(cuentaCorriente.value);
+    RRHH_STORE.setDevolucionCC(
+      (cuentaCorriente.value * RRHH_STORE.descuentoCC) / 100
+    );
+    RRHH_STORE.setVacaciones(vacaciones.value);
+    RRHH_STORE.setSac(sac.value);
+    RRHH_STORE.setRecibo(recibo.value);
+    RRHH_STORE.setReciboSac(reciboSac.value);
+
+    RRHH_STORE.setCustomRowsTot2(customRowsTot2.value);
+    RRHH_STORE.setAnticiposRows(anticiposRows.value);
+    RRHH_STORE.setCustomRowsTot3(customRowsTot3.value);
+
+    handleTotales();
+
+    loadingPlacebo.value = false;
+  }, Math.random() * 400 + 200);
 }
 
 function handleChangeViatico() {
@@ -32,6 +48,27 @@ function handleChangeViatico() {
   }
 
   handleTotales();
+}
+
+function addCustomRowTot2() {
+  customRowsTot2.value.push({
+    label: "",
+    value: 0,
+  });
+}
+
+function addAnticiposRow() {
+  anticiposRows.value.push({
+    date: new Date(),
+    value: 0,
+  });
+}
+
+function addCustomRowTot3() {
+  customRowsTot3.value.push({
+    label: "",
+    value: 0,
+  });
 }
 </script>
 
@@ -106,17 +143,121 @@ function handleChangeViatico() {
     <Divider class="col-12" />
 
     <div class="col-12 flex justify-content-between align-items-center">
-      <span class="col-12 font-bold">Anticipos</span>
-      <Button icon="pi pi-plus" class="p-button-secondary" />
+      <span class="font-bold">Lineas libres TOT2</span>
+      <Button
+        @click="addCustomRowTot2"
+        icon="pi pi-plus"
+        class="p-button-secondary"
+      />
+    </div>
+
+    <div class="col-12 grid" v-for="row in customRowsTot2" :key="row">
+      <div class="col-12 md:col-5 flex flex-column">
+        <span>Descripción</span>
+        <InputText v-model="row.label" />
+      </div>
+      <div class="col-12 md:col-5 flex flex-column">
+        <span>Valor</span>
+        <InputNumber
+          v-model="row.value"
+          :min-fraction-digits="0"
+          :max-fraction-digits="2"
+          mode="currency"
+          currency="ARS"
+          locale="es-AR"
+        />
+      </div>
+      <div class="col-12 md:col-2 flex justify-content-start align-items-end">
+        <Button
+          @click="customRowsTot2.splice(customRowsTot2.indexOf(row), 1)"
+          icon="pi pi-times-circle"
+          text
+          class="p-button-secondary"
+        />
+      </div>
     </div>
 
     <Divider class="col-12" />
 
-    <div class="col-12 flex justify-content-end align-items-center">
+    <div class="col-12 flex justify-content-between align-items-center">
+      <span class="font-bold">Anticipos</span>
+      <Button
+        @click="addAnticiposRow"
+        icon="pi pi-plus"
+        class="p-button-secondary"
+      />
+    </div>
+
+    <div class="col-12 grid" v-for="row in anticiposRows" :key="row.date">
+      <div class="col-12 md:col-5 flex flex-column">
+        <span>Fecha</span>
+        <Calendar v-model="row.date" />
+      </div>
+      <div class="col-12 md:col-5 flex flex-column">
+        <span>Valor</span>
+        <InputNumber
+          v-model="row.value"
+          :min-fraction-digits="0"
+          :max-fraction-digits="2"
+          mode="currency"
+          currency="ARS"
+          locale="es-AR"
+        />
+      </div>
+      <div class="col-12 md:col-2 flex justify-content-start align-items-end">
+        <Button
+          @click="anticiposRows.splice(anticiposRows.indexOf(row), 1)"
+          icon="pi pi-times-circle"
+          text
+          class="p-button-secondary"
+        />
+      </div>
+    </div>
+
+    <Divider class="col-12" />
+
+    <div class="col-12 flex justify-content-between align-items-center">
+      <span class="font-bold">Lineas libres TOT3</span>
+      <Button
+        @click="addCustomRowTot3"
+        icon="pi pi-plus"
+        class="p-button-secondary"
+      />
+    </div>
+
+    <div class="col-12 grid" v-for="row in customRowsTot3" :key="row">
+      <div class="col-12 md:col-5 flex flex-column">
+        <span>Descripción</span>
+        <InputText v-model="row.label" />
+      </div>
+      <div class="col-12 md:col-5 flex flex-column">
+        <span>Valor</span>
+        <InputNumber
+          v-model="row.value"
+          :min-fraction-digits="0"
+          :max-fraction-digits="2"
+          mode="currency"
+          currency="ARS"
+          locale="es-AR"
+        />
+      </div>
+      <div class="col-12 md:col-2 flex justify-content-start align-items-end">
+        <Button
+          @click="customRowsTot3.splice(customRowsTot3.indexOf(row), 1)"
+          icon="pi pi-times-circle"
+          text
+          class="p-button-secondary"
+        />
+      </div>
+    </div>
+
+    <Divider class="col-12" />
+
+    <div class="col-12 flex justify-content-end align-items-center my-2">
       <Button
         label="Confirmar"
-        class="p-button-secondary"
         icon="pi pi-check"
+        :loading="loadingPlacebo"
         @click="handleConfirm"
       />
     </div>

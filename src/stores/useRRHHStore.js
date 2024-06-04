@@ -58,6 +58,9 @@ export const useRRHHStore = defineStore("RRHH", () => {
   const _reciboSac = ref(0);
   const _totalAnticipos = ref(0);
   const _totalNeto = ref(null);
+  const _customRowsTot2 = ref([]);
+  const _anticiposRows = ref([]);
+  const _customRowsTot3 = ref([]);
 
   //COMPUTED
   const baseDataLastCall = computed(() => {
@@ -365,6 +368,28 @@ export const useRRHHStore = defineStore("RRHH", () => {
     }
     return _totalNeto.value;
   });
+  const customRowsTot2 = computed(() => {
+    if (!_customRowsTot2.value) {
+      setCustomRowsTot2(
+        JSON.parse(localStorage.getItem("gu_ge:customRowsTot2"))
+      );
+    }
+    return _customRowsTot2.value;
+  });
+  const anticiposRows = computed(() => {
+    if (!_anticiposRows.value) {
+      setAnticiposRows(JSON.parse(localStorage.getItem("gu_ge:anticiposRows")));
+    }
+    return _anticiposRows.value;
+  });
+  const customRowsTot3 = computed(() => {
+    if (!_customRowsTot3.value) {
+      setCustomRowsTot3(
+        JSON.parse(localStorage.getItem("gu_ge:customRowsTot3"))
+      );
+    }
+    return _customRowsTot3.value;
+  });
 
   //FUNCTIONS
   function clearAll() {
@@ -414,6 +439,9 @@ export const useRRHHStore = defineStore("RRHH", () => {
     setReciboSac(0);
     setTotalAnticipos(0);
     setTotalNeto(0);
+    setCustomRowsTot2([]);
+    setAnticiposRows([]);
+    setCustomRowsTot3([]);
   }
   function setBaseDataLastCall(value) {
     localStorage.removeItem("gu_ge:baseDataLastCall");
@@ -698,6 +726,24 @@ export const useRRHHStore = defineStore("RRHH", () => {
     localStorage.setItem("gu_ge:totalNeto", JSON.stringify(value));
     _totalNeto.value = value;
   }
+  function setCustomRowsTot2(value) {
+    localStorage.removeItem("gu_ge:customRowsTot2");
+    _customRowsTot2.value = null;
+    localStorage.setItem("gu_ge:customRowsTot2", JSON.stringify(value));
+    _customRowsTot2.value = value;
+  }
+  function setAnticiposRows(value) {
+    localStorage.removeItem("gu_ge:anticiposRows");
+    _anticiposRows.value = null;
+    localStorage.setItem("gu_ge:anticiposRows", JSON.stringify(value));
+    _anticiposRows.value = value;
+  }
+  function setCustomRowsTot3(value) {
+    localStorage.removeItem("gu_ge:customRowsTot3");
+    _customRowsTot3.value = null;
+    localStorage.setItem("gu_ge:customRowsTot3", JSON.stringify(value));
+    _customRowsTot3.value = value;
+  }
 
   return {
     clearAll,
@@ -838,5 +884,14 @@ export const useRRHHStore = defineStore("RRHH", () => {
 
     totalNeto,
     setTotalNeto,
+
+    customRowsTot2,
+    setCustomRowsTot2,
+
+    anticiposRows,
+    setAnticiposRows,
+
+    customRowsTot3,
+    setCustomRowsTot3,
   };
 });

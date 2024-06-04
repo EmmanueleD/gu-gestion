@@ -2,6 +2,7 @@
 import { computed } from "vue";
 import useGeneric from "@/composables/utils/useGeneric";
 import { useRRHHStore } from "@/stores/useRRHHStore";
+import { useDateFormat } from "@vueuse/core";
 
 const { decimalToHoursMinutes, formatCurrency } = useGeneric();
 const RRHH_STORE = useRRHHStore();
@@ -182,6 +183,15 @@ const presentismoAvailable = computed(() => {
       <span class="font-bold">{{ formatCurrency(RRHH_STORE.sac) }}</span>
     </div>
 
+    <div
+      v-for="row in RRHH_STORE.customRowsTot2"
+      :key="row"
+      class="col-12 flex justify-content-between align-items-center"
+    >
+      <span>{{ row.label }}</span>
+      <span class="font-bold">{{ formatCurrency(row.value) }}</span>
+    </div>
+
     <div class="col-12 flex justify-content-between align-items-center">
       <span class="text-blue-700 text-lg">TOTAL 2</span>
       <span class="text-blue-700 text-lg font-bold">{{
@@ -219,6 +229,24 @@ const presentismoAvailable = computed(() => {
     >
       <span>Recibo SAC</span>
       <span class="font-bold">{{ formatCurrency(RRHH_STORE.reciboSac) }}</span>
+    </div>
+
+    <div
+      v-for="row in RRHH_STORE.anticiposRows"
+      :key="row"
+      class="col-12 flex justify-content-between align-items-center"
+    >
+      <span>Adelanto: {{ useDateFormat(row.date, "DD-MM-YYYY").value }}</span>
+      <span class="font-bold">{{ formatCurrency(row.value) }}</span>
+    </div>
+
+    <div
+      v-for="row in RRHH_STORE.customRowsTot3"
+      :key="row"
+      class="col-12 flex justify-content-between align-items-center"
+    >
+      <span>{{ row.label }}</span>
+      <span class="font-bold">{{ formatCurrency(row.value) }}</span>
     </div>
 
     <div class="col-12 flex justify-content-between align-items-center">

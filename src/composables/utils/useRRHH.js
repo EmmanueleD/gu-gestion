@@ -98,6 +98,13 @@ export default function useRRHH() {
   }
 
   function handleTotalDos() {
+    let customRows2 = 0;
+    if (RRHH_STORE.customRowsTot2.length > 0) {
+      for (let row of RRHH_STORE.customRowsTot2) {
+        customRows2 += row.value;
+      }
+    }
+
     RRHH_STORE.setTotalDos(
       (RRHH_STORE.devolucionCC || 0) +
         (RRHH_STORE.rolPrincipalValue || 0) +
@@ -111,7 +118,8 @@ export default function useRRHH() {
         (RRHH_STORE.plusGu || 0) +
         (RRHH_STORE.feriados || 0) +
         (RRHH_STORE.vacaciones || 0) +
-        (RRHH_STORE.sac || 0)
+        (RRHH_STORE.sac || 0) +
+        customRows2
     );
   }
 
@@ -122,10 +130,27 @@ export default function useRRHH() {
   }
 
   function handleTotalAnticipos() {
+    let customRows3 = 0;
+    let anticipos = 0;
+
+    if (RRHH_STORE.customRowsTot3.length > 0) {
+      for (let row of RRHH_STORE.customRowsTot3) {
+        customRows3 += row.value;
+      }
+    }
+
+    if (RRHH_STORE.anticiposRows.length > 0) {
+      for (let row of RRHH_STORE.anticiposRows) {
+        anticipos += row.value;
+      }
+    }
+
     RRHH_STORE.setTotalAnticipos(
       (RRHH_STORE.cuentaCorriente || 0) +
         (RRHH_STORE.recibo || 0) +
-        (RRHH_STORE.reciboSac || 0)
+        (RRHH_STORE.reciboSac || 0) +
+        customRows3 +
+        anticipos
     );
   }
 
