@@ -30,10 +30,30 @@ export const useRRHHStore = defineStore("RRHH", () => {
   const _presentismo = ref(null);
   const _viatico = ref(null);
   const _rolPrincipalPerc = ref(null);
+  const _rolPrincipalValue = ref(null);
   const _staffExp = ref(null);
   const _antiguedad = ref(null);
+  const _antiguedadValue = ref(null);
   const _lastSuperYpf = ref(null);
   const _ayudaTransporte = ref(null);
+  const _plusGu = ref(null);
+  const _refuerzo = ref(null);
+  const _respCierre = ref(null);
+  const _horaReal = ref(null);
+  const _totalDos = ref(null);
+  const _staffExpValue = ref(null);
+  const _late = ref(null);
+  const _viaticoAvailable = ref(true);
+  const _feriadosAvailable = ref(false);
+  const _feriadoTime = ref(0);
+  const _feriados = ref(null);
+  const _numberOfShifts = ref(null);
+  const _cuentaCorriente = ref(null);
+  const _devolucionCC = ref(null);
+  const _descuentoCC = ref(null);
+  const _vacaciones = ref(null);
+  const _sac = ref(null);
+  const _totalTres = ref(null);
 
   //COMPUTED
   const baseDataLastCall = computed(() => {
@@ -116,12 +136,15 @@ export const useRRHHStore = defineStore("RRHH", () => {
   });
   const totalUno = computed(() => {
     if (!_totalUno.value) {
-      setTotalUno(JSON.parse(localStorage.getItem("gu_ge:totalUno")));
+      setTotalUno(JSON.parse(localStorage.getItem("gu_ge:totalUno") || 0));
     }
     return _totalUno.value;
   });
   const presentismoAvailable = computed(() => {
-    if (!_presentismoAvailable.value) {
+    if (
+      _presentismoAvailable.value === null ||
+      _presentismoAvailable.value === undefined
+    ) {
       setPresentismoAvailable(
         JSON.parse(localStorage.getItem("gu_ge:presentismoAvailable"))
       );
@@ -148,6 +171,14 @@ export const useRRHHStore = defineStore("RRHH", () => {
     }
     return _rolPrincipalPerc.value;
   });
+  const rolPrincipalValue = computed(() => {
+    if (!_rolPrincipalValue.value) {
+      setRolPrincipalValue(
+        JSON.parse(localStorage.getItem("gu_ge:rolPrincipalValue"))
+      );
+    }
+    return _rolPrincipalValue.value;
+  });
   const staffExp = computed(() => {
     if (!_staffExp.value) {
       setStaffExp(JSON.parse(localStorage.getItem("gu_ge:staffExp")));
@@ -159,6 +190,14 @@ export const useRRHHStore = defineStore("RRHH", () => {
       setAntiguedad(JSON.parse(localStorage.getItem("gu_ge:antiguedad")));
     }
     return _antiguedad.value;
+  });
+  const antiguedadValue = computed(() => {
+    if (!_antiguedadValue.value) {
+      setAntiguedadValue(
+        JSON.parse(localStorage.getItem("gu_ge:antiguedadValue"))
+      );
+    }
+    return _antiguedadValue.value;
   });
   const lastSuperYpf = computed(() => {
     if (!_lastSuperYpf.value) {
@@ -174,8 +213,174 @@ export const useRRHHStore = defineStore("RRHH", () => {
     }
     return _ayudaTransporte.value;
   });
+  const plusGu = computed(() => {
+    if (!_plusGu.value) {
+      setPlusGu(JSON.parse(localStorage.getItem("gu_ge:plusGu")));
+    }
+    return _plusGu.value;
+  });
+  const refuerzo = computed(() => {
+    if (!_refuerzo.value) {
+      setRefuerzo(JSON.parse(localStorage.getItem("gu_ge:refuerzo")));
+    }
+    return _refuerzo.value;
+  });
+  const respCierre = computed(() => {
+    if (!_respCierre.value) {
+      setRespCierre(JSON.parse(localStorage.getItem("gu_ge:respCierre")));
+    }
+    return _respCierre.value;
+  });
+  const horaReal = computed(() => {
+    if (!_horaReal.value) {
+      setHoraReal(JSON.parse(localStorage.getItem("gu_ge:horaReal")));
+    }
+    return _horaReal.value;
+  });
+  const totalDos = computed(() => {
+    if (!_totalDos.value) {
+      setTotalDos(JSON.parse(localStorage.getItem("gu_ge:totalDos")));
+    }
+    return _totalDos.value;
+  });
+  const staffExpValue = computed(() => {
+    if (!_staffExpValue.value) {
+      setStaffExpValue(JSON.parse(localStorage.getItem("gu_ge:staffExpValue")));
+    }
+    return _staffExpValue.value;
+  });
+  const late = computed(() => {
+    if (!_late.value) {
+      setLate(JSON.parse(localStorage.getItem("gu_ge:late")));
+    }
+    return _late.value;
+  });
+  const viaticoAvailable = computed(() => {
+    if (
+      _viaticoAvailable.value === null ||
+      _viaticoAvailable.value === undefined
+    ) {
+      setViaticoAvailable(
+        JSON.parse(localStorage.getItem("gu_ge:viaticoAvailable"))
+      );
+    }
+    return _viaticoAvailable.value;
+  });
+  const feriadosAvailable = computed(() => {
+    if (!_feriadosAvailable.value) {
+      setFeriadosAvailable(
+        JSON.parse(localStorage.getItem("gu_ge:feriadosAvailable"))
+      );
+    }
+    return _feriadosAvailable.value;
+  });
+  const feriadoTime = computed(() => {
+    if (_feriadoTime.value === null || _feriadoTime.value === undefined) {
+      setFeriadoTime(JSON.parse(localStorage.getItem("gu_ge:feriadoTime")));
+    }
+    return _feriadoTime.value;
+  });
+  const feriados = computed(() => {
+    if (!_feriados.value) {
+      setFeriados(JSON.parse(localStorage.getItem("gu_ge:feriados")));
+    }
+    return _feriados.value;
+  });
+  const numberOfShifts = computed(() => {
+    if (!_numberOfShifts.value) {
+      setNomberOfShifts(
+        JSON.parse(localStorage.getItem("gu_ge:numberOfShifts"))
+      );
+    }
+    return _numberOfShifts.value;
+  });
+  const cuentaCorriente = computed(() => {
+    if (
+      _cuentaCorriente.value === null ||
+      _cuentaCorriente.value === undefined
+    ) {
+      setCuentaCorriente(
+        JSON.parse(localStorage.getItem("gu_ge:cuentaCorriente"))
+      );
+    }
+    return _cuentaCorriente.value;
+  });
+  const devolucionCC = computed(() => {
+    if (_devolucionCC.value === null || _devolucionCC.value === undefined) {
+      setDevolucionCC(JSON.parse(localStorage.getItem("gu_ge:devolucionCC")));
+    }
+    return _devolucionCC.value;
+  });
+  const descuentoCC = computed(() => {
+    if (_descuentoCC.value === null || _descuentoCC.value === undefined) {
+      setDescuentoCC(JSON.parse(localStorage.getItem("gu_ge:descuentoCC")));
+    }
+    return _descuentoCC.value;
+  });
+  const vacaciones = computed(() => {
+    if (_vacaciones.value === null || _vacaciones.value === undefined) {
+      setVacaciones(JSON.parse(localStorage.getItem("gu_ge:vacaciones")));
+    }
+    return _vacaciones.value;
+  });
+  const sac = computed(() => {
+    if (_sac.value === null || _sac.value === undefined) {
+      setSac(JSON.parse(localStorage.getItem("gu_ge:sac")));
+    }
+    return _sac.value;
+  });
+  const totalTres = computed(() => {
+    if (!_totalTres.value) {
+      setTotalTres(JSON.parse(localStorage.getItem("gu_ge:totalTres")));
+    }
+    return _totalTres.value;
+  });
 
   //FUNCTIONS
+  function clearAll() {
+    setBaseDataLastCall(null);
+    setSessionToken(null);
+    setCurrentEmployee(null);
+    setFreeFingerId(null);
+    setStaffRoleOptions(null);
+    setLastBaseHourValue(null);
+    setLastViaticoValue(null);
+    setLastPresentismoValue(null);
+    setFingerId(null);
+    setTotalHours(null);
+    setStaffName(null);
+    setTotalUno(null);
+    setPresentismoAvailable(null);
+    setPresentismo(null);
+    setViatico(null);
+    setRolPrincipalPerc(null);
+    setRolPrincipalValue(null);
+    setStaffExp(null);
+    setAntiguedad(null);
+    setAntiguedadValue(null);
+    setLastSuperYpf(null);
+    setAyudaTransporte(null);
+    setPlusGu(null);
+    setRefuerzo(null);
+    setRespCierre(null);
+    setHoraReal(null);
+    setTotalDos(null);
+    setStaffExpValue(null);
+    setViaticoAvailable(null);
+    setFeriadosAvailable(null);
+    setFeriadoTime(0);
+    setFeriados(null);
+    setNumberOfShifts(null);
+    setLate(0);
+    setFeriados(null);
+    setNumberOfShifts(null);
+    setCuentaCorriente(null);
+    setDevolucionCC(null);
+    setDescuentoCC(null);
+    setVacaciones(null);
+    setSac(null);
+    setTotalTres(null);
+  }
   function setBaseDataLastCall(value) {
     localStorage.removeItem("gu_ge:baseDataLastCall");
     _baseDataLastCall.value = null;
@@ -275,6 +480,12 @@ export const useRRHHStore = defineStore("RRHH", () => {
     localStorage.setItem("gu_ge:rolPrincipalPerc", JSON.stringify(value));
     _rolPrincipalPerc.value = value;
   }
+  function setRolPrincipalValue(value) {
+    localStorage.removeItem("gu_ge:rolPrincipalValue");
+    _rolPrincipalValue.value = null;
+    localStorage.setItem("gu_ge:rolPrincipalValue", JSON.stringify(value));
+    _rolPrincipalValue.value = value;
+  }
   function setMapStaffRoleOptions(value) {
     localStorage.removeItem("gu_ge:mapStaffRoleOptions");
     _MAP_STAFF_ROLE_OPTIONS.value = null;
@@ -293,6 +504,12 @@ export const useRRHHStore = defineStore("RRHH", () => {
     localStorage.setItem("gu_ge:antiguedad", JSON.stringify(value));
     _antiguedad.value = value;
   }
+  function setAntiguedadValue(value) {
+    localStorage.removeItem("gu_ge:antiguedadValue");
+    _antiguedadValue.value = null;
+    localStorage.setItem("gu_ge:antiguedadValue", JSON.stringify(value));
+    _antiguedadValue.value = value;
+  }
   function setLastSuperYpf(value) {
     localStorage.removeItem("gu_ge:lastSuperYpf");
     _lastSuperYpf.value = null;
@@ -305,8 +522,128 @@ export const useRRHHStore = defineStore("RRHH", () => {
     localStorage.setItem("gu_ge:ayudaTransporte", JSON.stringify(value));
     _ayudaTransporte.value = value;
   }
+  function setPlusGu(value) {
+    localStorage.removeItem("gu_ge:plusGu");
+    _plusGu.value = null;
+    localStorage.setItem("gu_ge:plusGu", JSON.stringify(value));
+    _plusGu.value = value;
+  }
+  function setRefuerzo(value) {
+    localStorage.removeItem("gu_ge:refuerzo");
+    _refuerzo.value = null;
+    localStorage.setItem("gu_ge:refuerzo", JSON.stringify(value));
+    _refuerzo.value = value;
+  }
+  function setRespCierre(value) {
+    localStorage.removeItem("gu_ge:respCierre");
+    _respCierre.value = null;
+    localStorage.setItem("gu_ge:respCierre", JSON.stringify(value));
+    _respCierre.value = value;
+  }
+  function setHoraReal(value) {
+    localStorage.removeItem("gu_ge:horaReal");
+    _horaReal.value = null;
+    localStorage.setItem("gu_ge:horaReal", JSON.stringify(value));
+    _horaReal.value = value;
+  }
+  function setTotalDos(value) {
+    localStorage.removeItem("gu_ge:totalDos");
+    _totalDos.value = null;
+    localStorage.setItem("gu_ge:totalDos", JSON.stringify(value));
+    _totalDos.value = value;
+  }
+  function setStaffExpValue(value) {
+    localStorage.removeItem("gu_ge:staffExpValue");
+    _staffExpValue.value = null;
+    localStorage.setItem("gu_ge:staffExpValue", JSON.stringify(value));
+    _staffExpValue.value = value;
+  }
+  function setLate(value) {
+    localStorage.removeItem("gu_ge:late");
+    _late.value = null;
+    localStorage.setItem("gu_ge:late", JSON.stringify(value));
+    _late.value = value;
+  }
+  function handleVariationLate(value) {
+    let original = _late.value;
+    original = original + value;
+    setLate(original);
+  }
+  function setViaticoAvailable(value) {
+    localStorage.removeItem("gu_ge:viaticoAvailable");
+    _viaticoAvailable.value = null;
+    localStorage.setItem("gu_ge:viaticoAvailable", JSON.stringify(value));
+    _viaticoAvailable.value = value;
+  }
+  function setFeriadosAvailable(value) {
+    localStorage.removeItem("gu_ge:feriadosAvailable");
+    _feriadosAvailable.value = null;
+    localStorage.setItem("gu_ge:feriadosAvailable", JSON.stringify(value));
+    _feriadosAvailable.value = value;
+  }
+  function setFeriadoTime(value) {
+    localStorage.removeItem("gu_ge:feriadoTime");
+    _feriadoTime.value = null;
+    localStorage.setItem("gu_ge:feriadoTime", JSON.stringify(value));
+    _feriadoTime.value = value;
+  }
+  function handleVariationFeriatoTime(value) {
+    let original = _feriadoTime.value;
+    original = original + value;
+    setFeriadoTime(original);
+  }
+  function setFeriados(value) {
+    localStorage.removeItem("gu_ge:feriados");
+    _feriados.value = null;
+    localStorage.setItem("gu_ge:feriados", JSON.stringify(value));
+    _feriados.value = value;
+  }
+  function setNumberOfShifts(value) {
+    localStorage.removeItem("gu_ge:numberOfShifts");
+    _numberOfShifts.value = null;
+    localStorage.setItem("gu_ge:numberOfShifts", JSON.stringify(value));
+    _numberOfShifts.value = value;
+  }
+  function setCuentaCorriente(value) {
+    localStorage.removeItem("gu_ge:cuentaCorriente");
+    _cuentaCorriente.value = null;
+    localStorage.setItem("gu_ge:cuentaCorriente", JSON.stringify(value));
+    _cuentaCorriente.value = value;
+  }
+  function setDevolucionCC(value) {
+    localStorage.removeItem("gu_ge:devolucionCC");
+    _devolucionCC.value = null;
+    localStorage.setItem("gu_ge:devolucionCC", JSON.stringify(value));
+    _devolucionCC.value = value;
+  }
+  function setDescuentoCC(value) {
+    localStorage.removeItem("gu_ge:descuentoCC");
+    _descuentoCC.value = null;
+    localStorage.setItem("gu_ge:descuentoCC", JSON.stringify(value));
+    _descuentoCC.value = value;
+  }
+  function setVacaciones(value) {
+    localStorage.removeItem("gu_ge:vacaciones");
+    _vacaciones.value = null;
+    localStorage.setItem("gu_ge:vacaciones", JSON.stringify(value));
+    _vacaciones.value = value;
+  }
+  function setSac(value) {
+    localStorage.removeItem("gu_ge:sac");
+    _sac.value = null;
+    localStorage.setItem("gu_ge:sac", JSON.stringify(value));
+    _sac.value = value;
+  }
+  function setTotalTres(value) {
+    localStorage.removeItem("gu_ge:totalTres");
+    _totalTres.value = null;
+    localStorage.setItem("gu_ge:totalTres", JSON.stringify(value));
+    _totalTres.value = value;
+  }
 
   return {
+    clearAll,
+
     MAP_STAFF_ROLE_OPTIONS,
     setMapStaffRoleOptions,
 
@@ -358,16 +695,78 @@ export const useRRHHStore = defineStore("RRHH", () => {
     rolPrincipalPerc,
     setRolPrincipalPerc,
 
+    rolPrincipalValue,
+    setRolPrincipalValue,
+
     staffExp,
     setStaffExp,
 
     antiguedad,
     setAntiguedad,
 
+    antiguedadValue,
+    setAntiguedadValue,
+
     lastSuperYpf,
     setLastSuperYpf,
 
     ayudaTransporte,
     setAyudaTransporte,
+
+    plusGu,
+    setPlusGu,
+
+    refuerzo,
+    setRefuerzo,
+
+    respCierre,
+    setRespCierre,
+
+    horaReal,
+    setHoraReal,
+
+    totalDos,
+    setTotalDos,
+
+    staffExpValue,
+    setStaffExpValue,
+
+    late,
+    setLate,
+    handleVariationLate,
+
+    viaticoAvailable,
+    setViaticoAvailable,
+
+    feriadosAvailable,
+    setFeriadosAvailable,
+
+    feriadoTime,
+    setFeriadoTime,
+    handleVariationFeriatoTime,
+
+    feriados,
+    setFeriados,
+
+    numberOfShifts,
+    setNumberOfShifts,
+
+    cuentaCorriente,
+    setCuentaCorriente,
+
+    devolucionCC,
+    setDevolucionCC,
+
+    descuentoCC,
+    setDescuentoCC,
+
+    vacaciones,
+    setVacaciones,
+
+    sac,
+    setSac,
+
+    totalTres,
+    setTotalTres,
   };
 });

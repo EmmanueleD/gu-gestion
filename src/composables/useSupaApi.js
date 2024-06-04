@@ -633,7 +633,7 @@ export default function useSupaApi() {
         },
       });
 
-      if (dbResponseStatus.value === "OK") {
+      if (dbResponseStatus.value === "OK" && dbResp.value.length > 0) {
         return dbResp.value[0];
       } else {
         throw new Error("getProfileFromFingerId");
@@ -880,6 +880,61 @@ export default function useSupaApi() {
     }
   }
 
+  async function getStaffPlusGu(profileId) {
+    try {
+      await getWithFilter({
+        table: "mod_plus_gu",
+        orderingBy: "created_at",
+        filter: {
+          column: "profile_id",
+          value: profileId,
+        },
+      });
+
+      if (dbResponseStatus.value === "OK") {
+        if (dbResp.value.length > 0) {
+          return dbResp.value[0].value;
+        } else {
+          return 0;
+        }
+      } else {
+        throw new Error("getLastSuperYpf");
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async function getLastRefuerzo() {
+    try {
+      await getLastOne({
+        table: "mod_refuerzo",
+      });
+      if (dbResponseStatus.value === "OK") {
+        return dbResp.value[0].value;
+      } else {
+        throw new Error("getLastRefuerzo");
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async function getLastRespCierre() {
+    try {
+      await getLastOne({
+        table: "mod_resp_cierre",
+      });
+      if (dbResponseStatus.value === "OK") {
+        return dbResp.value[0].value;
+      } else {
+        throw new Error("getLastRespCierre");
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   return {
     getEmployeeOptions,
     getGestRoleOptions,
@@ -921,5 +976,8 @@ export default function useSupaApi() {
     deleteComunidadRelaciones,
     getExcelFiles,
     saveProfile,
+    getStaffPlusGu,
+    getLastRefuerzo,
+    getLastRespCierre,
   };
 }

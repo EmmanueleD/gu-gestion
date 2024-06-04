@@ -20,6 +20,10 @@ const {
   getStaffAntiguedad,
   getStaffDistance,
   getLastSuperYpf,
+  getStaffPlusGu,
+  getLastRefuerzo,
+  getLastRespCierre,
+  getStaffDescuentoCC,
 } = useSupaApi();
 
 const { extractActivePeriods, calculateTotalTime } = useDatetime();
@@ -86,9 +90,34 @@ export default function useRRHH() {
   function handleTotalUno() {
     if (!RRHH_STORE.lastBaseHourValue || !RRHH_STORE.totalHours) {
       RRHH_STORE.setTotalUno(0);
+      return;
     }
     RRHH_STORE.setTotalUno(
       RRHH_STORE.lastBaseHourValue * RRHH_STORE.totalHours
+    );
+  }
+
+  function handleTotalDos() {
+    RRHH_STORE.setTotalDos(
+      (RRHH_STORE.devolucionCC || 0) +
+        (RRHH_STORE.rolPrincipalValue || 0) +
+        (RRHH_STORE.staffExpValue || 0) +
+        (RRHH_STORE.viatico || 0) +
+        (RRHH_STORE.presentismo || 0) +
+        (RRHH_STORE.antiguedadValue || 0) +
+        (RRHH_STORE.ayudaTransporte || 0) +
+        (RRHH_STORE.respCierre || 0) +
+        (RRHH_STORE.refuerzo || 0) +
+        (RRHH_STORE.plusGu || 0) +
+        (RRHH_STORE.feriados || 0) +
+        (RRHH_STORE.vacaciones || 0) +
+        (RRHH_STORE.sac || 0)
+    );
+  }
+
+  function handleTotalTres() {
+    RRHH_STORE.setTotalTres(
+      (RRHH_STORE.totalDos || 0) + (RRHH_STORE.totalUno || 0)
     );
   }
 
@@ -105,8 +134,10 @@ export default function useRRHH() {
   function handleViatico() {
     if (!RRHH_STORE.currentEmployee.viatico) {
       RRHH_STORE.setViatico(0);
+      RRHH_STORE.setViaticoAvailable(false);
       return;
     }
+    RRHH_STORE.setViaticoAvailable(true);
     RRHH_STORE.setViatico(RRHH_STORE.lastViaticoValue * RRHH_STORE.totalUno);
   }
 
@@ -121,11 +152,96 @@ export default function useRRHH() {
     );
   }
 
+  function calcHoraReal() {
+    //totHours
+    let totHours = RRHH_STORE.totalHours || 0;
+    //base ok
+    let totUno = RRHH_STORE.totalUno || 0;
+    //rol ok
+    let mainRol = RRHH_STORE.rolPrincipalPerc * RRHH_STORE.totalUno || 0;
+    RRHH_STORE.setRolPrincipalValue(mainRol);
+    //exp ok
+    let exp = (RRHH_STORE.staffExp * totUno) / 100 || 0;
+    RRHH_STORE.setStaffExpValue(exp);
+    //viatico
+    let viatico = RRHH_STORE.viatico || 0;
+    //presentismo
+    let presentismo = RRHH_STORE.presentismo || 0;
+    //plusGu
+    let plusGu = RRHH_STORE.plusGu || 0;
+    //refuerzo
+    let refuerzo = RRHH_STORE.refuerzo || 0;
+    //respCierre
+    let respCierre = RRHH_STORE.respCierre || 0;
+    //ayudaTransporte
+    let ayudaTransporte = RRHH_STORE.ayudaTransporte || 0;
+    //antiguedad
+    let antiguedad = RRHH_STORE.antiguedadValue || 0;
+
+    let horaReal =
+      (totUno +
+        mainRol +
+        exp +
+        viatico +
+        presentismo +
+        plusGu +
+        refuerzo +
+        respCierre +
+        ayudaTransporte +
+        antiguedad) /
+      totHours;
+
+    RRHH_STORE.setHoraReal(horaReal);
+  }
+
+  async function handleDevolucionCC() {
+    try {
+      let descuento = await getStaffDescuentoCC(RRHH_STORE.currentEmployee.id);
+      let cc = RRHH_STORE.cuentaCorriente || 0;
+      if (descuento) {
+        RRHH_STORE.setDescuentoCC(descuento);
+        RRHH_STORE.setCuentaCorriente(cc);
+        RRHH_STORE.setDevolucionCC((cc * descuento) / 100);
+      } else {
+        RRHH_STORE.setDevolucionCC(0);
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async function handleRefuerzo() {
+    try {
+      let res = await getLastRefuerzo();
+      if (RRHH_STORE.currentEmployee.refuerzo) {
+        RRHH_STORE.setRefuerzo((res * RRHH_STORE.totalUno) / 100);
+      } else {
+        RRHH_STORE.setRefuerzo(0);
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async function handleRespCierre() {
+    try {
+      let res = await getLastRespCierre();
+      if (RRHH_STORE.currentEmployee.resp_cierre) {
+        RRHH_STORE.setRespCierre((res * RRHH_STORE.totalUno) / 100);
+      } else {
+        RRHH_STORE.setRespCierre(0);
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   async function getStaffData(staffFingerId) {
     try {
       let res = await getProfileFromFingerId(staffFingerId);
       RRHH_STORE.setCurrentEmployee(res);
     } catch (error) {
+      RRHH_STORE.setCurrentEmployee(null);
       throw new Error(error);
     }
   }
@@ -138,16 +254,17 @@ export default function useRRHH() {
       expExterna = await getStaffExpExterna(idStaff);
       expGuelcom = await getStaffExpGuelcom(idStaff);
       roles = await getStaffRoles(idStaff);
+
+      RRHH_STORE.setStaffExp(
+        Number(expTitulos.value) +
+          Number(expExterna.value) +
+          Number(expGuelcom.value) +
+          Number(roles.length * 2)
+      );
     } catch (error) {
+      RRHH_STORE.setStaffExp(0);
       throw new Error(error);
     }
-
-    RRHH_STORE.setStaffExp(
-      Number(expTitulos.value) +
-        Number(expExterna.value) +
-        Number(expGuelcom.value) +
-        Number(roles.length * 2)
-    );
   }
 
   async function handleAntiguedad() {
@@ -164,9 +281,31 @@ export default function useRRHH() {
   }
 
   async function handleCustomAntiguedad() {
+    // PRENDERE IL VALORE SU profiles.antiguedad
     try {
-      let res = await getStaffAntiguedad(RRHH_STORE.currentEmployee.id);
-      RRHH_STORE.setAntiguedad(res.value);
+      let antiguedadPerc = await getStaffAntiguedad(
+        RRHH_STORE.currentEmployee.id
+      );
+      let aniosTrabajados = RRHH_STORE.currentEmployee.antiguedad;
+      if (!aniosTrabajados) aniosTrabajados = 0;
+
+      RRHH_STORE.setAntiguedadValue(
+        (RRHH_STORE.totalUno * antiguedadPerc.value) / 100
+      );
+      RRHH_STORE.setAntiguedad(antiguedadPerc.value);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async function handlePlusGuelcom() {
+    try {
+      let res = await getStaffPlusGu(RRHH_STORE.currentEmployee.id);
+      if (res.value) {
+        RRHH_STORE.setPlusGu(res.value);
+      } else {
+        RRHH_STORE.setPlusGu(0);
+      }
     } catch (error) {
       throw new Error(error);
     }
@@ -175,18 +314,28 @@ export default function useRRHH() {
   async function handleAyudaTransporte() {
     try {
       let distance = await getStaffDistance(RRHH_STORE.currentEmployee.id);
-      RRHH_STORE.setAyudaTransporte(RRHH_STORE.lastSuperYpf * distance);
+
+      RRHH_STORE.setAyudaTransporte(
+        RRHH_STORE.lastSuperYpf * (distance / 10) * RRHH_STORE.numberOfShifts
+      );
     } catch (error) {
       throw new Error(error);
     }
   }
 
-  async function handleFeriados() {
-    if (!RRHH_STORE.feriados) {
+  function handleFeriados() {
+    RRHH_STORE.setFeriadosAvailable(RRHH_STORE.currentEmployee.feriados);
+    if (RRHH_STORE.currentEmployee.feriados) {
+      RRHH_STORE.setFeriados(
+        RRHH_STORE.feriadoTime * RRHH_STORE.lastBaseHourValue
+      );
+    } else {
       RRHH_STORE.setFeriados(0);
-      return;
     }
   }
+
+  function handleVacaciones() {}
+  function handleSac() {}
 
   async function getBaseDataRRHH(force = false) {
     //check if last call is less than 24 hours ago
@@ -201,7 +350,7 @@ export default function useRRHH() {
     RRHH_STORE.setBaseDataLastCall(new Date());
 
     //get all common data for all staff
-    Promise.all([
+    await Promise.all([
       _getStaffRoleOptions(),
       _getLastBaseHourValue(),
       _getLastViaticoValue(),
@@ -210,32 +359,70 @@ export default function useRRHH() {
     ]);
   }
 
-  async function calcResumenSalarial(staffFingerId) {
+  async function calcResumenSalarial() {
     try {
       await getBaseDataRRHH();
-      await getStaffData(staffFingerId);
-    } catch (error) {
-      throw new Error(error);
-    } finally {
+
+      //1.1 OK
+      // hora base (in getBaseDataRRHH)
+
+      //1.3 OK
+      // tot horas
       // total 1
       handleTotalUno();
 
-      // total 2
+      //2.1 OK
       handlePresentismo();
+      //2.2 OK
       handleViatico();
+      //2.3 OK
       handleRolPrincipal();
-      handleStaffExp();
+      //2.4 OK
+      await handleStaffExp();
+      //2.5 OK
+      handleCustomAntiguedad();
+      //2.6 OK
       handleAyudaTransporte();
+      //2.7 OK
+      handleRespCierre();
+      //2.8 OK
+      await handleRefuerzo();
+      //2.9 OK
+      await handlePlusGuelcom();
+      //2.10
+      await handleDevolucionCC();
+      //2.11
+      handleFeriados();
+      //2.12
+      handleVacaciones(); // non fa nulla
+      //2.13
+      handleSac(); // non fa nulla
+      // total 2 OK
+      handleTotalDos();
 
       // total 3
-      // handleAntiguedad(); Se calcula con los tiempos de status: ACTIVO
-      handleCustomAntiguedad(); // Se calcula con un input custom del valor de antiguedad
-      handleFeriados();
-      // total anticipos
+      handleTotalTres();
 
-      // total neto
+      // 5.1
+      // 5.2
+      // 5.3
+      // 5.4
+      // total 5
+
+      //1.2 OK
+      calcHoraReal();
+
+      // total 6
+    } catch (error) {
+      throw new Error(error);
+    } finally {
     }
   }
 
-  return { calcResumenSalarial, handlePresentismo };
+  return {
+    calcResumenSalarial,
+    handlePresentismo,
+    handleTotalDos,
+    handleTotalTres,
+  };
 }
