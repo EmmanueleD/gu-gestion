@@ -75,7 +75,7 @@ function lastDayOfCurrentMonth() {
   ); // Format the date string
 }
 
-async function getData() {
+async function getData(filter) {
   loadingPaycheckList.value = true;
 
   let result;
@@ -101,19 +101,30 @@ async function getData() {
   try {
     result = await sbDB("paycheck")
       .select("*")
-      .gt("reference_date", start)
-      .lt("reference_date", end);
+      .gt("startDate", filter.start)
+      .lt("endDate", filter.end);
   } catch (error) {
     console.log(error);
   } finally {
-    console.log("RESULT", result);
+    console.log("RESULT", result.data);
     paycheckList.value = result.data;
     loadingPaycheckList.value = false;
   }
 }
 
 onMounted(async () => {
-  await getData();
+  await getData({
+    // 31th december of last year
+    start: new Date(new Date().getFullYear() - 1, 11, 31)
+      .toISOString()
+      .slice(0, 10)
+      .replace(/-/g, "/"),
+    //1th january of next year
+    end: new Date(new Date().getFullYear() + 1, 0, 1)
+      .toISOString()
+      .slice(0, 10)
+      .replace(/-/g, "/"),
+  });
 });
 </script>
 
@@ -135,7 +146,7 @@ onMounted(async () => {
       </div>
 
       <div class="col-12 flex justify-content-end align-items-center">
-        <Button
+        <!-- <Button
           :label="
             'Mes pasado' +
             ' (' +
@@ -159,11 +170,11 @@ onMounted(async () => {
             toDate = lastDayOfCurrentMonth();
             getData();
           "
-        ></Button>
+        ></Button> -->
         <Button
           :disabled="!fromDate || !toDate"
           :loading="loadingPaycheckList"
-          @click="getData"
+          @click="getData({ start: fromDate, end: toDate })"
           label="Filtrar"
           icon="pi pi-filter"
           class="w-auto"
@@ -199,26 +210,25 @@ onMounted(async () => {
           <Button
             class="p-button-outlined mr-2"
             icon="pi pi-eye"
-            @click="handleDeleteValue(data)"
+            @click="showSidebar(data)"
           />
         </template>
       </Column>
-      <Column field="reference_date" header="Fecha">
+      <Column field="startDate" header="Fecha primer dia">
         <template #body="{ data }">
-          {{ useDateFormat(data.reference_date, "DD/MM/YYYY").value }}
+          {{ useDateFormat(data.startDate, "DD/MM/YYYY").value }}
         </template>
       </Column>
-      <Column field="profile_name" header="Nombre"></Column>
-
-      <Column field="value.total3" header="Bruto">
+      <Column field="endDate" header="Fecha ultimo dia">
         <template #body="{ data }">
-          {{ formatCurrency(data.value.bruto) }}
+          {{ useDateFormat(data.endDate, "DD/MM/YYYY").value }}
         </template>
       </Column>
+      <Column field="staffName" header="Nombre"></Column>
 
-      <Column field="value.cuentaCorriente" header="Cuenta Corriente">
+      <Column field="totalNeto" header="Neto">
         <template #body="{ data }">
-          {{ formatCurrency(data.value.cuentaCorriente) }}
+          {{ formatCurrency(data.totalNeto) }}
         </template>
       </Column>
     </DataTable>

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed, watch } from "vue";
+import { ref, onMounted, computed } from "vue";
 
 import useSupabaseStorage from "@/composables/useSupabaseStorage";
 import useGuCalculator from "@/composables/gu-calculator/useGuCalculator";
@@ -13,7 +13,6 @@ import { useDateFormat } from "@vueuse/core";
 import { useStorageStore } from "@/stores/useStorageStore";
 import { useRRHHStore } from "@/stores/useRRHHStore";
 
-import BaseInput from "@/components/base/BaseInput.vue";
 import ResumenSalarial from "@/components/sub-components/ResumenSalarial.vue";
 import ResumenSalarialPanelControl from "@/components/sub-components/ResumenSalarialPanelControl.vue";
 
@@ -25,10 +24,6 @@ const { calcResumenSalarial, handleTotales } = useRRHH();
 
 function formattedDate(date) {
   return useDateFormat(date, "ddd DD/MM/YY HH:mm").value;
-}
-
-function simpleFormattedDate(date) {
-  return useDateFormat(date, "DD-MM-YY").value;
 }
 
 const { decimalToHoursMinutes, formatCurrency } = useGeneric();
@@ -49,8 +44,6 @@ const sidebarData = ref({});
 
 const docsOptions = ref([]);
 const filtro = ref("");
-
-const staffId = ref("");
 
 const fileOptions = ref({
   name: "",
@@ -140,6 +133,8 @@ function handleCellEdit(event) {
     );
   }
 
+  RRHH_STORE.setTurnos(sidebarData.value.data);
+
   handleTotales();
 }
 
@@ -157,7 +152,6 @@ function handleDownload() {
 }
 
 async function showSidebar(data) {
-  RRHH_STORE.clearAll();
   loadingSidebar.value = true;
   RRHH_STORE.setFingerId(data.fingerId);
   RRHH_STORE.setTotalHours(data.totalHours);
@@ -165,6 +159,7 @@ async function showSidebar(data) {
   RRHH_STORE.setStaffName(data.name);
   RRHH_STORE.setPresentismoAvailable(true);
   RRHH_STORE.setLate(0);
+  RRHH_STORE.setTurnos(data.data);
   let currentEmployee = await getProfileFromFingerId(data.fingerId);
   RRHH_STORE.setCurrentEmployee(currentEmployee);
 

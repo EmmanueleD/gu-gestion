@@ -1,14 +1,33 @@
 <script setup>
-import { computed } from "vue";
+import { ref, computed } from "vue";
 import useGeneric from "@/composables/utils/useGeneric";
+import useSupaApi from "@/composables/useSupaApi";
+import useCustomToast from "@/composables/utils/useCustomToast";
 import { useRRHHStore } from "@/stores/useRRHHStore";
 import { useDateFormat } from "@vueuse/core";
 
+const { savePaycheck } = useSupaApi();
+const { showError } = useCustomToast();
 const { decimalToHoursMinutes, formatCurrency } = useGeneric();
 const RRHH_STORE = useRRHHStore();
 const presentismoAvailable = computed(() => {
   return RRHH_STORE.presentismoAvailable;
 });
+
+const loadingSaveRecibo = ref(false);
+const loadingDownloadRecibo = ref(false);
+
+async function handleSaveRecibo() {
+  loadingSaveRecibo.value = true;
+  try {
+    await savePaycheck();
+  } catch (error) {
+    showError("Error al generar recibo");
+    console.log("Error al generar recibo", error);
+  } finally {
+    loadingSaveRecibo.value = false;
+  }
+}
 </script>
 <template>
   <div class="w-full grid p-2">
@@ -200,7 +219,7 @@ const presentismoAvailable = computed(() => {
     </div>
 
     <div class="col-12 flex justify-content-between align-items-center">
-      <span class="text-blue-700 text-lg font-bold">TOTAL 3 (TOT1 + TOT2)</span>
+      <span class="text-blue-700 text-lg font-bold">TOT1 + TOT2</span>
       <span class="text-blue-700 text-lg font-bold">{{
         formatCurrency(RRHH_STORE.totalTres)
       }}</span>
@@ -265,6 +284,18 @@ const presentismoAvailable = computed(() => {
       <span class="text-blue-700 text-2xl font-bold">{{
         formatCurrency(RRHH_STORE.totalNeto)
       }}</span>
+    </div>
+
+    <Divider class="col-12" />
+
+    <div class="col-12 flex justify-content-end align-items-center">
+      <Button
+        label="Descargar"
+        icon="pi pi-download"
+        class="p-button-outlined mr-2"
+        @click="handleDownloadRecibo"
+      />
+      <Button label="Guardar" icon="pi pi-save" @click="handleSaveRecibo" />
     </div>
   </div>
 </template>

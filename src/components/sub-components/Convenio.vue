@@ -68,9 +68,7 @@ const staffAntiguedad = ref({ description: "", value: 0 });
 const expGuelcom = ref({ description: "", value: 0 });
 const expTitulos = ref({ description: "", value: 0 });
 const expExterna = ref({ description: "", value: 0 });
-const expRoles = computed(() => {
-  return roleSelected.value.length * 2;
-});
+const expRoles = ref(0);
 
 const distancia = ref();
 const ayudaTransporteNumber = computed(() => {
@@ -82,6 +80,10 @@ const ayudaTransporteNumber = computed(() => {
 });
 const descuentoCC = ref();
 const antiguedad = ref();
+
+function handleRoleChange() {
+  expRoles.value = roleSelected.value.length * 2;
+}
 
 async function saveConvenio() {
   loadingSave.value = true;
@@ -124,6 +126,7 @@ async function saveConvenio() {
 onMounted(async () => {
   loadingRoleOptions.value = true;
   loadingStatusOptions.value = true;
+  roleOptions.value.splice(0);
   try {
     roleOptions.value = await getStaffRoleOptions();
     statusOptions.value = await getStatusOptions();
@@ -192,6 +195,7 @@ onMounted(async () => {
           v-model="roleSelected"
           optionLabel="label"
           optionValue="staff_role_id"
+          @change="handleRoleChange"
         ></MultiSelect>
       </BaseInput>
     </div>
@@ -321,11 +325,7 @@ onMounted(async () => {
     <div class="col-12 flex flex-column mb-2">
       <div class="w-full flex justify-content-start align-items-center">
         <BaseInput label="2% por cada rol" class="mr-2 mb-2">
-          <InputNumber
-            :disabled="true"
-            v-model="expRoles"
-            suffix="%"
-          ></InputNumber>
+          <InputNumber v-model="expRoles" suffix="%"></InputNumber>
         </BaseInput>
       </div>
     </div>

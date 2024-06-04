@@ -1,6 +1,9 @@
 import useSupabaseDB from "./useSupabaseDB";
+import { useRRHHStore } from "@/stores/useRRHHStore";
 
 export default function useSupaApi() {
+  const RRHH_STORE = useRRHHStore();
+
   const {
     dbResponseStatus,
     dbResp,
@@ -744,16 +747,62 @@ export default function useSupaApi() {
     }
   }
 
-  async function savePaycheck(paycheck) {
+  async function savePaycheck() {
+    const payload = {
+      profile_id: RRHH_STORE.currentEmployee.id,
+      lastBaseHourValue: RRHH_STORE.lastBaseHourValue,
+      lastViaticoValue: RRHH_STORE.lastViaticoValue,
+      lastPresentismoValue: RRHH_STORE.lastPresentismoValue,
+      fingerId: RRHH_STORE.fingerId,
+      totalHours: RRHH_STORE.totalHours,
+      staffName: RRHH_STORE.currentEmployee.username,
+      totalUno: RRHH_STORE.totalUno,
+      presentismoAvailable: RRHH_STORE.presentismoAvailable,
+      presentismo: RRHH_STORE.presentismo,
+      viatico: RRHH_STORE.viatico,
+      rolPrincipalPerc: RRHH_STORE.rolPrincipalPerc,
+      rolPrincipalValue: RRHH_STORE.rolPrincipalValue,
+      staffExp: RRHH_STORE.staffExp,
+      antiguedad: RRHH_STORE.antiguedad,
+      antiguedadValue: RRHH_STORE.antiguedadValue,
+      lastSuperYpf: RRHH_STORE.lastSuperYpf,
+      ayudaTransporte: RRHH_STORE.ayudaTransporte,
+      plusGu: RRHH_STORE.plusGu,
+      refuerzo: RRHH_STORE.refuerzo,
+      respCierre: RRHH_STORE.respCierre,
+      horaReal: RRHH_STORE.horaReal,
+      totalDos: RRHH_STORE.totalDos,
+      staffExpValue: RRHH_STORE.staffExpValue,
+      late: RRHH_STORE.late,
+      viaticoAvailable: RRHH_STORE.viaticoAvailable,
+      feriadosAvailable: RRHH_STORE.feriadosAvailable,
+      feriadoTime: RRHH_STORE.feriadoTime,
+      feriados: RRHH_STORE.feriados,
+      numberOfShifts: RRHH_STORE.numberOfShifts,
+      cuentaCorriente: RRHH_STORE.cuentaCorriente,
+      devolucionCC: RRHH_STORE.devolucionCC,
+      descuentoCC: RRHH_STORE.descuentoCC,
+      vacaciones: RRHH_STORE.vacaciones,
+      sac: RRHH_STORE.sac,
+      totalTres: RRHH_STORE.totalTres,
+      recibo: RRHH_STORE.recibo,
+      reciboSac: RRHH_STORE.reciboSac,
+      totalAnticipos: RRHH_STORE.totalAnticipos,
+      totalNeto: RRHH_STORE.totalNeto,
+      customRowsTot2: RRHH_STORE.customRowsTot2,
+      anticiposRows: RRHH_STORE.anticiposRows,
+      customRowsTot3: RRHH_STORE.customRowsTot3,
+      turnos: RRHH_STORE.turnos,
+      startDate: RRHH_STORE.turnos[0].shift_start,
+      endDate: RRHH_STORE.turnos[RRHH_STORE.turnos.length - 1].shift_end,
+    };
+
+    console.log("savePaycheck", payload);
+
     try {
       await create({
         table: "paycheck",
-        data: {
-          value: paycheck,
-          profile_id: paycheck.profile_id,
-          reference_date: paycheck.reference_date,
-          profile_name: paycheck.profile_name,
-        },
+        data: payload,
       });
 
       if (dbResponseStatus.value === "OK") {

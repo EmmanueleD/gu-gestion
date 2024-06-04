@@ -61,6 +61,7 @@ export const useRRHHStore = defineStore("RRHH", () => {
   const _customRowsTot2 = ref([]);
   const _anticiposRows = ref([]);
   const _customRowsTot3 = ref([]);
+  const _turnos = ref([]);
 
   //COMPUTED
   const baseDataLastCall = computed(() => {
@@ -337,25 +338,25 @@ export const useRRHHStore = defineStore("RRHH", () => {
     return _sac.value;
   });
   const totalTres = computed(() => {
-    if (!_totalTres.value) {
+    if (_totalTres.value === null || _totalTres.value === undefined) {
       setTotalTres(JSON.parse(localStorage.getItem("gu_ge:totalTres")));
     }
     return _totalTres.value;
   });
   const recibo = computed(() => {
-    if (!_recibo.value) {
+    if (_recibo.value === null || _recibo.value === undefined) {
       setRecibo(JSON.parse(localStorage.getItem("gu_ge:recibo")));
     }
     return _recibo.value;
   });
   const reciboSac = computed(() => {
-    if (!_reciboSac.value) {
+    if (_reciboSac.value === null || _reciboSac.value === undefined) {
       setReciboSac(JSON.parse(localStorage.getItem("gu_ge:reciboSac")));
     }
     return _reciboSac.value;
   });
   const totalAnticipos = computed(() => {
-    if (!_totalAnticipos.value) {
+    if (_totalAnticipos.value === null || _totalAnticipos.value === undefined) {
       setTotalAnticipos(
         JSON.parse(localStorage.getItem("gu_ge:totalAnticipos"))
       );
@@ -363,13 +364,13 @@ export const useRRHHStore = defineStore("RRHH", () => {
     return _totalAnticipos.value;
   });
   const totalNeto = computed(() => {
-    if (!_totalNeto.value) {
+    if (_totalNeto.value === null || _totalNeto.value === undefined) {
       setTotalNeto(JSON.parse(localStorage.getItem("gu_ge:totalNeto")));
     }
     return _totalNeto.value;
   });
   const customRowsTot2 = computed(() => {
-    if (!_customRowsTot2.value) {
+    if (_customRowsTot2.value === null || _customRowsTot2.value === undefined) {
       setCustomRowsTot2(
         JSON.parse(localStorage.getItem("gu_ge:customRowsTot2"))
       );
@@ -377,18 +378,24 @@ export const useRRHHStore = defineStore("RRHH", () => {
     return _customRowsTot2.value;
   });
   const anticiposRows = computed(() => {
-    if (!_anticiposRows.value) {
+    if (_anticiposRows.value === null || _anticiposRows.value === undefined) {
       setAnticiposRows(JSON.parse(localStorage.getItem("gu_ge:anticiposRows")));
     }
     return _anticiposRows.value;
   });
   const customRowsTot3 = computed(() => {
-    if (!_customRowsTot3.value) {
+    if (_customRowsTot3.value === null || _customRowsTot3.value === undefined) {
       setCustomRowsTot3(
         JSON.parse(localStorage.getItem("gu_ge:customRowsTot3"))
       );
     }
     return _customRowsTot3.value;
+  });
+  const turnos = computed(() => {
+    if (_turnos.value === null || _turnos.value === undefined) {
+      setTurnos(JSON.parse(localStorage.getItem("gu_ge:turnos")));
+    }
+    return _turnos.value;
   });
 
   //FUNCTIONS
@@ -442,6 +449,7 @@ export const useRRHHStore = defineStore("RRHH", () => {
     setCustomRowsTot2([]);
     setAnticiposRows([]);
     setCustomRowsTot3([]);
+    setTurnos([]);
   }
   function setBaseDataLastCall(value) {
     localStorage.removeItem("gu_ge:baseDataLastCall");
@@ -744,6 +752,13 @@ export const useRRHHStore = defineStore("RRHH", () => {
     localStorage.setItem("gu_ge:customRowsTot3", JSON.stringify(value));
     _customRowsTot3.value = value;
   }
+  function setTurnos(value) {
+    console.log("setTurnos", value);
+    localStorage.removeItem("gu_ge:turnos");
+    _turnos.value = null;
+    localStorage.setItem("gu_ge:turnos", JSON.stringify(value));
+    _turnos.value = value;
+  }
 
   return {
     clearAll,
@@ -893,5 +908,8 @@ export const useRRHHStore = defineStore("RRHH", () => {
 
     customRowsTot3,
     setCustomRowsTot3,
+
+    turnos,
+    setTurnos,
   };
 });
