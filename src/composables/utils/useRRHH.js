@@ -121,6 +121,28 @@ export default function useRRHH() {
     );
   }
 
+  function handleTotalAnticipos() {
+    RRHH_STORE.setTotalAnticipos(
+      (RRHH_STORE.cuentaCorriente || 0) +
+        (RRHH_STORE.recibo || 0) +
+        (RRHH_STORE.reciboSac || 0)
+    );
+  }
+
+  function handleTotalNeto() {
+    RRHH_STORE.setTotalNeto(
+      (RRHH_STORE.totalTres || 0) - (RRHH_STORE.totalAnticipos || 0)
+    );
+  }
+
+  function handleTotales() {
+    handleTotalUno();
+    handleTotalDos();
+    handleTotalTres();
+    handleTotalAnticipos();
+    handleTotalNeto();
+  }
+
   function handlePresentismo() {
     if (!RRHH_STORE.presentismoAvailable) {
       RRHH_STORE.setPresentismo(0);
@@ -403,16 +425,18 @@ export default function useRRHH() {
       // total 3
       handleTotalTres();
 
-      // 5.1
-      // 5.2
-      // 5.3
-      // 5.4
-      // total 5
-
       //1.2 OK
       calcHoraReal();
 
-      // total 6
+      //4.1
+      //4.2
+      //4.3
+      //4.4
+      //4
+      handleTotalAnticipos();
+
+      //5 total neto
+      handleTotales();
     } catch (error) {
       throw new Error(error);
     } finally {
@@ -422,7 +446,6 @@ export default function useRRHH() {
   return {
     calcResumenSalarial,
     handlePresentismo,
-    handleTotalDos,
-    handleTotalTres,
+    handleTotales,
   };
 }

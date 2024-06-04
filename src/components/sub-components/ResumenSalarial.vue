@@ -174,7 +174,10 @@ const presentismoAvailable = computed(() => {
       <span class="font-bold">{{ formatCurrency(RRHH_STORE.vacaciones) }}</span>
     </div>
 
-    <div class="col-12 flex justify-content-between align-items-center">
+    <div
+      v-if="RRHH_STORE.sac"
+      class="col-12 flex justify-content-between align-items-center"
+    >
       <span>SAC</span>
       <span class="font-bold">{{ formatCurrency(RRHH_STORE.sac) }}</span>
     </div>
@@ -190,6 +193,49 @@ const presentismoAvailable = computed(() => {
       <span class="text-blue-700 text-lg font-bold">TOTAL 3 (TOT1 + TOT2)</span>
       <span class="text-blue-700 text-lg font-bold">{{
         formatCurrency(RRHH_STORE.totalTres)
+      }}</span>
+    </div>
+
+    <Divider class="col-12" />
+
+    <div class="col-12 flex justify-content-between align-items-center">
+      <span>Cuenta Corriente</span>
+      <span class="font-bold">{{
+        formatCurrency(RRHH_STORE.cuentaCorriente)
+      }}</span>
+    </div>
+
+    <div
+      v-if="RRHH_STORE.recibo"
+      class="col-12 flex justify-content-between align-items-center"
+    >
+      <span>Recibo</span>
+      <span class="font-bold">{{ formatCurrency(RRHH_STORE.recibo) }}</span>
+    </div>
+
+    <div
+      v-if="RRHH_STORE.reciboSac"
+      class="col-12 flex justify-content-between align-items-center"
+    >
+      <span>Recibo SAC</span>
+      <span class="font-bold">{{ formatCurrency(RRHH_STORE.reciboSac) }}</span>
+    </div>
+
+    <div class="col-12 flex justify-content-between align-items-center">
+      <span class="text-blue-700 text-lg font-bold">TOTAL ANTICIPOS</span>
+      <span class="text-blue-700 text-lg font-bold">{{
+        formatCurrency(RRHH_STORE.totalAnticipos)
+      }}</span>
+    </div>
+
+    <Divider class="col-12" />
+
+    <div class="col-12 flex justify-content-between align-items-center">
+      <span class="text-blue-700 text-2xl font-bold"
+        >TOTAL NETO (TOT3 - TOT ANTICIPOS)</span
+      >
+      <span class="text-blue-700 text-2xl font-bold">{{
+        formatCurrency(RRHH_STORE.totalNeto)
       }}</span>
     </div>
   </div>

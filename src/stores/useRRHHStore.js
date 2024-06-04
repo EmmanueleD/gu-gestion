@@ -54,6 +54,10 @@ export const useRRHHStore = defineStore("RRHH", () => {
   const _vacaciones = ref(null);
   const _sac = ref(null);
   const _totalTres = ref(null);
+  const _recibo = ref(0);
+  const _reciboSac = ref(0);
+  const _totalAnticipos = ref(0);
+  const _totalNeto = ref(null);
 
   //COMPUTED
   const baseDataLastCall = computed(() => {
@@ -335,6 +339,32 @@ export const useRRHHStore = defineStore("RRHH", () => {
     }
     return _totalTres.value;
   });
+  const recibo = computed(() => {
+    if (!_recibo.value) {
+      setRecibo(JSON.parse(localStorage.getItem("gu_ge:recibo")));
+    }
+    return _recibo.value;
+  });
+  const reciboSac = computed(() => {
+    if (!_reciboSac.value) {
+      setReciboSac(JSON.parse(localStorage.getItem("gu_ge:reciboSac")));
+    }
+    return _reciboSac.value;
+  });
+  const totalAnticipos = computed(() => {
+    if (!_totalAnticipos.value) {
+      setTotalAnticipos(
+        JSON.parse(localStorage.getItem("gu_ge:totalAnticipos"))
+      );
+    }
+    return _totalAnticipos.value;
+  });
+  const totalNeto = computed(() => {
+    if (!_totalNeto.value) {
+      setTotalNeto(JSON.parse(localStorage.getItem("gu_ge:totalNeto")));
+    }
+    return _totalNeto.value;
+  });
 
   //FUNCTIONS
   function clearAll() {
@@ -380,6 +410,10 @@ export const useRRHHStore = defineStore("RRHH", () => {
     setVacaciones(null);
     setSac(null);
     setTotalTres(null);
+    setRecibo(0);
+    setReciboSac(0);
+    setTotalAnticipos(0);
+    setTotalNeto(0);
   }
   function setBaseDataLastCall(value) {
     localStorage.removeItem("gu_ge:baseDataLastCall");
@@ -640,6 +674,30 @@ export const useRRHHStore = defineStore("RRHH", () => {
     localStorage.setItem("gu_ge:totalTres", JSON.stringify(value));
     _totalTres.value = value;
   }
+  function setRecibo(value) {
+    localStorage.removeItem("gu_ge:recibo");
+    _recibo.value = null;
+    localStorage.setItem("gu_ge:recibo", JSON.stringify(value));
+    _recibo.value = value;
+  }
+  function setReciboSac(value) {
+    localStorage.removeItem("gu_ge:reciboSac");
+    _reciboSac.value = null;
+    localStorage.setItem("gu_ge:reciboSac", JSON.stringify(value));
+    _reciboSac.value = value;
+  }
+  function setTotalAnticipos(value) {
+    localStorage.removeItem("gu_ge:totalAnticipos");
+    _totalAnticipos.value = null;
+    localStorage.setItem("gu_ge:totalAnticipos", JSON.stringify(value));
+    _totalAnticipos.value = value;
+  }
+  function setTotalNeto(value) {
+    localStorage.removeItem("gu_ge:totalNeto");
+    _totalNeto.value = null;
+    localStorage.setItem("gu_ge:totalNeto", JSON.stringify(value));
+    _totalNeto.value = value;
+  }
 
   return {
     clearAll,
@@ -768,5 +826,17 @@ export const useRRHHStore = defineStore("RRHH", () => {
 
     totalTres,
     setTotalTres,
+
+    recibo,
+    setRecibo,
+
+    reciboSac,
+    setReciboSac,
+
+    totalAnticipos,
+    setTotalAnticipos,
+
+    totalNeto,
+    setTotalNeto,
   };
 });

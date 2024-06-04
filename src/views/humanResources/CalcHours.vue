@@ -21,7 +21,7 @@ const { savePaycheck, getProfileFromFingerId } = useSupaApi();
 
 const { getAllFiles } = useSupabaseStorage();
 
-const { calcResumenSalarial, handleTotalDos, handleTotalTres } = useRRHH();
+const { calcResumenSalarial, handleTotales } = useRRHH();
 
 function formattedDate(date) {
   return useDateFormat(date, "ddd DD/MM/YY HH:mm").value;
@@ -140,13 +140,10 @@ function handleCellEdit(event) {
     );
   }
 
-  handleTotalDos();
-  handleTotalTres();
+  handleTotales();
 }
 
 function handleFeriadoChange(event) {
-  console.log("handleFeriadoChange", event);
-
   if (event.feriado) {
     RRHH_STORE.handleVariationFeriatoTime(event.tot_hours);
   } else {

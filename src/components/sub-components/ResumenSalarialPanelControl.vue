@@ -1,12 +1,27 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { useRRHHStore } from "@/stores/useRRHHStore";
 import useRRHH from "@/composables/utils/useRRHH";
 const RRHH_STORE = useRRHHStore();
-const { handleTotalDos, handleTotalTres } = useRRHH();
+const { handleTotales } = useRRHH();
 const cuentaCorriente = ref(0);
 const vacaciones = ref(0);
 const sac = ref(0);
+const recibo = ref(0);
+const reciboSac = ref(0);
+
+function handleConfirm() {
+  RRHH_STORE.setCuentaCorriente(cuentaCorriente.value);
+  RRHH_STORE.setDevolucionCC(
+    (cuentaCorriente.value * RRHH_STORE.descuentoCC) / 100
+  );
+  RRHH_STORE.setVacaciones(vacaciones.value);
+  RRHH_STORE.setSac(sac.value);
+  RRHH_STORE.setRecibo(recibo.value);
+  RRHH_STORE.setReciboSac(reciboSac.value);
+
+  handleTotales();
+}
 
 function handleChangeViatico() {
   RRHH_STORE.setViaticoAvailable(!RRHH_STORE.viaticoAvailable);
@@ -15,35 +30,9 @@ function handleChangeViatico() {
   } else {
     RRHH_STORE.setViatico(0);
   }
-  handleTotalDos();
-  handleTotalTres();
-}
 
-function handleChangeCuentaCorriente() {
-  RRHH_STORE.setCuentaCorriente(cuentaCorriente.value);
-  RRHH_STORE.setDevolucionCC(
-    (cuentaCorriente.value * RRHH_STORE.descuentoCC) / 100
-  );
-  handleTotalDos();
-  handleTotalTres();
+  handleTotales();
 }
-
-function handleChangeVacaciones() {
-  RRHH_STORE.setVacaciones(vacaciones.value);
-  handleTotalDos();
-  handleTotalTres();
-}
-
-function handleChangeSac() {
-  RRHH_STORE.setSac(sac.value);
-  handleTotalDos();
-  handleTotalTres();
-}
-
-onMounted(() => {
-  if (RRHH_STORE.cuentaCorriente)
-    cuentaCorriente.value = RRHH_STORE.cuentaCorriente;
-});
 </script>
 
 <template>
@@ -67,12 +56,6 @@ onMounted(() => {
           :min-fraction-digits="0"
           :max-fraction-digits="2"
         />
-        <Button
-          @click="handleChangeCuentaCorriente"
-          label="Confirmar"
-          icon="pi pi-check"
-          class="p-button-secondary ml-2"
-        />
       </div>
     </div>
 
@@ -83,12 +66,6 @@ onMounted(() => {
           v-model="vacaciones"
           :min-fraction-digits="0"
           :max-fraction-digits="2"
-        />
-        <Button
-          @click="handleChangeVacaciones"
-          label="Confirmar"
-          icon="pi pi-check"
-          class="p-button-secondary ml-2"
         />
       </div>
     </div>
@@ -101,13 +78,47 @@ onMounted(() => {
           :min-fraction-digits="0"
           :max-fraction-digits="2"
         />
-        <Button
-          @click="handleChangeSac"
-          label="Confirmar"
-          icon="pi pi-check"
-          class="p-button-secondary ml-2"
+      </div>
+    </div>
+
+    <div class="col-12 flex flex-column my-2">
+      <span class="font-bold">Recibo</span>
+      <div class="w-full flex justify-content-start align-items-center">
+        <InputNumber
+          v-model="recibo"
+          :min-fraction-digits="0"
+          :max-fraction-digits="2"
         />
       </div>
+    </div>
+
+    <div class="col-12 flex flex-column my-2">
+      <span class="font-bold">Recibo SAC</span>
+      <div class="w-full flex justify-content-start align-items-center">
+        <InputNumber
+          v-model="reciboSac"
+          :min-fraction-digits="0"
+          :max-fraction-digits="2"
+        />
+      </div>
+    </div>
+
+    <Divider class="col-12" />
+
+    <div class="col-12 flex justify-content-between align-items-center">
+      <span class="col-12 font-bold">Anticipos</span>
+      <Button icon="pi pi-plus" class="p-button-secondary" />
+    </div>
+
+    <Divider class="col-12" />
+
+    <div class="col-12 flex justify-content-end align-items-center">
+      <Button
+        label="Confirmar"
+        class="p-button-secondary"
+        icon="pi pi-check"
+        @click="handleConfirm"
+      />
     </div>
   </div>
 </template>
