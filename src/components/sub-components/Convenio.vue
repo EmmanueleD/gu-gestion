@@ -234,7 +234,7 @@ onMounted(async () => {
 
     <div class="col-12 flex flex-column mb-2">
       <div class="w-full flex justify-content-start align-items-center">
-        <BaseInput label="Viatico abilitado" class="mr-2 mb-2">
+        <BaseInput label="Viático habilitado" class="mr-2 mb-2">
           <Checkbox v-model="viatico" :binary="true"></Checkbox>
         </BaseInput>
       </div>
@@ -246,7 +246,7 @@ onMounted(async () => {
 
     <div class="col-12 flex flex-column mb-2">
       <div class="w-full flex justify-content-start align-items-center">
-        <BaseInput label="Feriados abilitados" class="mr-2 mb-2">
+        <BaseInput label="Feriados habilitados" class="mr-2 mb-2">
           <Checkbox v-model="feriados" :binary="true"></Checkbox>
         </BaseInput>
       </div>

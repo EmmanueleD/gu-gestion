@@ -251,8 +251,6 @@ export default function useFudoApi() {
         "https://gu-calulator.vercel.app/api/v1/fudo-api/sales-by-page/" + page
       );
 
-      console.log("result", result.data.status);
-
       if (result.data.status == "OK") {
         return result.data.data;
       } else {

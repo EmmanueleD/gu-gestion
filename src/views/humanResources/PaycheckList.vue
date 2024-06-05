@@ -22,9 +22,6 @@ const dt = ref();
 const loadingPaycheckList = ref(false);
 const paycheckList = ref([]);
 
-const fromDate = ref("");
-const toDate = ref("");
-
 const loadingSidebar = ref(false);
 const sidebarVisible = ref(false);
 const sidebarData = ref({});
@@ -40,7 +37,8 @@ const exportCSV = () => {
 };
 
 function handleDownloadRecibo() {
-  //TODO: Implementar
+  //TODO: Implementar para descarga del recibo
+  main();
 }
 
 function handleCellEdit(event) {
@@ -77,7 +75,6 @@ async function getData() {
   } catch (error) {
     console.log(error);
   } finally {
-    console.log("RESULT", result.data);
     paycheckList.value = result.data;
     loadingPaycheckList.value = false;
   }
@@ -90,7 +87,7 @@ async function showSidebar(data) {
   let currentUser = await getProfileFromFingerId(data.fingerId);
 
   // calcResumenSalarial();
-
+  RRHH_STORE.setIdPaycheck(data.paycheck_id);
   RRHH_STORE.setCurrentEmployee(currentUser);
   RRHH_STORE.setLastBaseHourValue(data.lastBaseHourValue);
   RRHH_STORE.setLastViaticoValue(data.lastViaticoValue);
@@ -184,7 +181,6 @@ onMounted(async () => {
             class="p-button-outlined mr-2"
             icon="pi pi-eye"
             @click="showSidebar(data)"
-            :loading="loadingSidebar"
           />
         </template>
       </Column>
@@ -301,4 +297,20 @@ onMounted(async () => {
       </TabPanel>
     </TabView>
   </Sidebar>
+
+  <Dialog
+    v-model:visible="loadingSidebar"
+    :style="{ width: '250px', height: '100px' }"
+    :modal="true"
+  >
+    <template #container>
+      <div
+        class="flex align-items-center justify-content-center w-full h-full p-3"
+      >
+        <i class="pi pi-spin pi-spinner text-3xl"></i>
+        <span class="ml-3 font-bold text-xl">Cargando...</span>
+      </div>
+    </template>
+    ></Dialog
+  >
 </template>

@@ -798,11 +798,24 @@ export default function useSupaApi() {
 
     console.log("savePaycheck", payload);
 
+    console.log("RRHH_STORE.idPaycheck", RRHH_STORE.idPaycheck);
+
     try {
-      await create({
-        table: "paycheck",
-        data: payload,
-      });
+      if (RRHH_STORE.idPaycheck) {
+        await update({
+          table: "paycheck",
+          id: {
+            key: "paycheck_id",
+            value: RRHH_STORE.idPaycheck,
+          },
+          data: payload,
+        });
+      } else {
+        await create({
+          table: "paycheck",
+          data: payload,
+        });
+      }
 
       if (dbResponseStatus.value === "OK") {
         return true;

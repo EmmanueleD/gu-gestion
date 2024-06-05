@@ -3,11 +3,13 @@ import { ref, computed, onMounted } from "vue";
 import useGeneric from "@/composables/utils/useGeneric";
 import useSupaApi from "@/composables/useSupaApi";
 import useCustomToast from "@/composables/utils/useCustomToast";
+import usePrintReciboSueldo from "@/composables/jsPDF/usePrintReciboSueldo";
 import { useRRHHStore } from "@/stores/useRRHHStore";
 import { useDateFormat } from "@vueuse/core";
 
 const { savePaycheck } = useSupaApi();
 const { showError } = useCustomToast();
+const { print } = usePrintReciboSueldo();
 const { decimalToHoursMinutes, formatCurrency } = useGeneric();
 const RRHH_STORE = useRRHHStore();
 const presentismoAvailable = computed(() => {
@@ -18,7 +20,17 @@ const loading = ref(false);
 const loadingSaveRecibo = ref(false);
 const loadingDownloadRecibo = ref(false);
 
-async function handleDownloadRecibo() {}
+function handleDownloadRecibo() {
+  loadingDownloadRecibo.value = true;
+  try {
+    print();
+  } catch (error) {
+    showError("Error al generar recibo");
+    console.log("Error al generar recibo", error);
+  } finally {
+    loadingDownloadRecibo.value = false;
+  }
+}
 
 async function handleSaveRecibo() {
   loadingSaveRecibo.value = true;
@@ -305,8 +317,14 @@ async function handleSaveRecibo() {
         icon="pi pi-download"
         class="p-button-outlined mr-2"
         @click="handleDownloadRecibo"
+        :loading="loadingDownloadRecibo"
       />
-      <Button label="Guardar" icon="pi pi-save" @click="handleSaveRecibo" />
+      <Button
+        label="Guardar"
+        icon="pi pi-save"
+        @click="handleSaveRecibo"
+        :loading="loadingSaveRecibo"
+      />
     </div>
   </div>
 </template>

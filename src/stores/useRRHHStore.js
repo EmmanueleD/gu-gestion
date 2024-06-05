@@ -62,6 +62,7 @@ export const useRRHHStore = defineStore("RRHH", () => {
   const _anticiposRows = ref([]);
   const _customRowsTot3 = ref([]);
   const _turnos = ref([]);
+  const _idPaycheck = ref(null);
 
   //COMPUTED
   const baseDataLastCall = computed(() => {
@@ -397,6 +398,12 @@ export const useRRHHStore = defineStore("RRHH", () => {
     }
     return _turnos.value;
   });
+  const idPaycheck = computed(() => {
+    if (_idPaycheck.value === null || _idPaycheck.value === undefined) {
+      setIdPaycheck(JSON.parse(localStorage.getItem("gu_ge:idPaycheck")));
+    }
+    return _idPaycheck.value;
+  });
 
   //FUNCTIONS
   function clearAll() {
@@ -450,6 +457,7 @@ export const useRRHHStore = defineStore("RRHH", () => {
     setAnticiposRows([]);
     setCustomRowsTot3([]);
     setTurnos([]);
+    setIdPaycheck(null);
   }
   function setBaseDataLastCall(value) {
     localStorage.removeItem("gu_ge:baseDataLastCall");
@@ -490,7 +498,6 @@ export const useRRHHStore = defineStore("RRHH", () => {
     _lastBaseHourValue.value = value;
   }
   function setLastViaticoValue(value) {
-    console.log("setLastViaticoValue", value);
     localStorage.removeItem("gu_ge:lastViaticoValue");
     _lastViaticoValue.value = null;
     localStorage.setItem("gu_ge:lastViaticoValue", JSON.stringify(value));
@@ -546,7 +553,6 @@ export const useRRHHStore = defineStore("RRHH", () => {
     _viatico.value = value;
   }
   function setRolPrincipalPerc(value) {
-    console.log("setRolPrincipalPerc", value);
     localStorage.removeItem("gu_ge:rolPrincipalPerc");
     _rolPrincipalPerc.value = null;
     localStorage.setItem("gu_ge:rolPrincipalPerc", JSON.stringify(value));
@@ -755,11 +761,16 @@ export const useRRHHStore = defineStore("RRHH", () => {
     _customRowsTot3.value = value;
   }
   function setTurnos(value) {
-    console.log("setTurnos", value);
     localStorage.removeItem("gu_ge:turnos");
     _turnos.value = null;
     localStorage.setItem("gu_ge:turnos", JSON.stringify(value));
     _turnos.value = value;
+  }
+  function setIdPaycheck(value) {
+    localStorage.removeItem("gu_ge:idPaycheck");
+    _idPaycheck.value = null;
+    localStorage.setItem("gu_ge:idPaycheck", JSON.stringify(value));
+    _idPaycheck.value = value;
   }
 
   return {
@@ -913,5 +924,8 @@ export const useRRHHStore = defineStore("RRHH", () => {
 
     turnos,
     setTurnos,
+
+    idPaycheck,
+    setIdPaycheck,
   };
 });
