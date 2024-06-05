@@ -490,6 +490,7 @@ export const useRRHHStore = defineStore("RRHH", () => {
     _lastBaseHourValue.value = value;
   }
   function setLastViaticoValue(value) {
+    console.log("setLastViaticoValue", value);
     localStorage.removeItem("gu_ge:lastViaticoValue");
     _lastViaticoValue.value = null;
     localStorage.setItem("gu_ge:lastViaticoValue", JSON.stringify(value));
@@ -545,6 +546,7 @@ export const useRRHHStore = defineStore("RRHH", () => {
     _viatico.value = value;
   }
   function setRolPrincipalPerc(value) {
+    console.log("setRolPrincipalPerc", value);
     localStorage.removeItem("gu_ge:rolPrincipalPerc");
     _rolPrincipalPerc.value = null;
     localStorage.setItem("gu_ge:rolPrincipalPerc", JSON.stringify(value));

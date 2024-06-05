@@ -1,9 +1,10 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRRHHStore } from "@/stores/useRRHHStore";
 import useRRHH from "@/composables/utils/useRRHH";
 const RRHH_STORE = useRRHHStore();
 const { handleTotales } = useRRHH();
+
 const cuentaCorriente = ref(0);
 const vacaciones = ref(0);
 const sac = ref(0);
@@ -70,6 +71,21 @@ function addCustomRowTot3() {
     value: 0,
   });
 }
+
+onMounted(() => {
+  if (RRHH_STORE.cuentaCorriente)
+    cuentaCorriente.value = RRHH_STORE.cuentaCorriente;
+  if (RRHH_STORE.vacaciones) vacaciones.value = RRHH_STORE.vacaciones;
+  if (RRHH_STORE.sac) sac.value = RRHH_STORE.sac;
+  if (RRHH_STORE.recibo) recibo.value = RRHH_STORE.recibo;
+  if (RRHH_STORE.reciboSac) reciboSac.value = RRHH_STORE.reciboSac;
+
+  if (RRHH_STORE.anticiposRows) anticiposRows.value = RRHH_STORE.anticiposRows;
+  if (RRHH_STORE.customRowsTot2)
+    customRowsTot2.value = RRHH_STORE.customRowsTot2;
+  if (RRHH_STORE.customRowsTot3)
+    customRowsTot3.value = RRHH_STORE.customRowsTot3;
+});
 </script>
 
 <template>

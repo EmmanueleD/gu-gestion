@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import useGeneric from "@/composables/utils/useGeneric";
 import useSupaApi from "@/composables/useSupaApi";
 import useCustomToast from "@/composables/utils/useCustomToast";
@@ -14,8 +14,11 @@ const presentismoAvailable = computed(() => {
   return RRHH_STORE.presentismoAvailable;
 });
 
+const loading = ref(false);
 const loadingSaveRecibo = ref(false);
 const loadingDownloadRecibo = ref(false);
+
+async function handleDownloadRecibo() {}
 
 async function handleSaveRecibo() {
   loadingSaveRecibo.value = true;
@@ -29,8 +32,16 @@ async function handleSaveRecibo() {
   }
 }
 </script>
+
 <template>
-  <div class="w-full grid p-2">
+  <div
+    v-if="loading"
+    class="w-full flex justify-content-center align-items-center"
+  >
+    <i class="pi pi-spin pi-spinner mr-2" v-if="loading"></i>
+    <span>Cargando...</span>
+  </div>
+  <div v-else class="w-full grid p-2">
     <div class="col-12 flex justify-content-between align-items-center">
       <span>Hora Base:</span>
       <span class="font-bold">{{

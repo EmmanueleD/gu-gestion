@@ -514,7 +514,6 @@ export default function useSupaApi() {
         table: "mod_exp_externa",
         data: expExternaData,
       });
-
       if (dbResponseStatus.value === "OK") {
         return true;
       } else {

@@ -4,9 +4,17 @@ import { useDateFormat } from "@vueuse/core";
 
 import useSupabaseClient from "@/composables/useSupabaseClient";
 import useGeneric from "@/composables/utils/useGeneric";
+import useSupaApi from "@/composables/useSupaApi";
 
-const { formatCurrency } = useGeneric();
+import { useRRHHStore } from "@/stores/useRRHHStore";
 
+import ResumenSalarial from "@/components/sub-components/ResumenSalarial.vue";
+import ResumenSalarialPanelControl from "@/components/sub-components/ResumenSalarialPanelControl.vue";
+
+const RRHH_STORE = useRRHHStore();
+
+const { formatCurrency, decimalToHoursMinutes } = useGeneric();
+const { getProfileFromFingerId } = useSupaApi();
 const { sbDB } = useSupabaseClient();
 
 const dt = ref();
@@ -17,92 +25,55 @@ const paycheckList = ref([]);
 const fromDate = ref("");
 const toDate = ref("");
 
+const loadingSidebar = ref(false);
+const sidebarVisible = ref(false);
+const sidebarData = ref({});
+
+function handleHideSidebar() {
+  sidebarVisible.value = false;
+  sidebarData.value = { data: [] };
+  RRHH_STORE.clearAll();
+}
+
 const exportCSV = () => {
   dt.value.exportCSV();
 };
 
-function firstDayOfLastMonth() {
-  var today = new Date(); // Get today's date
-  var lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1); // Create a new date object for the first day of last month
-  return (
-    lastMonth.getFullYear() +
-    "/" +
-    (lastMonth.getMonth() + 1 < 10
-      ? "0" + (lastMonth.getMonth() + 1)
-      : lastMonth.getMonth() + 1) +
-    "/01"
-  ); // Format the date string
+function handleDownloadRecibo() {
+  //TODO: Implementar
 }
 
-function firstDayOCurrentMonth() {
-  var today = new Date(); // Get today's date
-  var lastMonth = new Date(today.getFullYear(), today.getMonth(), 1); // Create a new date object for the first day of last month
-  return (
-    lastMonth.getFullYear() +
-    "/" +
-    (lastMonth.getMonth() + 1 < 10
-      ? "0" + (lastMonth.getMonth() + 1)
-      : lastMonth.getMonth() + 1) +
-    "/01"
-  ); // Format the date string
+function handleCellEdit(event) {
+  const MAX_TARDANZAS = 3;
+  const { data, newValue, field } = event;
+  data[field] = newValue;
+
+  if (field === "late") {
+    RRHH_STORE.handleVariationLate(newValue === true ? 1 : -1);
+  }
+
+  if (RRHH_STORE.late >= MAX_TARDANZAS) {
+    RRHH_STORE.setPresentismoAvailable(false);
+    RRHH_STORE.setPresentismo(0);
+  } else {
+    RRHH_STORE.setPresentismoAvailable(true);
+    RRHH_STORE.setPresentismo(
+      RRHH_STORE.lastPresentismoValue * RRHH_STORE.totalUno
+    );
+  }
+
+  RRHH_STORE.setTurnos(sidebarData.value.data);
+
+  handleTotales();
 }
 
-function lastDayOfLastMonth() {
-  var today = new Date(); // Get today's date
-  var lastMonth = new Date(today.getFullYear(), today.getMonth(), 0); // Create a new date object for the last day of last month
-  return (
-    lastMonth.getFullYear() +
-    "/" +
-    (lastMonth.getMonth() + 1 < 10
-      ? "0" + (lastMonth.getMonth() + 1)
-      : lastMonth.getMonth() + 1) +
-    "/" +
-    (lastMonth.getDate() < 10 ? "0" + lastMonth.getDate() : lastMonth.getDate())
-  ); // Format the date string
-}
-
-function lastDayOfCurrentMonth() {
-  var today = new Date(); // Get today's date
-  var lastMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0); // Create a new date object for the last day of last month
-  return (
-    lastMonth.getFullYear() +
-    "/" +
-    (lastMonth.getMonth() + 1 < 10
-      ? "0" + (lastMonth.getMonth() + 1)
-      : lastMonth.getMonth() + 1) +
-    "/" +
-    (lastMonth.getDate() < 10 ? "0" + lastMonth.getDate() : lastMonth.getDate())
-  ); // Format the date string
-}
-
-async function getData(filter) {
+async function getData() {
   loadingPaycheckList.value = true;
 
   let result;
 
-  let start;
-  let end;
-
-  if (!fromDate.value) {
-    start = firstDayOfLastMonth();
-  } else {
-    start = new Date(fromDate.value)
-      .toISOString()
-      .slice(0, 10)
-      .replace(/-/g, "/");
-  }
-
-  if (!toDate.value) {
-    end = lastDayOfLastMonth();
-  } else {
-    end = new Date(toDate.value).toISOString().slice(0, 10).replace(/-/g, "/");
-  }
-
   try {
-    result = await sbDB("paycheck")
-      .select("*")
-      .gt("startDate", filter.start)
-      .lt("endDate", filter.end);
+    result = await sbDB("paycheck").select("*");
   } catch (error) {
     console.log(error);
   } finally {
@@ -112,76 +83,78 @@ async function getData(filter) {
   }
 }
 
+async function showSidebar(data) {
+  sidebarData.value = data;
+  loadingSidebar.value = true;
+
+  let currentUser = await getProfileFromFingerId(data.fingerId);
+
+  // calcResumenSalarial();
+
+  RRHH_STORE.setCurrentEmployee(currentUser);
+  RRHH_STORE.setLastBaseHourValue(data.lastBaseHourValue);
+  RRHH_STORE.setLastViaticoValue(data.lastViaticoValue);
+  RRHH_STORE.setLastPresentismoValue(data.lastPresentismoValue);
+  RRHH_STORE.setFingerId(data.fingerId);
+  RRHH_STORE.setTotalHours(data.totalHours);
+  RRHH_STORE.setStaffName(data.staffName);
+  RRHH_STORE.setTotalUno(data.totalUno);
+  RRHH_STORE.setPresentismoAvailable(data.presentismoAvailable);
+  RRHH_STORE.setPresentismo(data.presentismo);
+  RRHH_STORE.setViatico(data.viatico);
+  RRHH_STORE.setRolPrincipalPerc(data.rolPrincipalPerc);
+  RRHH_STORE.setRolPrincipalValue(data.rolPrincipalValue);
+  RRHH_STORE.setStaffExp(data.staffExp);
+  RRHH_STORE.setAntiguedad(data.antiguedad);
+  RRHH_STORE.setAntiguedadValue(data.antiguedadValue);
+  RRHH_STORE.setLastSuperYpf(data.lastSuperYpf);
+  RRHH_STORE.setAyudaTransporte(data.ayudaTransporte);
+  RRHH_STORE.setPlusGu(data.plusGu);
+  RRHH_STORE.setRefuerzo(data.refuerzo);
+  RRHH_STORE.setRespCierre(data.respCierre);
+  RRHH_STORE.setHoraReal(data.horaReal);
+  RRHH_STORE.setTotalDos(data.totalDos);
+  RRHH_STORE.setStaffExpValue(data.staffExpValue);
+  RRHH_STORE.setLate(data.late);
+  RRHH_STORE.setViaticoAvailable(data.viaticoAvailable);
+  RRHH_STORE.setFeriadosAvailable(data.feriadosAvailable);
+  RRHH_STORE.setFeriadoTime(data.feriadoTime);
+  RRHH_STORE.setFeriados(data.feriados);
+  RRHH_STORE.setNumberOfShifts(data.numberOfShifts);
+  RRHH_STORE.setCuentaCorriente(data.cuentaCorriente);
+  RRHH_STORE.setDevolucionCC(data.devolucionCC);
+  RRHH_STORE.setDescuentoCC(data.descuentoCC);
+  RRHH_STORE.setVacaciones(data.vacaciones);
+  RRHH_STORE.setSac(data.sac);
+  RRHH_STORE.setTotalTres(data.totalTres);
+  RRHH_STORE.setRecibo(data.recibo);
+  RRHH_STORE.setReciboSac(data.reciboSac);
+  RRHH_STORE.setTotalAnticipos(data.totalAnticipos);
+  RRHH_STORE.setTotalNeto(data.totalNeto);
+  RRHH_STORE.setCustomRowsTot2(data.customRowsTot2);
+  RRHH_STORE.setAnticiposRows(data.anticiposRows);
+  RRHH_STORE.setCustomRowsTot3(data.customRowsTot3);
+  RRHH_STORE.setTurnos(data.turnos);
+
+  sidebarVisible.value = true;
+  loadingSidebar.value = false;
+}
+function handleFeriadoChange(event) {
+  if (event.feriado) {
+    RRHH_STORE.handleVariationFeriatoTime(event.tot_hours);
+  } else {
+    RRHH_STORE.handleVariationFeriatoTime(-event.tot_hours);
+  }
+  RRHH_STORE.setFeriados(RRHH_STORE.feriadoTime * RRHH_STORE.lastBaseHourValue);
+}
 onMounted(async () => {
-  await getData({
-    // 31th december of last year
-    start: new Date(new Date().getFullYear() - 1, 11, 31)
-      .toISOString()
-      .slice(0, 10)
-      .replace(/-/g, "/"),
-    //1th january of next year
-    end: new Date(new Date().getFullYear() + 1, 0, 1)
-      .toISOString()
-      .slice(0, 10)
-      .replace(/-/g, "/"),
-  });
+  await getData();
 });
 </script>
 
 <template>
   <h1>Sueldos</h1>
 
-  <div class="w-full surface-card py-6 px-3 sm:px-6 my-4">
-    <div class="w-full grid">
-      <h4 class="col-12">Filtros</h4>
-
-      <div class="col-12 md:col-6 lg:col-3 flex flex-column">
-        <span>Desde</span>
-        <Calendar v-model="fromDate" />
-      </div>
-
-      <div class="col-12 md:col-6 lg:col-3 flex flex-column">
-        <span>Hasta</span>
-        <Calendar v-model="toDate" />
-      </div>
-
-      <div class="col-12 flex justify-content-end align-items-center">
-        <!-- <Button
-          :label="
-            'Mes pasado' +
-            ' (' +
-            useDateFormat(firstDayOfLastMonth(), 'MMMM YYYY').value +
-            ')'
-          "
-          icon="pi pi-arrow-left"
-          class="w-auto p-button-secondary mr-2"
-          @click="
-            fromDate = firstDayOfLastMonth();
-            toDate = lastDayOfLastMonth();
-            getData();
-          "
-        />
-        <Button
-          label="Este mes"
-          icon="pi pi-arrow-down"
-          class="w-auto p-button-secondary mr-2"
-          @click="
-            fromDate = firstDayOCurrentMonth();
-            toDate = lastDayOfCurrentMonth();
-            getData();
-          "
-        ></Button> -->
-        <Button
-          :disabled="!fromDate || !toDate"
-          :loading="loadingPaycheckList"
-          @click="getData({ start: fromDate, end: toDate })"
-          label="Filtrar"
-          icon="pi pi-filter"
-          class="w-auto"
-        />
-      </div>
-    </div>
-  </div>
   <div class="w-full surface-card py-6 px-3 sm:px-6 my-4">
     <DataTable
       :value="paycheckList"
@@ -211,20 +184,21 @@ onMounted(async () => {
             class="p-button-outlined mr-2"
             icon="pi pi-eye"
             @click="showSidebar(data)"
+            :loading="loadingSidebar"
           />
         </template>
       </Column>
-      <Column field="startDate" header="Fecha primer dia">
+      <Column field="startDate" header="Fecha primer dia" sortable>
         <template #body="{ data }">
           {{ useDateFormat(data.startDate, "DD/MM/YYYY").value }}
         </template>
       </Column>
-      <Column field="endDate" header="Fecha ultimo dia">
+      <Column field="endDate" header="Fecha ultimo dia" sortable>
         <template #body="{ data }">
           {{ useDateFormat(data.endDate, "DD/MM/YYYY").value }}
         </template>
       </Column>
-      <Column field="staffName" header="Nombre"></Column>
+      <Column field="staffName" header="Nombre" sortable></Column>
 
       <Column field="totalNeto" header="Neto">
         <template #body="{ data }">
@@ -233,4 +207,98 @@ onMounted(async () => {
       </Column>
     </DataTable>
   </div>
+
+  <Sidebar
+    @hide="handleHideSidebar"
+    v-model:visible="sidebarVisible"
+    :baseZIndex="10000"
+    position="right"
+    class="w-full md:w-9 lg:w-5"
+    :header="'Resumen salarial - ' + sidebarData.name"
+  >
+    <div
+      v-if="loadingSidebar"
+      class="flex align-items-center justify-content-center w-full h-full p-3"
+    >
+      <i class="pi pi-spin pi-spinner text-3xl"></i>
+      <span class="ml-3 font-bold text-xl">Cargando...</span>
+    </div>
+    <TabView v-else>
+      <TabPanel header="Resumen salarial">
+        <ResumenSalarial />
+      </TabPanel>
+
+      <TabPanel header="Panel de control">
+        <ResumenSalarialPanelControl />
+      </TabPanel>
+
+      <TabPanel header="Turnos">
+        <div class="col-12">
+          <DataTable
+            :value="RRHH_STORE.turnos"
+            class="p-datatable-sm"
+            showGridlines
+            responsiveLayout="scroll"
+            stripedRows
+            editMode="cell"
+            @cell-edit-complete="handleCellEdit"
+          >
+            <Column field="shift_start" header="Inicio">
+              <template #body="{ data }">
+                {{ useDateFormat(data.shift_start, "DD/MM/YYYY HH:mm").value }}
+              </template>
+            </Column>
+            <Column field="shift_end" header="Fin">
+              <template #body="{ data }">
+                {{ useDateFormat(data.shift_end, "DD/MM/YYYY HH:mm").value }}
+              </template>
+            </Column>
+            <Column field="base_hours" header="Horas">
+              <template #body="{ data }">
+                {{ decimalToHoursMinutes(data.base_hours) }}
+              </template>
+            </Column>
+            <Column field="late" header="Tardanza">
+              <template #body="{ data }">
+                <i
+                  class="pi"
+                  :class="
+                    data.late
+                      ? 'pi-check-circle text-red-500'
+                      : 'pi-times text-gray-300'
+                  "
+                ></i>
+              </template>
+              <template #editor="{ data }">
+                <Checkbox v-model="data.late" :binary="true" />
+              </template>
+            </Column>
+            <Column
+              v-if="RRHH_STORE.currentEmployee.feriados"
+              field="feriado"
+              header="Feriado"
+            >
+              <template #body="{ data }">
+                <i
+                  class="pi"
+                  :class="
+                    data.feriado
+                      ? 'pi-check-circle text-green-500'
+                      : 'pi-times text-gray-300'
+                  "
+                ></i>
+              </template>
+              <template #editor="{ data, index }">
+                <Checkbox
+                  @change="handleFeriadoChange({ ...data, index })"
+                  v-model="data.feriado"
+                  :binary="true"
+                />
+              </template>
+            </Column>
+          </DataTable>
+        </div>
+      </TabPanel>
+    </TabView>
+  </Sidebar>
 </template>
