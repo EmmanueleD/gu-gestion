@@ -2,6 +2,8 @@
 import { ref, onMounted } from "vue";
 import { useDateFormat } from "@vueuse/core";
 
+import { useConfirm } from "primevue/useconfirm";
+
 import useSupabaseClient from "@/composables/useSupabaseClient";
 import useGeneric from "@/composables/utils/useGeneric";
 import useSupaApi from "@/composables/useSupaApi";
@@ -16,6 +18,8 @@ const RRHH_STORE = useRRHHStore();
 const { formatCurrency, decimalToHoursMinutes } = useGeneric();
 const { getProfileFromFingerId } = useSupaApi();
 const { sbDB } = useSupabaseClient();
+
+const confirm = useConfirm();
 
 const dt = ref();
 
@@ -63,6 +67,34 @@ function handleCellEdit(event) {
   RRHH_STORE.setTurnos(sidebarData.value.data);
 
   handleTotales();
+}
+
+async function handleDeletePaycheck(event) {
+  confirm.require({
+    message: "¿Desea eliminar este recibo de nómina?",
+    header: "Confirmar eliminación",
+    icon: "pi pi-info-circle",
+    acceptLabel: "Si",
+    rejectLabel: "No",
+    acceptClassName: "p-button-danger",
+    acceptIcon: "pi pi-trash",
+    rejectIcon: "pi pi-times",
+    rejectClassName: "p-button-secondary",
+    accept: () => {
+      deletePaycheck(event);
+    },
+    reject: () => {},
+  });
+}
+
+async function deletePaycheck(event) {
+  try {
+    await sbDB("paycheck").delete().eq("paycheck_id", event.paycheck_id);
+  } catch (error) {
+    showError(error);
+  } finally {
+    await getData();
+  }
 }
 
 async function getData() {
@@ -182,6 +214,11 @@ onMounted(async () => {
             icon="pi pi-eye"
             @click="showSidebar(data)"
           />
+          <Button
+            icon="pi pi-trash"
+            class="p-button-danger p-button-outlined ml-2"
+            @click="handleDeletePaycheck(data)"
+          />
         </template>
       </Column>
       <Column field="startDate" header="Fecha primer dia" sortable>
@@ -210,7 +247,7 @@ onMounted(async () => {
     :baseZIndex="10000"
     position="right"
     class="w-full md:w-9 lg:w-5"
-    :header="'Resumen salarial - ' + sidebarData.name"
+    :header="'Resumen salarial - ' + RRHH_STORE.currentEmployee?.username || ''"
   >
     <div
       v-if="loadingSidebar"

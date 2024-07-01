@@ -166,6 +166,7 @@ export default function useRRHH() {
     handleTotalTres();
     handleTotalAnticipos();
     handleTotalNeto();
+    calcHoraReal();
   }
 
   function handlePresentismo() {
