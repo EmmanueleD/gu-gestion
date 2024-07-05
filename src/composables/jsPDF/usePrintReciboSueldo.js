@@ -511,8 +511,7 @@ export default function usePrintReciboSueldo() {
     pdfMake
       .createPdf(docDefinition)
       .download(
-        "recibo" +
-          fechaSalario +
+        fechaSalario +
           " - " +
           "Resumen Salarial, " +
           (RRHH_STORE.staffName || "") +
