@@ -7,6 +7,7 @@ import useCustomToast from "@/composables/utils/useCustomToast";
 import useGeneric from "@/composables/utils/useGeneric";
 import useSupaApi from "@/composables/useSupaApi";
 import useRRHH from "@/composables/utils/useRRHH";
+import useDateTime from "@/composables/utils/useDateTime";
 
 import { useDateFormat } from "@vueuse/core";
 
@@ -21,6 +22,8 @@ const { savePaycheck, getProfileFromFingerId } = useSupaApi();
 const { getAllFiles } = useSupabaseStorage();
 
 const { calcResumenSalarial, handleTotales } = useRRHH();
+
+const { getNumberOfDaysInShifts } = useDateTime();
 
 function formattedDate(date) {
   return useDateFormat(date, "ddd DD/MM/YY HH:mm").value;
@@ -155,7 +158,7 @@ async function showSidebar(data) {
   loadingSidebar.value = true;
   RRHH_STORE.setFingerId(data.fingerId);
   RRHH_STORE.setTotalHours(data.totalHours);
-  RRHH_STORE.setNumberOfShifts(data.data.length);
+  RRHH_STORE.setNumberOfDaysInShifts(getNumberOfDaysInShifts(data.data));
   RRHH_STORE.setStaffName(data.name);
   RRHH_STORE.setPresentismoAvailable(true);
   RRHH_STORE.setLate(0);

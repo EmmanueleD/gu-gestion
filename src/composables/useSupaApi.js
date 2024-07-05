@@ -95,6 +95,7 @@ export default function useSupaApi() {
         orderingBy: "label",
       });
       if (dbResponseStatus.value === "OK") {
+        console.log("getStaffRoleOptions", dbResp.value);
         return dbResp.value;
       } else {
         throw new Error("getStaffRoleOptions");
@@ -777,7 +778,7 @@ export default function useSupaApi() {
       feriadosAvailable: RRHH_STORE.feriadosAvailable,
       feriadoTime: RRHH_STORE.feriadoTime,
       feriados: RRHH_STORE.feriados,
-      numberOfShifts: RRHH_STORE.numberOfShifts,
+      numberOfDaysInShifts: RRHH_STORE.numberOfDaysInShifts,
       cuentaCorriente: RRHH_STORE.cuentaCorriente,
       devolucionCC: RRHH_STORE.devolucionCC,
       descuentoCC: RRHH_STORE.descuentoCC,
@@ -795,10 +796,6 @@ export default function useSupaApi() {
       startDate: RRHH_STORE.turnos[0].shift_start,
       endDate: RRHH_STORE.turnos[RRHH_STORE.turnos.length - 1].shift_end,
     };
-
-    console.log("savePaycheck", payload);
-
-    console.log("RRHH_STORE.idPaycheck", RRHH_STORE.idPaycheck);
 
     try {
       if (RRHH_STORE.idPaycheck) {
@@ -863,8 +860,6 @@ export default function useSupaApi() {
   }
 
   async function saveComunidadRelaciones(relacion) {
-    console.log("saveComunidadRelaciones", relacion);
-
     try {
       if (!relacion.comunidad_relaciones_id) {
         await create({
@@ -954,12 +949,42 @@ export default function useSupaApi() {
 
       if (dbResponseStatus.value === "OK") {
         if (dbResp.value.length > 0) {
-          return dbResp.value[0].value;
+          return dbResp.value[0];
         } else {
-          return 0;
+          return { description: "", value: 0 };
         }
       } else {
         throw new Error("getLastSuperYpf");
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async function saveStaffPlusGu(staffId, plusGu) {
+    console.log("saveStaffPlusGu", staffId, plusGu);
+
+    try {
+      if (plusGu.id) {
+        await update({
+          table: "mod_plus_gu",
+          id: {
+            key: "id",
+            value: plusGu.id,
+          },
+          data: {
+            value: plusGu.value,
+          },
+        });
+      } else {
+        await create({
+          table: "mod_plus_gu",
+          data: {
+            profile_id: staffId,
+            value: plusGu.value,
+            description: plusGu.description,
+          },
+        });
       }
     } catch (error) {
       throw new Error(error);
@@ -1038,6 +1063,7 @@ export default function useSupaApi() {
     getExcelFiles,
     saveProfile,
     getStaffPlusGu,
+    saveStaffPlusGu,
     getLastRefuerzo,
     getLastRespCierre,
   };

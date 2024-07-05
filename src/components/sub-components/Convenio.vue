@@ -31,6 +31,8 @@ const {
   getStaffMainRoleId,
   getStaffStatusHistory,
   getLastAntiguedad,
+  getStaffPlusGu,
+  saveStaffPlusGu,
   saveProfile,
 } = useSupaApi();
 const { showSuccess, showError } = useCustomToast();
@@ -79,6 +81,7 @@ const ayudaTransporteNumber = computed(() => {
   }
 });
 const descuentoCC = ref();
+const plusGu = ref({ description: "", value: 0 });
 const antiguedad = ref();
 
 function handleRoleChange() {
@@ -99,6 +102,7 @@ async function saveConvenio() {
     await saveStaffStatus(currentEmployee.id, statusSelected.value);
     await saveStaffDistance(currentEmployee.id, distancia.value);
     await saveStaffDescuentoCC(currentEmployee.id, descuentoCC.value);
+    await saveStaffPlusGu(currentEmployee.id, plusGu.value);
     await saveStaffExpGuelcom({
       profile_id: currentEmployee.id,
       ...expGuelcom.value,
@@ -144,6 +148,7 @@ onMounted(async () => {
       staffAntiguedad.value = await getStaffAntiguedad(currentEmployee.id);
       distancia.value = await getStaffDistance(currentEmployee.id);
       descuentoCC.value = await getStaffDescuentoCC(currentEmployee.id);
+      plusGu.value = await getStaffPlusGu(currentEmployee.id);
       mainRole.value = await getStaffMainRoleId(currentEmployee.id);
       statusHistory.value = await getStaffStatusHistory(currentEmployee.id);
       activePeriods.value = extractActivePeriods(statusHistory.value);
@@ -152,6 +157,7 @@ onMounted(async () => {
   } catch (error) {
     console.log(error);
   } finally {
+    handleRoleChange();
     loadingRoleOptions.value = false;
     loadingStatusOptions.value = false;
   }
@@ -353,6 +359,25 @@ onMounted(async () => {
           ></InputNumber>
         </BaseInput>
       </div>
+    </div>
+
+    <Divider class="col-12 my-4"></Divider>
+
+    <span class="col-12 font-bold">Plus Gu</span>
+
+    <div class="col-12 flex justify-content-start align-items-center">
+      <BaseInput label="Descripción" class="mr-2 mb-2">
+        <InputText v-model="plusGu.description"></InputText>
+      </BaseInput>
+
+      <BaseInput label="Plus Gu" class="mr-2 mb-2">
+        <InputNumber
+          v-model="plusGu.value"
+          locale="es"
+          currency="ARS"
+          mode="currency"
+        ></InputNumber>
+      </BaseInput>
     </div>
 
     <Divider class="col-12 my-4"></Divider>

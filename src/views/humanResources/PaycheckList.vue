@@ -149,7 +149,7 @@ async function showSidebar(data) {
   RRHH_STORE.setFeriadosAvailable(data.feriadosAvailable);
   RRHH_STORE.setFeriadoTime(data.feriadoTime);
   RRHH_STORE.setFeriados(data.feriados);
-  RRHH_STORE.setNumberOfShifts(data.numberOfShifts);
+  RRHH_STORE.setNumberOfDaysInShifts(data.numberOfDaysInShifts);
   RRHH_STORE.setCuentaCorriente(data.cuentaCorriente);
   RRHH_STORE.setDevolucionCC(data.devolucionCC);
   RRHH_STORE.setDescuentoCC(data.descuentoCC);

@@ -162,6 +162,17 @@ export default function useDatetime() {
     ); // Format the date string
   }
 
+  function getNumberOfDaysInShifts(shifts) {
+    const uniqueDays = new Set();
+
+    shifts.forEach((shift) => {
+      const startDate = shift.shift_start.split("T")[0];
+      uniqueDays.add(startDate);
+    });
+
+    return uniqueDays.size;
+  }
+
   return {
     orderObjectsByDate,
     getMonthNames,
@@ -172,5 +183,6 @@ export default function useDatetime() {
     firstDayOCurrentMonth,
     lastDayOfLastMonth,
     lastDayOfCurrentMonth,
+    getNumberOfDaysInShifts,
   };
 }

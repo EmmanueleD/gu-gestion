@@ -364,7 +364,8 @@ export default function useRRHH() {
       let distance = await getStaffDistance(RRHH_STORE.currentEmployee.id);
 
       RRHH_STORE.setAyudaTransporte(
-        RRHH_STORE.lastSuperYpf * (distance / 10) * RRHH_STORE.numberOfShifts
+        ((RRHH_STORE.lastSuperYpf * distance) / 10) *
+          RRHH_STORE.numberOfDaysInShifts
       );
     } catch (error) {
       throw new Error(error);

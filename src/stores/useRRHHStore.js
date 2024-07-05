@@ -47,7 +47,7 @@ export const useRRHHStore = defineStore("RRHH", () => {
   const _feriadosAvailable = ref(false);
   const _feriadoTime = ref(0);
   const _feriados = ref(null);
-  const _numberOfShifts = ref(null);
+  const _numberOfDaysInShifts = ref(null);
   const _cuentaCorriente = ref(null);
   const _devolucionCC = ref(null);
   const _descuentoCC = ref(null);
@@ -295,13 +295,13 @@ export const useRRHHStore = defineStore("RRHH", () => {
     }
     return _feriados.value;
   });
-  const numberOfShifts = computed(() => {
-    if (!_numberOfShifts.value) {
-      setNomberOfShifts(
-        JSON.parse(localStorage.getItem("gu_ge:numberOfShifts"))
+  const numberOfDaysInShifts = computed(() => {
+    if (!_numberOfDaysInShifts.value) {
+      setNumberOfDaysInShifts(
+        JSON.parse(localStorage.getItem("gu_ge:numberOfDaysInShifts"))
       );
     }
-    return _numberOfShifts.value;
+    return _numberOfDaysInShifts.value;
   });
   const cuentaCorriente = computed(() => {
     if (
@@ -439,10 +439,9 @@ export const useRRHHStore = defineStore("RRHH", () => {
     setFeriadosAvailable(null);
     setFeriadoTime(0);
     setFeriados(null);
-    setNumberOfShifts(null);
+    setNumberOfDaysInShifts(null);
     setLate(0);
     setFeriados(null);
-    setNumberOfShifts(null);
     setCuentaCorriente(null);
     setDevolucionCC(null);
     setDescuentoCC(null);
@@ -676,11 +675,11 @@ export const useRRHHStore = defineStore("RRHH", () => {
     localStorage.setItem("gu_ge:feriados", JSON.stringify(value));
     _feriados.value = value;
   }
-  function setNumberOfShifts(value) {
-    localStorage.removeItem("gu_ge:numberOfShifts");
-    _numberOfShifts.value = null;
-    localStorage.setItem("gu_ge:numberOfShifts", JSON.stringify(value));
-    _numberOfShifts.value = value;
+  function setNumberOfDaysInShifts(value) {
+    localStorage.removeItem("gu_ge:numberOfDaysInShifts");
+    _numberOfDaysInShifts.value = null;
+    localStorage.setItem("gu_ge:numberOfDaysInShifts", JSON.stringify(value));
+    _numberOfDaysInShifts.value = value;
   }
   function setCuentaCorriente(value) {
     localStorage.removeItem("gu_ge:cuentaCorriente");
@@ -880,8 +879,8 @@ export const useRRHHStore = defineStore("RRHH", () => {
     feriados,
     setFeriados,
 
-    numberOfShifts,
-    setNumberOfShifts,
+    numberOfDaysInShifts,
+    setNumberOfDaysInShifts,
 
     cuentaCorriente,
     setCuentaCorriente,

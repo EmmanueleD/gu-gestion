@@ -90,17 +90,6 @@ onMounted(() => {
 
 <template>
   <div class="w-full grid p-2">
-    <div class="col-12 flex justify-content-start align-items-center my-2">
-      <Checkbox
-        v-model="RRHH_STORE.viaticoAvailable"
-        :binary="true"
-        class="mr-2"
-      ></Checkbox>
-      <span @click="handleChangeViatico" class="cursor-pointer select-none"
-        >Viatico</span
-      >
-    </div>
-
     <div class="col-12 flex flex-column my-2">
       <span class="font-bold">Cuenta Corriente</span>
       <div class="w-full flex justify-content-start align-items-center">
