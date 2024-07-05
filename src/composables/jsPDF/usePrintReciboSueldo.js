@@ -7,9 +7,9 @@ import useGeneric from "@/composables/utils/useGeneric";
 import BASE64 from "@/constants/BASE64";
 
 import pdfMake, { s } from "pdfmake/build/pdfmake";
-import pdfFonts from "./usePdfFonts";
+import { FONTS } from "./usePdfFonts";
 
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
+pdfMake.vfs = pdfMake.vfs = FONTS;
 
 export default function usePrintReciboSueldo() {
   const RRHH_STORE = useRRHHStore();
