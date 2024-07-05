@@ -296,18 +296,24 @@ export default function useRRHH() {
 
   async function handleStaffExp() {
     const idStaff = RRHH_STORE.currentEmployee.id;
-    let expTitulos, expExterna, expGuelcom, roles;
+    let expTitulos, expExterna, expGuelcom, expRoles, roles;
     try {
       expTitulos = await getStaffExpTitulos(idStaff);
       expExterna = await getStaffExpExterna(idStaff);
       expGuelcom = await getStaffExpGuelcom(idStaff);
       roles = await getStaffRoles(idStaff);
 
+      if (typeof RRHH_STORE.currentEmployee.expRoles === "number") {
+        expRoles = RRHH_STORE.currentEmployee.expRoles;
+      } else {
+        expRoles = roles.length * 2;
+      }
+
       RRHH_STORE.setStaffExp(
         Number(expTitulos.value) +
           Number(expExterna.value) +
           Number(expGuelcom.value) +
-          Number(roles.length * 2)
+          Number(expRoles)
       );
     } catch (error) {
       RRHH_STORE.setStaffExp(0);
