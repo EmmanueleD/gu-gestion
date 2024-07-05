@@ -64,11 +64,11 @@ export default function usePrintReciboSueldo() {
 
     docDefinition.content.push({
       columns: [
-        {
-          image: BASE64.GU_LOGO, // Replace with your base64 encoded image data
-          width: 75,
-          margin: [0, 0, 0, 30],
-        },
+        // {
+        //   image: BASE64.GU_LOGO, // Replace with your base64 encoded image data
+        //   width: 75,
+        //   margin: [0, 0, 0, 30],
+        // },
         {
           text:
             fechaSalario +
