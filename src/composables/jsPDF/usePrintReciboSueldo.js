@@ -7,7 +7,7 @@ import useGeneric from "@/composables/utils/useGeneric";
 import BASE64 from "@/constants/BASE64";
 
 import pdfMake, { s } from "pdfmake/build/pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
+import pdfFonts from "./usePdfFonts";
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
