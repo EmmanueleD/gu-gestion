@@ -94,6 +94,7 @@ async function saveConvenio() {
   let currentProfile = { ...currentEmployee };
   currentProfile.viatico = viatico.value;
   currentProfile.feriados = feriados.value;
+  currentProfile.expRoles = expRoles.value;
 
   try {
     await saveProfile(currentProfile);
@@ -153,11 +154,15 @@ onMounted(async () => {
       statusHistory.value = await getStaffStatusHistory(currentEmployee.id);
       activePeriods.value = extractActivePeriods(statusHistory.value);
       totActiveTime.value = calculateTotalTime(activePeriods.value);
+      if (currentEmployee.expRoles) {
+        expRoles.value = currentEmployee.expRoles;
+      } else {
+        handleRoleChange();
+      }
     }
   } catch (error) {
     console.log(error);
   } finally {
-    handleRoleChange();
     loadingRoleOptions.value = false;
     loadingStatusOptions.value = false;
   }
