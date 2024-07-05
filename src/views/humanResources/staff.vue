@@ -257,7 +257,7 @@ onMounted(async () => {
           /> -->
         </template>
       </Column>
-      <Column field="active" header="Activo">
+      <Column field="active" header="Activo" sortable>
         <template #body="{ data }">
           <i
             class="pi"
@@ -303,7 +303,7 @@ onMounted(async () => {
         </template>
       </Column> -->
 
-      <Column field="viatico" header="Viatico">
+      <Column field="viatico" header="Viatico" sortable>
         <template #body="{ data }">
           <i
             class="pi"
@@ -316,7 +316,7 @@ onMounted(async () => {
         </template>
       </Column>
 
-      <Column field="feriados" header="Feriados">
+      <Column field="feriados" header="Feriados" sortable>
         <template #body="{ data }">
           <i
             class="pi"
@@ -329,7 +329,7 @@ onMounted(async () => {
         </template>
       </Column>
 
-      <Column field="houseAccountBalance" header="Cuenta corriente">
+      <Column field="houseAccountBalance" header="Cuenta corriente" sortable>
         <template #body="{ data }">
           <span
             :class="
