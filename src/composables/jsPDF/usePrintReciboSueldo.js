@@ -376,7 +376,7 @@ export default function usePrintReciboSueldo() {
         },
       ],
       [
-        { text: "TOT1 + TOT2", style: "total" },
+        { text: "Total 3 (Total 1 + Total 2)", style: "total" },
         "",
         {
           text: formatCurrency(RRHH_STORE.totalTres),
@@ -443,7 +443,7 @@ export default function usePrintReciboSueldo() {
     });
 
     thirdBody.push([
-      { text: "TOTAL ANTICIPOS", style: "total" },
+      { text: "Total Anticipos", style: "total" },
       "",
       {
         text: formatCurrency(RRHH_STORE.totalAnticipos),
@@ -453,9 +453,10 @@ export default function usePrintReciboSueldo() {
     ]);
 
     const totalNeto = [
+      ["", "", ""],
       [
         {
-          text: "TOTAL NETO (TOT3 - TOT ANTICIPOS)",
+          text: "TOTAL NETO (Total 3 - Total Anticipos)",
           style: "total",
         },
         "",
