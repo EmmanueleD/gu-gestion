@@ -1,12 +1,18 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 
+import { FilterMatchMode } from "primevue/api";
+
 // COMPOSABLES
 import useSupabaseDB from "@/composables/useSupabaseDB";
 import useCustomToast from "@/composables/utils/useCustomToast";
 import useAuth from "@/composables/useAuth";
 import useSupaApi from "@/composables/useSupaApi";
 import useGeneric from "@/composables/utils/useGeneric";
+
+const filters = ref({
+  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+});
 
 // COMPOSABLES VARIABLES
 const { get, getAll, getWithFilter, create, update, dbResponseStatus, dbResp } =
@@ -233,6 +239,14 @@ onMounted(async () => {
     <DataTable
       :value="employees"
       :loading="loadingEmployees || loadingEmployeesRoles"
+      v-model:filters="filters"
+      :globalFilterFields="[
+        'username',
+        'comment',
+        'email',
+        'finger_id',
+        'fudo_id',
+      ]"
       responsiveLayout="scroll"
       class="w-full"
       stripedRows
@@ -243,6 +257,16 @@ onMounted(async () => {
       :rowsPerPageOptions="[10, 20, 50]"
       paginatorPosition="bottom"
     >
+      <template #header>
+        <div class="flex justify-content-end align-items-center mb-4">
+          <i class="pi pi-search mr-3"></i>
+          <InputText
+            v-model="filters['global'].value"
+            placeholder="Busca por nombre, comentario, email, huella o fudo_id..."
+            class="w-4"
+          />
+        </div>
+      </template>
       <Column field="acciones" header="Acciones" style="width: 150px">
         <template #body="{ data }">
           <Button
