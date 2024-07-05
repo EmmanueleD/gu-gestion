@@ -256,6 +256,7 @@ onMounted(async () => {
       paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
       :rowsPerPageOptions="[10, 20, 50]"
       paginatorPosition="bottom"
+      sortMode="multiple"
     >
       <template #header>
         <div class="flex justify-content-end align-items-center mb-4">
