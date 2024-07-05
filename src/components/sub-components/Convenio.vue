@@ -6,6 +6,11 @@ import useSupaApi from "@/composables/useSupaApi";
 import useCustomToast from "@/composables/utils/useCustomToast";
 import useDatetime from "@/composables/utils/useDateTime";
 
+// COMPONENTS
+import BaseInput from "../base/BaseInput.vue";
+
+const emit = defineEmits(["saved-convenio"]);
+
 // COMPOSABLES VARIABLES
 const {
   getStaffRoleOptions,
@@ -41,9 +46,6 @@ const { extractActivePeriods, calculateTotalTime } = useDatetime();
 
 // STORES
 import { useRRHHStore } from "@/stores/useRRHHStore";
-
-// COMPONENTS
-import BaseInput from "../base/BaseInput.vue";
 
 // COMPONENT VARIABLES
 const RRHHStore = useRRHHStore();
@@ -124,6 +126,7 @@ async function saveConvenio() {
   } catch (error) {
     showError("ERROR SALVANDO STAFF:", error);
   } finally {
+    emit("saved-convenio");
     loadingSave.value = false;
   }
 }

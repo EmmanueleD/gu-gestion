@@ -6,14 +6,20 @@ import useSupabaseDB from "@/composables/useSupabaseDB";
 import useCustomToast from "@/composables/utils/useCustomToast";
 import useAuth from "@/composables/useAuth";
 import useSupaApi from "@/composables/useSupaApi";
+import useGeneric from "@/composables/utils/useGeneric";
 
 // COMPOSABLES VARIABLES
 const { get, getAll, getWithFilter, create, update, dbResponseStatus, dbResp } =
   useSupabaseDB();
 const { showSuccess, showError } = useCustomToast();
 const { guAuthResponse, guRegister, fetchProfiles } = useAuth();
-const { getEmployeeOptions, getGestRoleOptions, setProfileGestRole } =
-  useSupaApi();
+const {
+  getEmployeeOptions,
+  getGestRoleOptions,
+  setProfileGestRole,
+  getRolesList,
+} = useSupaApi();
+const { formatCurrency } = useGeneric();
 
 // STORES
 import { useRRHHStore } from "@/stores/useRRHHStore";
@@ -43,6 +49,8 @@ const loadingGestRole = ref(false);
 const sidebarVisible = ref(false);
 const gestRoleOptions = ref([]);
 
+const roleList = ref([]);
+
 const email = ref("");
 const name = ref("");
 const password = ref("staff123");
@@ -52,6 +60,10 @@ const password = ref("staff123");
 function hideSidebar() {
   sidebarVisible.value = false;
   RRHHStore.setCurrentEmployee({});
+}
+
+function roleNameFromId(id) {
+  return roleList.value.find((role) => role.staff_role_id === id).label;
 }
 
 async function createStaff() {
@@ -190,6 +202,8 @@ async function getData() {
 }
 
 onMounted(async () => {
+  roleList.value.splice(0);
+  roleList.value = await getRolesList();
   await getData();
 });
 </script>
@@ -243,7 +257,34 @@ onMounted(async () => {
           /> -->
         </template>
       </Column>
-      <Column field="name" header="Nombre Fudo" sortable>
+      <Column field="active" header="Activo">
+        <template #body="{ data }">
+          <i
+            class="pi"
+            :class="{
+              'pi-sun text-yellow-500 font-bold text-xl': data.active,
+              'pi-moon text-blue-300  text-xl': !data.active,
+            }"
+          ></i>
+        </template>
+      </Column>
+      <Column field="username" header="Nombre" sortable>
+        <template #body="{ data }">
+          <span class="font-bold" :class="{ 'text-gray-400': !data.active }">{{
+            data.username
+          }}</span>
+        </template>
+      </Column>
+      <Column field="main_role_id" header="Area" sortable>
+        <template #body="{ data }">
+          <span :class="{ 'text-gray-400': !data.active }">
+            {{
+              data.main_role_id ? roleNameFromId(data.main_role_id) : "-"
+            }}</span
+          >
+        </template>
+      </Column>
+      <!-- <Column field="name" header="Avatar" sortable>
         <template #body="{ data }">
           <Avatar
             size="xlarge"
@@ -260,13 +301,56 @@ onMounted(async () => {
             "
           ></Avatar>
         </template>
+      </Column> -->
+
+      <Column field="viatico" header="Viatico">
+        <template #body="{ data }">
+          <i
+            class="pi"
+            :class="
+              data.viatico
+                ? 'pi-check-circle text-green-500'
+                : 'pi-times text-gray-300'
+            "
+          ></i>
+        </template>
       </Column>
+
+      <Column field="feriados" header="Feriados">
+        <template #body="{ data }">
+          <i
+            class="pi"
+            :class="
+              data.feriados
+                ? 'pi-check-circle text-green-500'
+                : 'pi-times text-gray-300'
+            "
+          ></i>
+        </template>
+      </Column>
+
+      <Column field="houseAccountBalance" header="Cuenta corriente">
+        <template #body="{ data }">
+          <span
+            :class="
+              !data.active
+                ? 'text-gray-300'
+                : data.houseAccountBalance < 0
+                ? 'text-red-800'
+                : data.houseAccountBalance > 0
+                ? 'text-green-500'
+                : 'text-gray-500'
+            "
+            >{{ formatCurrency(data.houseAccountBalance) }}</span
+          >
+        </template>
+      </Column>
+
       <Column field="finger_id" header="Numero Huella" sortable>
         <template #body="{ data }">
           <pre>{{ data.finger_id }}</pre>
         </template>
       </Column>
-      <Column field="username" header="Nombre" sortable> </Column>
     </DataTable>
   </div>
   <Sidebar
@@ -408,7 +492,7 @@ onMounted(async () => {
         </div>
       </TabPanel>
       <TabPanel header="Convenio">
-        <Convenio />
+        <Convenio @saved-convenio="getData" />
       </TabPanel>
       <TabPanel header="Documentos"> Work in progress... </TabPanel>
       <TabPanel header="Notas">

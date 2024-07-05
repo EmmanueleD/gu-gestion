@@ -137,6 +137,21 @@ export default function useSupaApi() {
     }
   }
 
+  async function getRolesList() {
+    try {
+      await getAll({
+        table: "staff_role",
+      });
+      if (dbResponseStatus.value === "OK") {
+        return dbResp.value;
+      } else {
+        throw new Error("getRolesList");
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   async function getStaffRoles(staffId) {
     let idRoles = await getStaffIdRoles(staffId);
     let result = [];
@@ -480,6 +495,25 @@ export default function useSupaApi() {
         return true;
       } else {
         throw new Error("saveStaffAntiguedad");
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async function deleteStaffAntiguedad(antiguedadData) {
+    try {
+      await remove({
+        table: "mod_staff_antiguedad",
+        id: {
+          key: "mod_staff_antiguedad_id",
+          value: antiguedadData.mod_staff_antiguedad_id,
+        },
+      });
+      if (dbResponseStatus.value === "OK") {
+        return true;
+      } else {
+        throw new Error("deleteStaffAntiguedad");
       }
     } catch (error) {
       throw new Error(error);
@@ -1027,6 +1061,7 @@ export default function useSupaApi() {
     getStaffRoleOptions,
     getStatusOptions,
     getLastSuperYpf,
+    getRolesList,
     getStaffRoles,
     getStaffIdRoles,
     setStaffIdRoles,
@@ -1037,6 +1072,7 @@ export default function useSupaApi() {
     saveStaffStatus,
     getStaffAntiguedad,
     saveStaffAntiguedad,
+    deleteStaffAntiguedad,
     getStaffExpTitulos,
     saveStaffExpTitulos,
     getStaffExpGuelcom,

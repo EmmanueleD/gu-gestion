@@ -7,6 +7,7 @@ import useCustomToast from "@/composables/utils/useCustomToast";
 import { useDateFormat } from "@vueuse/core";
 import useGeneric from "@/composables/utils/useGeneric";
 import useCustomConfirm from "@/composables/utils/useCustomConfirm";
+import useSupaApi from "@/composables/useSupaApi";
 
 // COMPONENTS
 import SingleLineChart from "@/components/custom/SingleLineChart.vue";
@@ -20,6 +21,7 @@ const { dbResponseStatus, dbResp, getAll, create, remove } = useSupabaseDB();
 const { showSuccess, showError } = useCustomToast();
 const { formatCurrency } = useGeneric();
 const { showConfirm } = useCustomConfirm();
+const { deleteStaffAntiguedad } = useSupaApi();
 
 // COMPONENT VARIABLES
 const historicSeries = ref([]);
@@ -112,19 +114,7 @@ async function handleDeleteValue(data) {
 
     accept: async () => {
       try {
-        await remove({
-          table: "mod_staff_antiguedad",
-          id: {
-            key: "mod_staff_antiguedad_id",
-            value: data.seniority_modifier_id,
-          },
-        });
-
-        if (dbResponseStatus.value === "OK") {
-          showSuccess("Eliminado exitosamente");
-        } else {
-          showError("No se encontraron archivos");
-        }
+        await deleteStaffAntiguedad(data);
       } catch (error) {
         showError(error);
       } finally {
@@ -151,7 +141,7 @@ getData();
         v-if="loading"
         class="flex align-items-center justify-content-center"
       >
-        <i class="pi pi-spin pi-spinner mr-4" style="fontsize: 3rem"></i>
+        <i class="pi pi-spin pi-spinner mr-4" style="font-size: 3rem"></i>
         <span>Cargando...</span>
       </div>
       <div
