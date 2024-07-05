@@ -157,7 +157,7 @@ onMounted(async () => {
       statusHistory.value = await getStaffStatusHistory(currentEmployee.id);
       activePeriods.value = extractActivePeriods(statusHistory.value);
       totActiveTime.value = calculateTotalTime(activePeriods.value);
-      if (currentEmployee.expRoles) {
+      if (typeof currentEmployee.expRoles === "number") {
         expRoles.value = currentEmployee.expRoles;
       } else {
         handleRoleChange();
