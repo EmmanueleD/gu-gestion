@@ -63,6 +63,7 @@ export const useRRHHStore = defineStore("RRHH", () => {
   const _customRowsTot3 = ref([]);
   const _turnos = ref([]);
   const _idPaycheck = ref(null);
+  const _fechaSalario = ref(null);
 
   //COMPUTED
   const baseDataLastCall = computed(() => {
@@ -403,6 +404,12 @@ export const useRRHHStore = defineStore("RRHH", () => {
       setIdPaycheck(JSON.parse(localStorage.getItem("gu_ge:idPaycheck")));
     }
     return _idPaycheck.value;
+  });
+  const fechaSalario = computed(() => {
+    if (_fechaSalario.value === null || _fechaSalario.value === undefined) {
+      setFechaSalario(JSON.parse(localStorage.getItem("gu_ge:fechaSalario")));
+    }
+    return _fechaSalario.value;
   });
 
   //FUNCTIONS
@@ -771,6 +778,12 @@ export const useRRHHStore = defineStore("RRHH", () => {
     localStorage.setItem("gu_ge:idPaycheck", JSON.stringify(value));
     _idPaycheck.value = value;
   }
+  function setFechaSalario(value) {
+    localStorage.removeItem("gu_ge:fechaSalario");
+    _fechaSalario.value = null;
+    localStorage.setItem("gu_ge:fechaSalario", JSON.stringify(value));
+    _fechaSalario.value = value;
+  }
 
   return {
     clearAll,
@@ -926,5 +939,8 @@ export const useRRHHStore = defineStore("RRHH", () => {
 
     idPaycheck,
     setIdPaycheck,
+
+    fechaSalario,
+    setFechaSalario,
   };
 });

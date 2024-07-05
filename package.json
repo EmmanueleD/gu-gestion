@@ -17,6 +17,7 @@
     "jspdf": "^2.5.1",
     "lodash": "^4.17.21",
     "npm": "^10.3.0",
+    "pdfmake": "^0.2.10",
     "pinia": "^2.1.7",
     "primeflex": "^3.3.1",
     "primeicons": "^6.0.1",

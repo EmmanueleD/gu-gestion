@@ -164,6 +164,7 @@ async function showSidebar(data) {
   RRHH_STORE.setAnticiposRows(data.anticiposRows);
   RRHH_STORE.setCustomRowsTot3(data.customRowsTot3);
   RRHH_STORE.setTurnos(data.turnos);
+  RRHH_STORE.setFechaSalario(data.startDate);
 
   sidebarVisible.value = true;
   loadingSidebar.value = false;

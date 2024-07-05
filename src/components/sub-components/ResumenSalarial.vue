@@ -91,7 +91,7 @@ async function handleSaveRecibo() {
 
     <div class="col-12 flex justify-content-between align-items-center">
       <span
-        >Rol:
+        >Area:
         {{
           RRHH_STORE.MAP_STAFF_ROLE_OPTIONS[
             RRHH_STORE.currentEmployee.main_role_id
@@ -193,11 +193,7 @@ async function handleSaveRecibo() {
       v-if="RRHH_STORE.plusGu"
       class="col-12 flex justify-content-between align-items-center"
     >
-      <span
-        >Plus Guelcom ({{
-          ((RRHH_STORE.plusGu / RRHH_STORE.totalUno) * 100).toFixed(2)
-        }}%)</span
-      >
+      <span>Plus Guelcom </span>
       <span class="font-bold">{{ formatCurrency(RRHH_STORE.plusGu) }}</span>
     </div>
 
