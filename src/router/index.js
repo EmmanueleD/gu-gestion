@@ -98,6 +98,18 @@ const router = createRouter({
           meta: { requiresAuth: true, gest_role_id: [1, 2, 3] },
         },
         {
+          path: "test-qr-turnos",
+          name: "qr-turnos",
+          component: () => import("@/views/humanResources/QRTurnos.vue"),
+          meta: { requiresAuth: true, gest_role_id: [1, 2, 3] },
+        },
+        {
+          path: "test-qr-turnos-scanner",
+          name: "qr-turnos-scanner",
+          component: () => import("@/views/humanResources/QRTurnosScanner.vue"),
+          meta: { requiresAuth: true },
+        },
+        {
           path: "modifiers",
           name: "modifiers",
           children: [

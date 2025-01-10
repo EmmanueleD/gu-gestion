@@ -81,6 +81,12 @@ const model = ref([
     gest_role_id: [1, 2, 3],
     items: [
       {
+        label: "QR Turnos",
+        icon: "pi pi-fw pi-qrcode",
+        to: "/qr-turnos",
+        gest_role_id: [1, 2, 3],
+      },
+      {
         label: "Lista Documentos Cargados",
         icon: "pi pi-fw pi-folder",
         to: "/list-excel-hours",
@@ -158,11 +164,7 @@ const model = ref([
   </div>
   <ul class="layout-menu">
     <template v-for="(item, i) in model" :key="item">
-      <app-menu-item
-        v-if="!item.separator"
-        :item="item"
-        :index="i"
-      ></app-menu-item>
+      <app-menu-item v-if="!item.separator" :item="item" :index="i"></app-menu-item>
     </template>
   </ul>
 </template>
