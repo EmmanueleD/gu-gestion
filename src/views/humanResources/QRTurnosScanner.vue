@@ -2,16 +2,15 @@
   <div class="card">
     <h5>Escanear QR Turnos</h5>
     <div class="flex flex-column align-items-center">
-      <video ref="video" autoplay playsinline class="scanner-video"></video>
-      <canvas ref="canvas" style="display: none;"></canvas>
+      <video ref="video" class="scanner-video"></video>
       <div v-if="error" class="text-red-500 mt-3">
         {{ error }}
       </div>
       <div v-if="lastScan" class="text-green-500 mt-3">
         Último escaneo: {{ lastScan }}
       </div>
-      <button @click="startCamera" class="p-button mt-3">
-        Iniciar Cámara
+      <button @click="startScanner" class="p-button mt-3">
+        Iniciar Escáner
       </button>
     </div>
   </div>
@@ -20,95 +19,71 @@
 <script setup>
 import { ref, onBeforeUnmount } from 'vue';
 import { useAuthStore } from '@/stores/useAuthStore';
-import QrScanner from 'qr-scanner';
+import Instascan from 'instascan';
 
 const video = ref(null);
-const canvas = ref(null);
 const error = ref('');
 const lastScan = ref('');
 const authStore = useAuthStore();
-let stream = null;
-let scanInterval = null;
+let scanner = null;
 
-async function startCamera() {
+async function startScanner() {
   try {
-    // Ferma lo stream precedente se esiste
-    if (stream) {
-      stream.getTracks().forEach(track => track.stop());
+    // Ferma lo scanner precedente se esiste
+    if (scanner) {
+      await scanner.stop();
     }
-    
+
     error.value = '';
     
-    // Richiedi accesso alla fotocamera posteriore
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        facingMode: 'environment',
-        width: { ideal: 1280 },
-        height: { ideal: 720 }
-      }
+    // Crea un nuovo scanner
+    scanner = new Instascan.Scanner({
+      video: video.value,
+      scanPeriod: 5, // Scansiona ogni 5ms
+      mirror: false  // Non specchiare l'immagine
     });
+
+    // Gestisci gli eventi di scansione
+    scanner.addListener('scan', result => {
+      const scanData = {
+        qrCode: result,
+        userId: authStore.user?.id,
+        userEmail: authStore.user?.email,
+        username: authStore.user?.username,
+        timestamp: new Date().toISOString()
+      };
+      console.log('Scan result:', scanData);
+      lastScan.value = result;
+      error.value = '';
+    });
+
+    // Ottieni le fotocamere disponibili
+    const cameras = await Instascan.Camera.getCameras();
     
-    // Collega lo stream al video
-    video.value.srcObject = stream;
+    if (cameras.length === 0) {
+      throw new Error('No se encontraron cámaras');
+    }
     
-    // Avvia la scansione del QR
-    startQRScanning();
+    // Usa la fotocamera posteriore se disponibile
+    const backCamera = cameras.find(camera => camera.name.toLowerCase().includes('back'));
+    const selectedCamera = backCamera || cameras[0];
     
+    // Avvia lo scanner
+    await scanner.start(selectedCamera);
+
   } catch (err) {
     if (location.protocol !== 'https:') {
       error.value = 'Esta función requiere HTTPS. Por favor, accede a través de una conexión segura.';
     } else {
-      error.value = 'Error al acceder a la cámara: ' + (err.message || 'Permiso denegado');
+      error.value = 'Error al iniciar el escáner: ' + (err.message || 'Permiso denegado');
     }
-    console.error('Camera error:', err);
+    console.error('Scanner error:', err);
   }
-}
-
-function startQRScanning() {
-  // Pulisci l'intervallo precedente se esiste
-  if (scanInterval) {
-    clearInterval(scanInterval);
-  }
-  
-  // Crea un nuovo intervallo per scansionare il video
-  scanInterval = setInterval(() => {
-    if (!video.value || !canvas.value || !video.value.videoWidth) return;
-    
-    const ctx = canvas.value.getContext('2d');
-    canvas.value.width = video.value.videoWidth;
-    canvas.value.height = video.value.videoHeight;
-    
-    // Cattura un frame dal video
-    ctx.drawImage(video.value, 0, 0);
-    
-    // Prova a decodificare il QR code
-    QrScanner.scanImage(canvas.value)
-      .then(result => {
-        const scanData = {
-          qrCode: result,
-          userId: authStore.user?.id,
-          userEmail: authStore.user?.email,
-          username: authStore.user?.username,
-          timestamp: new Date().toISOString()
-        };
-        console.log('Scan result:', scanData);
-        lastScan.value = result;
-      })
-      .catch(() => {
-        // Ignora gli errori di scansione (nessun QR trovato)
-      });
-  }, 1000);
 }
 
 onBeforeUnmount(() => {
-  // Pulisci l'intervallo quando il componente viene distrutto
-  if (scanInterval) {
-    clearInterval(scanInterval);
-  }
-  
-  // Ferma lo stream della fotocamera
-  if (stream) {
-    stream.getTracks().forEach(track => track.stop());
+  if (scanner) {
+    scanner.stop();
   }
 });
 </script>
@@ -125,9 +100,5 @@ onBeforeUnmount(() => {
   border: 1px solid #ccc;
   border-radius: 8px;
   margin-bottom: 1rem;
-}
-
-canvas {
-  display: none;
 }
 </style>
