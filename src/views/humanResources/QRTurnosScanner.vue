@@ -2,29 +2,30 @@
   <div class="card">
     <h5>Escanear QR Turnos</h5>
     <div class="flex flex-column align-items-center">
-      <qrcode-stream 
-        v-if="isScanning && !showSuccess"
-        @decode="onDecode"
-        @init="onInit"
-        :track="paintOutline"
-        class="scanner-video"
-      />
+      <qrcode-stream v-if="isScanning && !showSuccess" @decode="onDecode" @init="onInit" :track="paintOutline"
+        class="scanner-video" />
+
+      <pre>{{ { currentQrData, scanData } }}</pre>
+
       <Transition name="slide">
         <div v-if="showSuccess" class="success-screen">
           <div class="success-content">
             <i class="pi pi-check-circle" style="font-size: 4rem;"></i>
             <h2>¡Escaneado con éxito!</h2>
             <div class="scan-info">
-              <p><strong>Fecha y Hora:</strong> {{ formatDateTime(lastScan) }}</p>
-              <p><strong>Usuario:</strong> {{ authStore.user?.username }}</p>
-              <p><strong>Email:</strong> {{ authStore.user?.email }}</p>
+              <p><strong>Código QR:</strong> {{ scanData.qrCode }}</p>
+              <p><strong>Usuario:</strong> {{ scanData.username }}</p>
+              <p><strong>Email:</strong> {{ scanData.userEmail }}</p>
+              <p><strong>Fecha y Hora:</strong> {{ formatDateTime(scanData.timestamp) }}</p>
             </div>
           </div>
         </div>
       </Transition>
+
       <div v-if="error" class="text-red-500 mt-3">
         {{ error }}
       </div>
+
       <button @click="toggleScanner" class="p-button mt-3" :disabled="showSuccess">
         {{ isScanning ? 'Detener Escáner' : 'Iniciar Escáner' }}
       </button>
@@ -33,15 +34,22 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
 import { QrcodeStream } from 'vue-qrcode-reader';
 import { useAuthStore } from '@/stores/useAuthStore';
 
 const error = ref('');
-const lastScan = ref('');
 const isScanning = ref(false);
 const showSuccess = ref(false);
 const authStore = useAuthStore();
+
+const scanData = reactive({
+  qrCode: '',
+  userId: '',
+  userEmail: '',
+  username: '',
+  timestamp: ''
+});
 
 function toggleScanner() {
   isScanning.value = !isScanning.value;
@@ -85,18 +93,19 @@ async function onInit(promise) {
 }
 
 function onDecode(result) {
-  const scanData = {
-    qrCode: result,
-    userId: authStore.user?.id,
-    userEmail: authStore.user?.email,
-    username: authStore.user?.username,
-    timestamp: new Date().toISOString()
-  };
+  // Aggiorna i dati della scansione
+  scanData.qrCode = result;
+  scanData.userId = authStore.user?.id || '';
+  scanData.userEmail = authStore.user?.email || '';
+  scanData.username = authStore.user?.username || '';
+  scanData.timestamp = new Date().toISOString();
+
   console.log('Scan result:', scanData);
-  lastScan.value = scanData.timestamp;
+
+  // Mostra la schermata di successo
   showSuccess.value = true;
 
-  // Nascondi la schermata di successo dopo 3 secondi
+  // Nascondi la schermata dopo 3 secondi
   setTimeout(() => {
     showSuccess.value = false;
   }, 3000);
@@ -139,7 +148,7 @@ function paintOutline(detectedCodes, ctx) {
 }
 
 .success-screen {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
