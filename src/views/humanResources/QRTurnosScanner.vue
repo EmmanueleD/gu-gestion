@@ -8,11 +8,12 @@
       <Transition name="slide">
         <div v-if="showSuccess" class="success-screen">
           <div class="success-content">
-            <i class="pi pi-check-circle" style="font-size: 4rem;"></i>
+            <i class="pi pi-check-circle" style="font-size: 3rem;"></i>
             <div class="scan-info">
-              <p>{{ scanData.username }}</p>
+              <p class="font-bold" style="font-size: 2rem;">{{ scanData.username }}</p>
               <p class="font-bold" style="font-size: 5rem;">{{ useDateFormat(scanData.timestamp, 'HH:mm').value }}</p>
-              <p class="font-bold">{{ useDateFormat(scanData.timestamp, 'DD/MM/YYYY').value }}</p>
+              <p class="font-bold" style="font-size: 2rem;">{{ useDateFormat(scanData.timestamp, 'DD/MM/YYYY').value }}
+              </p>
             </div>
           </div>
         </div>
