@@ -12,9 +12,9 @@
             <h2>¡Escaneado con éxito!</h2>
             <div class="scan-info">
               <!-- <p><strong>Código QR:</strong> {{ scanData.qrCode }}</p> -->
-              <p><strong>Usuario:</strong> {{ scanData.username }}</p>
-              <p><strong>Email:</strong> {{ scanData.userEmail }}</p>
-              <p class="text-2xl"><strong>Fecha y Hora:</strong> {{ formatDateTime(scanData.timestamp) }}</p>
+              <p>{{ scanData.username }}</p>
+              <!-- <p><strong>Email:</strong> {{ scanData.userEmail }}</p> -->
+              <p class="font-bold text-2xl">{{ formatDateTime(scanData.timestamp) }}</p>
             </div>
           </div>
         </div>
