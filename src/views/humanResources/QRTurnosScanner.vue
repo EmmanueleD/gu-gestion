@@ -5,18 +5,16 @@
       <qrcode-stream v-if="isScanning && !showSuccess" @detect="onDecode" @init="onInit" :track="paintOutline"
         class="scanner-video" />
 
-      <pre>{{ { currentQrData, scanData } }}</pre>
-
       <Transition name="slide">
         <div v-if="showSuccess" class="success-screen">
           <div class="success-content">
             <i class="pi pi-check-circle" style="font-size: 4rem;"></i>
             <h2>¡Escaneado con éxito!</h2>
             <div class="scan-info">
-              <p><strong>Código QR:</strong> {{ scanData.qrCode }}</p>
+              <!-- <p><strong>Código QR:</strong> {{ scanData.qrCode }}</p> -->
               <p><strong>Usuario:</strong> {{ scanData.username }}</p>
               <p><strong>Email:</strong> {{ scanData.userEmail }}</p>
-              <p><strong>Fecha y Hora:</strong> {{ formatDateTime(scanData.timestamp) }}</p>
+              <p class="text-2xl"><strong>Fecha y Hora:</strong> {{ formatDateTime(scanData.timestamp) }}</p>
             </div>
           </div>
         </div>
@@ -97,7 +95,7 @@ function onDecode(result) {
   scanData.qrCode = result;
   scanData.userId = authStore.user?.id || '';
   scanData.userEmail = authStore.user?.email || '';
-  scanData.username = authStore.user?.username || '';
+  scanData.username = authStore.profile?.username || '';
   scanData.timestamp = new Date().toISOString();
 
   console.log('Scan result:', scanData);
