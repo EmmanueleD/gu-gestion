@@ -83,7 +83,13 @@ const model = ref([
       {
         label: "QR Turnos",
         icon: "pi pi-fw pi-qrcode",
-        to: "/qr-turnos",
+        to: "/test-qr-turnos",
+        gest_role_id: [1, 2, 3],
+      },
+      {
+        label: "Escanear QR Turnos",
+        icon: "pi pi-fw pi-qrcode",
+        to: "/test-qr-turnos-scanner",
         gest_role_id: [1, 2, 3],
       },
       {
