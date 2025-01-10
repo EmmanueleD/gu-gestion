@@ -3,17 +3,30 @@
     <div class="flex flex-column align-items-center justify-content-start full-height py-8">
       <h1>QR Turnos</h1>
       <div ref="qrcode" class="qr-container"></div>
+      <div class="countdown-container">
+        <ProgressBar :value="progressValue" :showValue="false" :pt="{
+          root: { style: 'height: 2w0px; width: 300px' }
+        }" />
+        <Badge class="countdown">{{ remainingSeconds }}</Badge>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
 import QRCode from 'qrcode';
+import ProgressBar from 'primevue/progressbar'; // Import ProgressBar from PrimeVue
 
 const qrcode = ref(null);
 const currentQrData = ref('');
+const remainingSeconds = ref(0);
 let updateInterval;
+let countdownInterval;
+
+const progressValue = computed(() => {
+  return (((remainingSeconds.value) / 60) * 100).toFixed(0);
+});
 
 function formatDateTime(date) {
   return [
@@ -23,6 +36,11 @@ function formatDateTime(date) {
     String(date.getHours()).padStart(2, '0'),
     String(date.getMinutes()).padStart(2, '0')
   ].join('');
+}
+
+function updateCountdown() {
+  const now = new Date();
+  remainingSeconds.value = 60 - now.getSeconds();
 }
 
 async function updateQRCode() {
@@ -57,6 +75,7 @@ onMounted(() => {
   window.addEventListener('resize', updateQRCode);
 
   updateQRCode();
+  updateCountdown();
 
   const seconds = 60 - new Date().getSeconds();
 
@@ -64,12 +83,18 @@ onMounted(() => {
     updateQRCode();
     updateInterval = setInterval(updateQRCode, 60 * 1000);
   }, seconds * 1000);
+
+  // Avvia il contatore
+  countdownInterval = setInterval(updateCountdown, 1000);
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', updateQRCode);
   if (updateInterval) {
     clearInterval(updateInterval);
+  }
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
   }
 });
 </script>
@@ -102,5 +127,24 @@ onBeforeUnmount(() => {
   max-width: 500px;
   max-height: 500px;
   object-fit: contain;
+}
+
+.countdown-container {
+  position: relative;
+  margin-top: 1rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.countdown {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.2rem;
+  font-weight: 500;
 }
 </style>
