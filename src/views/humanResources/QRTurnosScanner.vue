@@ -8,13 +8,11 @@
       <Transition name="slide">
         <div v-if="showSuccess" class="success-screen">
           <div class="success-content">
-            <i class="pi pi-check-circle" style="font-size: 2rem;"></i>
-            <h2>¡Escaneado con éxito!</h2>
+            <i class="pi pi-check-circle" style="font-size: 4rem;"></i>
             <div class="scan-info">
-              <!-- <p><strong>Código QR:</strong> {{ scanData.qrCode }}</p> -->
               <p>{{ scanData.username }}</p>
-              <!-- <p><strong>Email:</strong> {{ scanData.userEmail }}</p> -->
-              <p class="font-bold " style="font-size: 5rem;">{{ formatDateTime(scanData.timestamp) }}</p>
+              <p class="font-bold" style="font-size: 5rem;">{{ useDateFormat(scanData.timestamp, 'HH:mm').value }}</p>
+              <p class="font-bold">{{ useDateFormat(scanData.timestamp, 'DD/MM/YYYY').value }}</p>
             </div>
           </div>
         </div>
@@ -32,9 +30,10 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { QrcodeStream } from 'vue-qrcode-reader';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { useDateFormat } from '@vueuse/core';
 
 const error = ref('');
 const isScanning = ref(false);
@@ -49,23 +48,12 @@ const scanData = reactive({
   timestamp: ''
 });
 
+
 function toggleScanner() {
   isScanning.value = !isScanning.value;
   if (!isScanning.value) {
     error.value = '';
   }
-}
-
-function formatDateTime(timestamp) {
-  if (!timestamp) return '';
-  const date = new Date(timestamp);
-  return new Intl.DateTimeFormat('es-ES', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit'
-  }).format(date);
 }
 
 async function onInit(promise) {
@@ -103,7 +91,7 @@ function onDecode(result) {
   // Mostra la schermata di successo
   showSuccess.value = true;
 
-  // Nascondi la schermata dopo 3 secondi
+  // Nascondi la schermata dopo 5 secondi
   setTimeout(() => {
     showSuccess.value = false;
   }, 5000);
@@ -168,14 +156,8 @@ function paintOutline(detectedCodes, ctx) {
   margin-bottom: 1rem;
 }
 
-.success-content h2 {
-  margin-bottom: 2rem;
-  font-size: 2rem;
-  color: white;
-}
-
 .scan-info {
-  text-align: left;
+  text-align: center;
   font-size: 1.2rem;
 }
 
