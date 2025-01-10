@@ -8,13 +8,13 @@
       <Transition name="slide">
         <div v-if="showSuccess" class="success-screen">
           <div class="success-content">
-            <i class="pi pi-check-circle" style="font-size: 4rem;"></i>
+            <i class="pi pi-check-circle" style="font-size: 2rem;"></i>
             <h2>¡Escaneado con éxito!</h2>
             <div class="scan-info">
               <!-- <p><strong>Código QR:</strong> {{ scanData.qrCode }}</p> -->
               <p>{{ scanData.username }}</p>
               <!-- <p><strong>Email:</strong> {{ scanData.userEmail }}</p> -->
-              <h1 class="font-bold ">{{ formatDateTime(scanData.timestamp) }}</h1>
+              <p class="font-bold " style="font-size: 5rem;">{{ formatDateTime(scanData.timestamp) }}</p>
             </div>
           </div>
         </div>
