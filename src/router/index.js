@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { useQRTokenStore } from "@/stores/useQRTokenStore";
 
 import AppLayout from "@/layout/AppLayout.vue";
+import QRLayout from "@/layout/QRLayout.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -97,14 +99,9 @@ const router = createRouter({
           component: () => import("@/views/humanResources/staff.vue"),
           meta: { requiresAuth: true, gest_role_id: [1, 2, 3] },
         },
+
         {
-          path: "test-qr-turnos",
-          name: "qr-turnos",
-          component: () => import("@/views/humanResources/QRTurnos.vue"),
-          meta: { requiresAuth: true, gest_role_id: [1, 2, 3] },
-        },
-        {
-          path: "test-qr-turnos-scanner",
+          path: "qr-turnos-scanner",
           name: "qr-turnos-scanner",
           component: () => import("@/views/humanResources/QRTurnosScanner.vue"),
           meta: { requiresAuth: true },
@@ -147,7 +144,32 @@ const router = createRouter({
             },
           ],
         },
+        {
+          path: "qr-display-config",
+          name: "qr-display-config",
+          component: () => import("@/views/humanResources/QRDisplayConfig.vue"),
+          meta: { requiresAuth: true, gest_role_id: [1, 2] },
+        },
       ],
+    },
+    {
+      path: "/qr-display",
+      component: QRLayout,
+      children: [
+        {
+          path: "",
+          name: "qr-turnos",
+          component: () => import("@/views/humanResources/QRTurnos.vue"),
+          beforeEnter: (to, from, next) => {
+            const qrTokenStore = useQRTokenStore();
+            if (qrTokenStore.hasValidToken()) {
+              next();
+            } else {
+              next('/access-denied');
+            }
+          }
+        }
+      ]
     },
     {
       path: "/access",
