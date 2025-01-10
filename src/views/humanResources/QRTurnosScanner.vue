@@ -2,7 +2,7 @@
   <div class="card">
     <h5>Escanear QR Turnos</h5>
     <div class="flex flex-column align-items-center">
-      <qrcode-stream v-if="isScanning && !showSuccess" @decode="onDecode" @init="onInit" :track="paintOutline"
+      <qrcode-stream v-if="isScanning && !showSuccess" @detect="onDecode" @init="onInit" :track="paintOutline"
         class="scanner-video" />
 
       <pre>{{ { currentQrData, scanData } }}</pre>
