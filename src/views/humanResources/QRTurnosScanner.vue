@@ -37,7 +37,7 @@ import { useAuthStore } from '@/stores/useAuthStore';
 import { useDateFormat } from '@vueuse/core';
 
 const error = ref('');
-const isScanning = ref(false);
+const isScanning = ref(true);
 const showSuccess = ref(false);
 const authStore = useAuthStore();
 
@@ -95,6 +95,7 @@ function onDecode(result) {
   // Nascondi la schermata dopo 5 secondi
   setTimeout(() => {
     showSuccess.value = false;
+    isScanning.value = false;
   }, 5000);
 }
 
