@@ -106,7 +106,7 @@ function onDecode(result) {
   // Nascondi la schermata dopo 3 secondi
   setTimeout(() => {
     showSuccess.value = false;
-  }, 3000);
+  }, 5000);
 }
 
 function paintOutline(detectedCodes, ctx) {
