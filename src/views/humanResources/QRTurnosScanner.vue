@@ -2,90 +2,93 @@
   <div class="card">
     <h5>Escanear QR Turnos</h5>
     <div class="flex flex-column align-items-center">
-      <video ref="video" class="scanner-video"></video>
+      <qrcode-stream 
+        v-if="isScanning"
+        @decode="onDecode"
+        @init="onInit"
+        :track="paintOutline"
+        class="scanner-video"
+      />
       <div v-if="error" class="text-red-500 mt-3">
         {{ error }}
       </div>
       <div v-if="lastScan" class="text-green-500 mt-3">
         Último escaneo: {{ lastScan }}
       </div>
-      <button @click="startScanner" class="p-button mt-3">
-        Iniciar Escáner
+      <button @click="toggleScanner" class="p-button mt-3">
+        {{ isScanning ? 'Detener Escáner' : 'Iniciar Escáner' }}
       </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onBeforeUnmount } from 'vue';
+import { ref } from 'vue';
+import { QrcodeStream } from 'vue-qrcode-reader';
 import { useAuthStore } from '@/stores/useAuthStore';
-import Instascan from 'instascan';
 
-const video = ref(null);
 const error = ref('');
 const lastScan = ref('');
+const isScanning = ref(false);
 const authStore = useAuthStore();
-let scanner = null;
 
-async function startScanner() {
-  try {
-    // Ferma lo scanner precedente se esiste
-    if (scanner) {
-      await scanner.stop();
-    }
-
+function toggleScanner() {
+  isScanning.value = !isScanning.value;
+  if (!isScanning.value) {
     error.value = '';
-    
-    // Crea un nuovo scanner
-    scanner = new Instascan.Scanner({
-      video: video.value,
-      scanPeriod: 5, // Scansiona ogni 5ms
-      mirror: false  // Non specchiare l'immagine
-    });
-
-    // Gestisci gli eventi di scansione
-    scanner.addListener('scan', result => {
-      const scanData = {
-        qrCode: result,
-        userId: authStore.user?.id,
-        userEmail: authStore.user?.email,
-        username: authStore.user?.username,
-        timestamp: new Date().toISOString()
-      };
-      console.log('Scan result:', scanData);
-      lastScan.value = result;
-      error.value = '';
-    });
-
-    // Ottieni le fotocamere disponibili
-    const cameras = await Instascan.Camera.getCameras();
-    
-    if (cameras.length === 0) {
-      throw new Error('No se encontraron cámaras');
-    }
-    
-    // Usa la fotocamera posteriore se disponibile
-    const backCamera = cameras.find(camera => camera.name.toLowerCase().includes('back'));
-    const selectedCamera = backCamera || cameras[0];
-    
-    // Avvia lo scanner
-    await scanner.start(selectedCamera);
-
-  } catch (err) {
-    if (location.protocol !== 'https:') {
-      error.value = 'Esta función requiere HTTPS. Por favor, accede a través de una conexión segura.';
-    } else {
-      error.value = 'Error al iniciar el escáner: ' + (err.message || 'Permiso denegado');
-    }
-    console.error('Scanner error:', err);
   }
 }
 
-onBeforeUnmount(() => {
-  if (scanner) {
-    scanner.stop();
+async function onInit(promise) {
+  try {
+    await promise;
+    error.value = '';
+  } catch (err) {
+    if (err.name === 'NotAllowedError') {
+      error.value = 'ERROR: necesita dar permiso de cámara';
+    } else if (err.name === 'NotFoundError') {
+      error.value = 'ERROR: no se encontró ninguna cámara';
+    } else if (err.name === 'NotSupportedError') {
+      error.value = 'ERROR: HTTPS necesario';
+    } else if (err.name === 'NotReadableError') {
+      error.value = 'ERROR: ¿está la cámara en uso?';
+    } else if (err.name === 'OverconstrainedError') {
+      error.value = 'ERROR: cámara no compatible';
+    } else {
+      error.value = 'ERROR: error al iniciar la cámara';
+    }
+    console.error(err);
   }
-});
+}
+
+function onDecode(result) {
+  const scanData = {
+    qrCode: result,
+    userId: authStore.user?.id,
+    userEmail: authStore.user?.email,
+    username: authStore.user?.username,
+    timestamp: new Date().toISOString()
+  };
+  console.log('Scan result:', scanData);
+  lastScan.value = result;
+}
+
+function paintOutline(detectedCodes, ctx) {
+  for (const detectedCode of detectedCodes) {
+    const [firstPoint, ...otherPoints] = detectedCode.cornerPoints;
+
+    ctx.strokeStyle = 'green';
+    ctx.lineWidth = 4;
+
+    ctx.beginPath();
+    ctx.moveTo(firstPoint.x, firstPoint.y);
+    for (const { x, y } of otherPoints) {
+      ctx.lineTo(x, y);
+    }
+    ctx.lineTo(firstPoint.x, firstPoint.y);
+    ctx.stroke();
+  }
+}
 </script>
 
 <style scoped>
@@ -100,5 +103,6 @@ onBeforeUnmount(() => {
   border: 1px solid #ccc;
   border-radius: 8px;
   margin-bottom: 1rem;
+  overflow: hidden;
 }
 </style>
