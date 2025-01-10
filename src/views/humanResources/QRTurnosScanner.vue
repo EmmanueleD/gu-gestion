@@ -14,7 +14,7 @@
               <!-- <p><strong>Código QR:</strong> {{ scanData.qrCode }}</p> -->
               <p>{{ scanData.username }}</p>
               <!-- <p><strong>Email:</strong> {{ scanData.userEmail }}</p> -->
-              <p class="font-bold text-2xl">{{ formatDateTime(scanData.timestamp) }}</p>
+              <h1 class="font-bold ">{{ formatDateTime(scanData.timestamp) }}</h1>
             </div>
           </div>
         </div>
