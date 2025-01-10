@@ -5,7 +5,7 @@
       <div ref="qrcode" class="qr-container"></div>
       <div class="countdown-container">
         <ProgressBar :value="progressValue" :showValue="false" :pt="{
-          root: { style: 'height: 2w0px; width: 300px' }
+          root: { style: 'height: 30px; width: 300px' },
         }" />
         <Badge class="countdown">{{ remainingSeconds }}</Badge>
       </div>
